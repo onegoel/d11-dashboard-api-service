@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/server.ts",
     "seed": "prisma db seed",
-    "reset-db": "prisma migrate reset"
+    "reset-db": "prisma migrate reset && prisma db seed"
   },
   "keywords": [],
   "author": "",

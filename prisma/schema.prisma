@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -12,19 +7,38 @@ datasource db {
   provider = "postgresql"
 }
 
+enum MatchStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+}
+
 model User {
   id   Int    @id @default(autoincrement())
-  name String
+  last_name String
+  first_name String
+  user_name String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   seasonsPlayed SeasonUser[]
   wonSeasons    Season[]     @relation("SeasonWinner")
 }
 
 model Season {
-  id           Int    @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   name         String
   year         Int
+  isActive     Boolean @default(true)
+
+  startDate DateTime?
+  endDate   DateTime?
+
   winnerUserId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   winnerUser User? @relation("SeasonWinner", fields: [winnerUserId], references: [id])
 
@@ -38,21 +52,29 @@ model SeasonUser {
   userId      Int
   teamName    String
   finalRank   Int?
-  totalPoints Int?
+  totalPoints Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   season Season @relation(fields: [seasonId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
 
-  scores    Score[]
-  chipPlays ChipPlay[]
+  scores      Score[]
+  chipPlays   ChipPlay[]
+  playerPicks PlayerPick[]
 
   @@unique([seasonId, userId])
+  @@index([seasonId])
 }
 
 model Team {
   id        String @id @default(uuid())
   name      String
-  shortCode String
+  shortCode String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   homeMatches Match[] @relation("HomeTeam")
   awayMatches Match[] @relation("AwayTeam")
@@ -63,9 +85,13 @@ model Match {
   seasonId  Int
   matchNo   Int
   matchDate DateTime
+  status    MatchStatus @default(SCHEDULED)
 
   homeTeamId String
   awayTeamId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   season Season @relation(fields: [seasonId], references: [id])
 
@@ -74,8 +100,11 @@ model Match {
 
   scores    Score[]
   chipPlays ChipPlay[]
+  picks     PlayerPick[]
 
   @@unique([seasonId, matchNo])
+  @@index([seasonId])
+  @@index([matchDate])
 }
 
 model ChipType {
@@ -84,6 +113,9 @@ model ChipType {
   description      String?
   multiplier       Float
   maxUsesPerSeason Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   chipPlays ChipPlay[]
 }
@@ -94,6 +126,9 @@ model ChipPlay {
   chipTypeId   Int
   matchId      String
   playedAt     DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
   chipType   ChipType   @relation(fields: [chipTypeId], references: [id])
@@ -106,13 +141,43 @@ model Score {
   id           String  @id @default(uuid())
   seasonUserId String
   matchId      String
-  points       Int
-  rank         Int
-  chipPlayId   String? @unique
+
+  points Int
+  rank   Int
+
+  captainPoints Int?
+  benchPoints   Int?
+
+  chipPlayId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
   match      Match      @relation(fields: [matchId], references: [id])
   chipPlay   ChipPlay?  @relation(fields: [chipPlayId], references: [id])
 
   @@unique([seasonUserId, matchId])
+  @@index([matchId])
+  @@index([seasonUserId])
+}
+
+model PlayerPick {
+  id           String @id @default(uuid())
+  seasonUserId String
+  matchId      String
+
+  playerName String
+  isCaptain  Boolean @default(false)
+
+  points Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
+  match      Match      @relation(fields: [matchId], references: [id])
+
+  @@index([seasonUserId])
+  @@index([matchId])
 }
