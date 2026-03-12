@@ -1,0 +1,22 @@
+[
+  { "match_no": 1, "home": "RCB", "away": "SRH", "date": "2026-03-28T19:30:00+05:30" },
+  { "match_no": 2, "home": "MI", "away": "KKR", "date": "2026-03-29T19:30:00+05:30" },
+  { "match_no": 3, "home": "RR", "away": "CSK", "date": "2026-03-30T19:30:00+05:30" },
+  { "match_no": 4, "home": "GT", "away": "PBKS", "date": "2026-03-31T19:30:00+05:30" },
+  { "match_no": 5, "home": "DC", "away": "LSG", "date": "2026-04-01T19:30:00+05:30" },
+  { "match_no": 6, "home": "SRH", "away": "RR", "date": "2026-04-02T19:30:00+05:30" },
+  { "match_no": 7, "home": "KKR", "away": "RCB", "date": "2026-04-03T19:30:00+05:30" },
+  { "match_no": 8, "home": "CSK", "away": "GT", "date": "2026-04-04T15:30:00+05:30" },
+  { "match_no": 9, "home": "PBKS", "away": "MI", "date": "2026-04-04T19:30:00+05:30" },
+  { "match_no": 10, "home": "LSG", "away": "DC", "date": "2026-04-05T15:30:00+05:30" },
+  { "match_no": 11, "home": "RR", "away": "KKR", "date": "2026-04-05T19:30:00+05:30" },
+  { "match_no": 12, "home": "SRH", "away": "CSK", "date": "2026-04-06T19:30:00+05:30" },
+  { "match_no": 13, "home": "MI", "away": "GT", "date": "2026-04-07T19:30:00+05:30" },
+  { "match_no": 14, "home": "RCB", "away": "PBKS", "date": "2026-04-08T19:30:00+05:30" },
+  { "match_no": 15, "home": "DC", "away": "RR", "date": "2026-04-09T19:30:00+05:30" },
+  { "match_no": 16, "home": "KKR", "away": "LSG", "date": "2026-04-10T19:30:00+05:30" },
+  { "match_no": 17, "home": "CSK", "away": "MI", "date": "2026-04-11T15:30:00+05:30" },
+  { "match_no": 18, "home": "GT", "away": "SRH", "date": "2026-04-11T19:30:00+05:30" },
+  { "match_no": 19, "home": "PBKS", "away": "DC", "date": "2026-04-12T15:30:00+05:30" },
+  { "match_no": 20, "home": "LSG", "away": "RCB", "date": "2026-04-12T19:30:00+05:30" }
+]
