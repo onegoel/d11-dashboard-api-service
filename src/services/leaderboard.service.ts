@@ -2,54 +2,101 @@ import { prisma } from "../../prisma/client.js";
 import { MatchStatus } from "../../generated/prisma/client.js";
 
 const getSeasonLeaderboard = async (seasonId: number) => {
-  const leaderboard = await prisma.seasonUser.findMany({
-    where: { seasonId },
-    include: {
-      user: true,
-      scores: {
-        where: {
-          match: {
-            status: MatchStatus.COMPLETED,
-          },
-        },
-        include: {
-          match: {
-            select: {
-              id: true,
-              matchNo: true,
-              matchDate: true,
+  const [seasonUsers, completedMatches] = await Promise.all([
+    prisma.seasonUser.findMany({
+      where: { seasonId },
+      include: {
+        user: true,
+        scores: {
+          where: {
+            match: {
+              status: MatchStatus.COMPLETED,
             },
           },
         },
       },
-    },
-  });
+    }),
+    prisma.match.findMany({
+      where: {
+        seasonId,
+        status: MatchStatus.COMPLETED,
+      },
+      select: {
+        id: true,
+        matchNo: true,
+        matchDate: true,
+        homeTeam: {
+          select: {
+            shortCode: true,
+          },
+        },
+        awayTeam: {
+          select: {
+            shortCode: true,
+          },
+        },
+      },
+      orderBy: [{ matchDate: "asc" }, { matchNo: "asc" }],
+    }),
+  ]);
 
-  return leaderboard
+  const serializedMatches = completedMatches.map((match) => ({
+    id: match.id,
+    matchNo: match.matchNo,
+    matchDate: match.matchDate.toISOString(),
+    matchLabel: `${match.homeTeam.shortCode} vs ${match.awayTeam.shortCode}`,
+  }));
+
+  const leaderboard = seasonUsers
     .map((player) => {
-      const completedScores = [...player.scores].sort(
-        (a, b) =>
-          new Date(b.match.matchDate).getTime() -
-          new Date(a.match.matchDate).getTime(),
+      const scoresByMatchId = new Map(
+        player.scores.map((score) => [score.matchId, score]),
       );
+      let cumulativePoints = 0;
 
-      const fullName = `${player.user.first_name} ${player.user.last_name}`;
+      const history = completedMatches.map((match) => {
+        const score = scoresByMatchId.get(match.id);
+        const points = score?.points ?? 0;
+
+        cumulativePoints += points;
+
+        return {
+          matchId: match.id,
+          matchNo: match.matchNo,
+          matchDate: match.matchDate.toISOString(),
+          matchLabel: `${match.homeTeam.shortCode} vs ${match.awayTeam.shortCode}`,
+          points,
+          rank: score?.rank ?? null,
+          cumulativePoints,
+          didPlay: score !== undefined,
+        };
+      });
+
+      const playedHistory = history.filter((point) => point.didPlay);
+      const recentForm = playedHistory
+        .slice(Math.max(playedHistory.length - 5, 0))
+        .reverse()
+        .map((point) => ({
+          matchId: point.matchId,
+          matchNo: point.matchNo,
+          rank: point.rank ?? 0,
+        }));
+
+      const displayName = player.user.display_name;
 
       return {
         id: player.id,
-        name: fullName,
+        name: displayName,
+        displayName,
         userName: player.user.user_name,
-        fullName,
+        fullName: displayName,
         teamName: player.teamName,
         team: player.teamName,
-        points: player.scores.reduce((sum, score) => sum + score.points, 0),
-        played: player.scores.length,
-        wins: player.scores.filter((score) => score.rank === 1).length,
-        recentForm: completedScores.slice(0, 5).map((score) => ({
-          matchId: score.matchId,
-          matchNo: score.match.matchNo,
-          rank: score.rank,
-        })),
+        points: history.length > 0 ? history[history.length - 1]!.cumulativePoints : 0,
+        played: playedHistory.length,
+        wins: playedHistory.filter((point) => point.rank === 1).length,
+        recentForm,
+        history,
       };
     })
     .sort((a, b) => {
@@ -61,8 +108,14 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         return b.wins - a.wins;
       }
 
-      return a.fullName.localeCompare(b.fullName);
+      return a.displayName.localeCompare(b.displayName);
     });
+
+  return {
+    seasonId,
+    completedMatches: serializedMatches,
+    leaderboard,
+  };
 };
 
 const getMatchLeaderboard = async (matchId: string) => {
@@ -77,7 +130,7 @@ const getMatchLeaderboard = async (matchId: string) => {
   });
 
   return matchLeaderboard.map((player) => ({
-    name: player.seasonUser.user.user_name,
+    name: player.seasonUser.user.display_name,
     teamName: player.seasonUser.teamName,
     points: player.points,
     rank: player.rank,

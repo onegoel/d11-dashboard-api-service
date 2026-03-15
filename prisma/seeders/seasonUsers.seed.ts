@@ -17,7 +17,7 @@ export async function seedSeasonUsers(prisma: PrismaClient, seasonId: number) {
       create: {
         seasonId,
         userId: user.id,
-        teamName: `${user.user_name}'s XI`,
+        teamName: `${user.display_name}'s Team`,
       },
     });
   }

@@ -11,12 +11,9 @@ const getSeasonLeaderboard: RequestHandler = async (req, res) => {
       });
     }
 
-    const leaderboard = await leaderboardService.getSeasonLeaderboard(seasonId);
+    const leaderboardData = await leaderboardService.getSeasonLeaderboard(seasonId);
 
-    return res.json({
-      seasonId,
-      leaderboard,
-    });
+    return res.json(leaderboardData);
   } catch (error) {
     console.error("Error fetching season leaderboard:", error);
 

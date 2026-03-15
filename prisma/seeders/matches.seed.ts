@@ -8,6 +8,63 @@ type Fixture = {
   date: string;
 };
 
+const unlockOneScheduledMatchForTesting = async (
+  prisma: PrismaClient,
+  seasonId: number,
+) => {
+  const now = new Date();
+
+  const editableScheduledMatch = await prisma.match.findFirst({
+    where: {
+      seasonId,
+      status: "SCHEDULED",
+      matchDate: { lte: now },
+    },
+    orderBy: { matchDate: "asc" },
+    select: {
+      id: true,
+      matchNo: true,
+      matchDate: true,
+    },
+  });
+
+  if (editableScheduledMatch) {
+    console.log(
+      `Match ${editableScheduledMatch.matchNo} already editable (${editableScheduledMatch.matchDate.toISOString()})`,
+    );
+    return;
+  }
+
+  const nextScheduledMatch = await prisma.match.findFirst({
+    where: {
+      seasonId,
+      status: "SCHEDULED",
+      matchDate: { gt: now },
+    },
+    orderBy: { matchDate: "asc" },
+    select: {
+      id: true,
+      matchNo: true,
+    },
+  });
+
+  if (!nextScheduledMatch) {
+    console.log("No future scheduled match found to unlock for testing");
+    return;
+  }
+
+  const unlockedDate = new Date(now.getTime() - 10 * 60 * 1000);
+
+  await prisma.match.update({
+    where: { id: nextScheduledMatch.id },
+    data: { matchDate: unlockedDate },
+  });
+
+  console.log(
+    `Unlocked match ${nextScheduledMatch.matchNo} for testing (${unlockedDate.toISOString()})`,
+  );
+};
+
 export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
   console.log("Seeding fixtures...");
 
@@ -34,6 +91,8 @@ export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
       },
       update: {
         matchDate: new Date(fixture.date),
+        homeTeamId,
+        awayTeamId,
       },
       create: {
         seasonId,
@@ -44,6 +103,8 @@ export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
       },
     });
   }
+
+  await unlockOneScheduledMatchForTesting(prisma, seasonId);
 
   console.log(`Seeded ${fixtures.length} fixtures`);
 }
