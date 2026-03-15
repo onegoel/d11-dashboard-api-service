@@ -7,6 +7,19 @@ export interface MatchScore {
     rank: number;
 }
 
+const getMatchScores = async (matchId: string) => {
+    return prisma.score.findMany({
+        where: { matchId },
+        orderBy: { rank: "asc" },
+        select: {
+            matchId: true,
+            seasonUserId: true,
+            points: true,
+            rank: true,
+        },
+    });
+};
+
 const submitMatchScoresBulk = async (matchId: string, scores: MatchScore[]) => {
     return prisma.$transaction(async (tx) => {
         const submittedSeasonUserIds = scores.map((score) => score.seasonUserId);
@@ -57,5 +70,6 @@ const submitMatchScoresBulk = async (matchId: string, scores: MatchScore[]) => {
 };
 
 export const scoresService = {
+    getMatchScores,
     submitMatchScoresBulk,
 };

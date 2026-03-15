@@ -1,6 +1,33 @@
 import type { RequestHandler } from "express";
 import { scoresService } from "../services/score.service.js";
 
+const getMatchScores: RequestHandler = async (req, res) => {
+    try {
+        const matchIdParam = req.params.matchId;
+        const matchId =
+            Array.isArray(matchIdParam) || !matchIdParam ? null : matchIdParam;
+
+        if (!matchId) {
+            return res.status(400).json({
+                error: "matchId is required in route params",
+            });
+        }
+
+        const scores = await scoresService.getMatchScores(matchId);
+
+        return res.json({
+            matchId,
+            scores,
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            error: "Failed to fetch match scores",
+        });
+    }
+};
+
 const uploadMatchScores: RequestHandler = async (req, res) => {
     try {
         const matchIdParam = req.params.matchId;
@@ -54,5 +81,6 @@ const uploadMatchScores: RequestHandler = async (req, res) => {
 };
 
 export const scoreController = {
+    getMatchScores,
     uploadMatchScores,
 };

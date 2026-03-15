@@ -33,9 +33,13 @@ const getSeasonLeaderboard = async (seasonId: number) => {
           new Date(a.match.matchDate).getTime(),
       );
 
+      const fullName = `${player.user.first_name} ${player.user.last_name}`;
+
       return {
         id: player.id,
-        name: player.user.user_name,
+        name: fullName,
+        userName: player.user.user_name,
+        fullName,
         teamName: player.teamName,
         team: player.teamName,
         points: player.scores.reduce((sum, score) => sum + score.points, 0),
@@ -57,7 +61,7 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         return b.wins - a.wins;
       }
 
-      return a.name.localeCompare(b.name);
+      return a.fullName.localeCompare(b.fullName);
     });
 };
 
