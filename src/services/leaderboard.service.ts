@@ -4,7 +4,9 @@ import { MatchStatus } from "../../generated/prisma/client.js";
 const DROP_COUNT = parseInt(process.env.BEST_N_DROP_COUNT ?? "0", 10);
 
 const calcFinalPoints = (playedPoints: number[]): number => {
-  const keep = Math.max(playedPoints.length - DROP_COUNT, 0);
+  if (playedPoints.length === 0) return 0;
+  if (playedPoints.length <= DROP_COUNT) return playedPoints.reduce((sum, p) => sum + p, 0);
+  const keep = playedPoints.length - DROP_COUNT;
   return [...playedPoints]
     .sort((a, b) => b - a)
     .slice(0, keep)
@@ -105,6 +107,7 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         teamName: player.teamName,
         team: player.teamName,
         points: totalPoints,
+        gamesDropCount: DROP_COUNT,
         finalPoints,
         played: playedHistory.length,
         wins: playedHistory.filter((point) => point.rank === 1).length,
