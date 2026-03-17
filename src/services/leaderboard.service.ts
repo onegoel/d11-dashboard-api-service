@@ -1,5 +1,20 @@
 import { prisma } from "../../prisma/client.js";
-import { MatchStatus } from "../../generated/prisma/client.js";
+import {
+  ChipCode,
+  ChipPlayStatus,
+  MatchStatus,
+} from "../../generated/prisma/client.js";
+
+const getChipShortCode = (chipCode: ChipCode) => {
+  switch (chipCode) {
+    case ChipCode.DOUBLE_TEAM:
+      return "DT";
+    case ChipCode.COMEBACK_KID:
+      return "CK";
+    default:
+      return chipCode;
+  }
+};
 
 const DROP_COUNT = parseInt(process.env.BEST_N_DROP_COUNT ?? "0", 10);
 
@@ -14,7 +29,7 @@ const calcFinalPoints = (playedPoints: number[]): number => {
 };
 
 const getSeasonLeaderboard = async (seasonId: number) => {
-  const [seasonUsers, completedMatches] = await Promise.all([
+  const [seasonUsers, completedMatches, chipTypes] = await Promise.all([
     prisma.seasonUser.findMany({
       where: { seasonId },
       include: {
@@ -23,6 +38,35 @@ const getSeasonLeaderboard = async (seasonId: number) => {
           where: {
             match: {
               status: MatchStatus.COMPLETED,
+            },
+          },
+          include: {
+            chipPlay: {
+              select: {
+                chipType: {
+                  select: {
+                    code: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        chipPlays: {
+          where: {
+            status: {
+              not: ChipPlayStatus.CANCELLED,
+            },
+          },
+          include: {
+            chipType: {
+              select: {
+                id: true,
+                code: true,
+                name: true,
+                maxUsesPerSeason: true,
+              },
             },
           },
         },
@@ -49,6 +93,17 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         },
       },
       orderBy: [{ matchDate: "asc" }, { matchNo: "asc" }],
+    }),
+    prisma.chipType.findMany({
+      orderBy: {
+        id: "asc",
+      },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        maxUsesPerSeason: true,
+      },
     }),
   ]);
 
@@ -79,6 +134,8 @@ const getSeasonLeaderboard = async (seasonId: number) => {
           matchLabel: `${match.homeTeam.shortCode} vs ${match.awayTeam.shortCode}`,
           points,
           rank: score?.rank ?? null,
+          chipCode: score?.chipPlay?.chipType.code ?? null,
+          chipName: score?.chipPlay?.chipType.name ?? null,
           cumulativePoints,
           didPlay: score !== undefined,
         };
@@ -96,7 +153,23 @@ const getSeasonLeaderboard = async (seasonId: number) => {
           matchId: point.matchId,
           matchNo: point.matchNo,
           rank: point.rank ?? 0,
+          chipCode: point.chipCode,
         }));
+
+      const powerups = chipTypes.map((chipType) => {
+        const usedCount = player.chipPlays.filter(
+          (chipPlay) => chipPlay.chipTypeId === chipType.id,
+        ).length;
+
+        return {
+          chipCode: chipType.code,
+          chipShortCode: getChipShortCode(chipType.code),
+          chipName: chipType.name,
+          usedCount,
+          maxUsesPerSeason: chipType.maxUsesPerSeason,
+          remainingCount: Math.max(chipType.maxUsesPerSeason - usedCount, 0),
+        };
+      });
 
       const displayName = player.user.display_name;
       const totalPoints = history.length > 0 ? history[history.length - 1]!.cumulativePoints : 0;
@@ -118,6 +191,7 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         averageRank,
         recentForm,
         history,
+        powerups,
       };
     })
     .sort((a, b) => {
@@ -153,6 +227,15 @@ const getMatchLeaderboard = async (matchId: string) => {
       seasonUser: {
         include: { user: true },
       },
+      chipPlay: {
+        select: {
+          chipType: {
+            select: {
+              code: true,
+            },
+          },
+        },
+      },
     },
     orderBy: { rank: "asc" },
   });
@@ -162,6 +245,7 @@ const getMatchLeaderboard = async (matchId: string) => {
     teamName: player.seasonUser.teamName,
     points: player.points,
     rank: player.rank,
+    chipCode: player.chipPlay?.chipType.code ?? null,
   }));
 };
 

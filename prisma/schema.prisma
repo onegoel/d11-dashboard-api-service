@@ -13,6 +13,16 @@ enum MatchStatus {
   COMPLETED
 }
 
+enum ChipCode {
+  DOUBLE_TEAM
+  COMEBACK_KID
+}
+
+enum ChipPlayStatus {
+  SCHEDULED
+  CANCELLED
+}
+
 model User {
   id   Int    @id @default(autoincrement())
   last_name String
@@ -110,10 +120,14 @@ model Match {
 
 model ChipType {
   id               Int     @id @default(autoincrement())
+  code             ChipCode @unique
   name             String
   description      String?
   multiplier       Float
   maxUsesPerSeason Int
+  effectWindowMatches Int @default(1)
+  requiresBottomHalf Boolean @default(false)
+  usesSecondaryTeamScore Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -125,17 +139,22 @@ model ChipPlay {
   id           String   @id @default(uuid())
   seasonUserId String
   chipTypeId   Int
-  matchId      String
-  playedAt     DateTime @default(now())
+  startMatchId String
+  status       ChipPlayStatus @default(SCHEDULED)
+  canceledAt   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
   chipType   ChipType   @relation(fields: [chipTypeId], references: [id])
-  match      Match      @relation(fields: [matchId], references: [id])
+  startMatch Match      @relation(fields: [startMatchId], references: [id])
 
-  score Score?
+  scores Score[]
+
+  @@unique([seasonUserId, chipTypeId, startMatchId])
+  @@index([seasonUserId])
+  @@index([startMatchId])
 }
 
 model Score {
@@ -146,10 +165,14 @@ model Score {
   points Int
   rank   Int
 
+  rawScore       Float?
+  effectiveScore Float?
+  secondaryRawScore Float?
+
   captainPoints Int?
   benchPoints   Int?
 
-  chipPlayId String? @unique
+  chipPlayId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,6 +184,7 @@ model Score {
   @@unique([seasonUserId, matchId])
   @@index([matchId])
   @@index([seasonUserId])
+  @@index([chipPlayId])
 }
 
 model PlayerPick {

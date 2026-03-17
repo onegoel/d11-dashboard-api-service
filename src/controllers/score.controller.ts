@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { ChipServiceError } from "../services/chip.service.js";
 import { scoresService } from "../services/score.service.js";
 
 const getMatchScores: RequestHandler = async (req, res) => {
@@ -13,14 +14,21 @@ const getMatchScores: RequestHandler = async (req, res) => {
             });
         }
 
-        const scores = await scoresService.getMatchScores(matchId);
+        const response = await scoresService.getMatchScores(matchId);
 
         return res.json({
             matchId,
-            scores,
+            scores: response.scores,
+            chipAssignments: response.chipAssignments,
         });
     } catch (error) {
         console.error(error);
+
+        if (error instanceof ChipServiceError) {
+            return res.status(error.statusCode).json({
+                error: error.message,
+            });
+        }
 
         return res.status(500).json({
             error: "Failed to fetch match scores",
@@ -50,11 +58,20 @@ const uploadMatchScores: RequestHandler = async (req, res) => {
         for (const score of scores) {
             if (
                 !score.seasonUserId ||
-                score.points === undefined ||
                 score.rank === undefined
             ) {
                 return res.status(400).json({
-                    error: "Each score must include seasonUserId, points, and rank",
+                    error: "Each score must include seasonUserId and rank",
+                });
+            }
+
+            if (
+                typeof score.rank !== "number" ||
+                !Number.isInteger(score.rank) ||
+                score.rank <= 0
+            ) {
+                return res.status(400).json({
+                    error: "rank must be a positive integer",
                 });
             }
         }
@@ -68,7 +85,19 @@ const uploadMatchScores: RequestHandler = async (req, res) => {
     } catch (error) {
         console.error(error);
 
+        if (error instanceof ChipServiceError) {
+            return res.status(error.statusCode).json({
+                error: error.message,
+            });
+        }
+
         if (error instanceof Error && error.message.includes("same match")) {
+            return res.status(400).json({
+                error: error.message,
+            });
+        }
+
+        if (error instanceof Error) {
             return res.status(400).json({
                 error: error.message,
             });
