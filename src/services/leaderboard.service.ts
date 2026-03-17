@@ -1,6 +1,16 @@
 import { prisma } from "../../prisma/client.js";
 import { MatchStatus } from "../../generated/prisma/client.js";
 
+const DROP_COUNT = parseInt(process.env.BEST_N_DROP_COUNT ?? "0", 10);
+
+const calcFinalPoints = (playedPoints: number[]): number => {
+  const keep = Math.max(playedPoints.length - DROP_COUNT, 0);
+  return [...playedPoints]
+    .sort((a, b) => b - a)
+    .slice(0, keep)
+    .reduce((sum, p) => sum + p, 0);
+};
+
 const getSeasonLeaderboard = async (seasonId: number) => {
   const [seasonUsers, completedMatches] = await Promise.all([
     prisma.seasonUser.findMany({
@@ -83,6 +93,8 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         }));
 
       const displayName = player.user.display_name;
+      const totalPoints = history.length > 0 ? history[history.length - 1]!.cumulativePoints : 0;
+      const finalPoints = calcFinalPoints(playedHistory.map((p) => p.points));
 
       return {
         id: player.id,
@@ -92,7 +104,8 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         fullName: displayName,
         teamName: player.teamName,
         team: player.teamName,
-        points: history.length > 0 ? history[history.length - 1]!.cumulativePoints : 0,
+        points: totalPoints,
+        finalPoints,
         played: playedHistory.length,
         wins: playedHistory.filter((point) => point.rank === 1).length,
         recentForm,
@@ -100,8 +113,8 @@ const getSeasonLeaderboard = async (seasonId: number) => {
       };
     })
     .sort((a, b) => {
-      if (b.points !== a.points) {
-        return b.points - a.points;
+      if (b.finalPoints !== a.finalPoints) {
+        return b.finalPoints - a.finalPoints;
       }
 
       if (b.wins !== a.wins) {
