@@ -125,6 +125,13 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         return b.finalPoints - a.finalPoints;
       }
 
+      const aAverageRank = a.averageRank ?? Number.POSITIVE_INFINITY;
+      const bAverageRank = b.averageRank ?? Number.POSITIVE_INFINITY;
+
+      if (aAverageRank !== bAverageRank) {
+        return aAverageRank - bAverageRank;
+      }
+
       if (b.wins !== a.wins) {
         return b.wins - a.wins;
       }
