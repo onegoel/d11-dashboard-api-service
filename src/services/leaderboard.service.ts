@@ -73,6 +73,10 @@ const getSeasonLeaderboard = async (seasonId: number) => {
       });
 
       const playedHistory = history.filter((point) => point.didPlay);
+      const averageRank = playedHistory.length > 0
+        ? playedHistory.reduce((total, point) => total + (point.rank ?? 0), 0) / playedHistory.length
+        : null;
+
       const recentForm = playedHistory
         .slice(Math.max(playedHistory.length - 5, 0))
         .reverse()
@@ -95,6 +99,7 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         points: history.length > 0 ? history[history.length - 1]!.cumulativePoints : 0,
         played: playedHistory.length,
         wins: playedHistory.filter((point) => point.rank === 1).length,
+        averageRank,
         recentForm,
         history,
       };
@@ -102,6 +107,13 @@ const getSeasonLeaderboard = async (seasonId: number) => {
     .sort((a, b) => {
       if (b.points !== a.points) {
         return b.points - a.points;
+      }
+
+      const aAverageRank = a.averageRank ?? Number.POSITIVE_INFINITY;
+      const bAverageRank = b.averageRank ?? Number.POSITIVE_INFINITY;
+
+      if (aAverageRank !== bAverageRank) {
+        return aAverageRank - bAverageRank;
       }
 
       if (b.wins !== a.wins) {
