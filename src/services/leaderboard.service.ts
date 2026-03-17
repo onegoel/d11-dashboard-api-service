@@ -85,6 +85,10 @@ const getSeasonLeaderboard = async (seasonId: number) => {
       });
 
       const playedHistory = history.filter((point) => point.didPlay);
+      const averageRank = playedHistory.length > 0
+        ? playedHistory.reduce((total, point) => total + (point.rank ?? 0), 0) / playedHistory.length
+        : null;
+
       const recentForm = playedHistory
         .slice(Math.max(playedHistory.length - 5, 0))
         .reverse()
@@ -111,6 +115,7 @@ const getSeasonLeaderboard = async (seasonId: number) => {
         finalPoints,
         played: playedHistory.length,
         wins: playedHistory.filter((point) => point.rank === 1).length,
+        averageRank,
         recentForm,
         history,
       };
