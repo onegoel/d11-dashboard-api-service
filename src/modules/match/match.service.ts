@@ -1,0 +1,49 @@
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { MatchStatus } from "../../../generated/prisma/client.js";
+import { PrismaService } from "../../common/database/prisma.service.js";
+import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
+
+export type GetSeasonMatchesOptions = {
+  status?: MatchStatus;
+};
+
+@Injectable()
+export class MatchService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async getSeasonMatches(
+    seasonId: number,
+    options: GetSeasonMatchesOptions = {},
+  ) {
+    return this.prisma.client.match.findMany({
+      where: {
+        seasonId,
+        ...(options.status ? { status: options.status } : {}),
+      },
+      orderBy: { matchDate: "asc" },
+      include: {
+        homeTeam: true,
+        awayTeam: true,
+      },
+    });
+  }
+
+  async updateMatchStatus(matchId: string, status: MatchStatus) {
+    try {
+      return await this.prisma.client.match.update({
+        where: { id: matchId },
+        data: { status },
+        include: {
+          homeTeam: true,
+          awayTeam: true,
+        },
+      });
+    } catch (error) {
+      if (isPrismaRecordNotFoundError(error)) {
+        throw new NotFoundException("Match not found");
+      }
+
+      throw error;
+    }
+  }
+}

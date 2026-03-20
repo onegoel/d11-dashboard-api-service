@@ -6,6 +6,7 @@ import { seedSeason } from "./seeders/seasons.seed.js";
 import { seedSeasonUsers } from "./seeders/seasonUsers.seed.js";
 import { seedFixtures } from "./seeders/matches.seed.js";
 import { seedChipTypes } from "./seeders/chips.seed.js";
+import { seedScores } from "./seeders/scores.seed.js";
 
 async function main() {
   console.log("Seeding database...");
@@ -16,6 +17,7 @@ async function main() {
   const season = await seedSeason(prisma);
   await seedSeasonUsers(prisma, season.id);
   await seedFixtures(prisma, season.id);
+  await seedScores(prisma, season.id);
 
   console.log("Seed complete");
 }
