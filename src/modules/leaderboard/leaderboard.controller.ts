@@ -18,6 +18,28 @@ import { LeaderboardService } from "./leaderboard.service.js";
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 
+  @Get("season/:seasonId/power-rankings")
+  @ApiOperation({
+    summary: "Get season power rankings",
+    description:
+      "Retrieve weighted power rankings based on each player's recent 5-match performance",
+  })
+  @ApiParam({
+    name: "seasonId",
+    type: "number",
+    description: "The season ID",
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Season power rankings retrieved successfully",
+  })
+  async getSeasonPowerRankings(
+    @Param("seasonId", ParseIntPipe) seasonId: number,
+  ) {
+    return this.leaderboardService.getSeasonPowerRankings(seasonId);
+  }
+
   @Get("season/:seasonId")
   @ApiOperation({
     summary: "Get season leaderboard",

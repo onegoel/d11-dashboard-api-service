@@ -37,43 +37,50 @@ const PLAYER_ORDER = [
 ] as const;
 
 /**
- * matchRanks[m][p] = rank of player p in match m+1.
+ * matchRanks[m][p] = rank of player p in match m+1, or null for DNP.
+ * When a player DNPs they get no Score row; the leaderboard treats absent
+ * rows as "did not play".  Ranks for playing players must be a contiguous
+ * permutation starting at 1 (e.g. 8 players → ranks 1-8).
  *
  * Match winners (rank 1):
  *   M1:  ujju       M2:  suryo      M3:  sart_wars  M4:  ujju
  *   M5:  suryo      M6:  rohukannz  M7:  ujju        M8:  sart_wars
  *   M9:  ujju       M10: suryo      M11: goelball    M12: ujju
  *   M13: rohukannz  M14: suryo      M15: ujju
+ *
+ * DNPs (null):
+ *   M3:  baksy          M7:  goelball_gorillas
+ *   M11: bigrickenergy  M14: baksy
  */
-const matchRanks: number[][] = [
+const matchRanks: (number | null)[][] = [
   // M1  : ujju 1st, suryo 2nd, sart_wars 3rd
   [2, 3, 4, 9, 5, 6, 1, 7, 8],
   // M2  : suryo 1st, ujju 2nd, rohukannz 3rd
   [1, 5, 7, 4, 3, 6, 2, 9, 8],
-  // M3  : sart_wars 1st, ujju 2nd, suryo 3rd
-  [3, 1, 5, 4, 6, 7, 2, 8, 9],
+  // M3  : sart_wars 1st, ujju 2nd, suryo 3rd | baksy DNP
+  [3, 1, 5, 4, 6, 7, 2, 8, null],
   // M4  : ujju 1st, rohukannz 2nd, sart_wars 3rd
   [4, 3, 7, 6, 2, 5, 1, 9, 8],
   // M5  : suryo 1st, ujju 2nd, sart_wars 3rd
   [1, 3, 5, 6, 4, 8, 2, 7, 9],
   // M6  : rohukannz 1st, suryo 2nd, ujju 3rd
   [2, 4, 5, 7, 1, 6, 3, 8, 9],
-  // M7  : ujju 1st, suryo 2nd, gamechangerjassibhai 3rd
-  [2, 4, 3, 5, 6, 7, 1, 8, 9],
+  // M7  : ujju 1st, suryo 2nd, gamechangerjassibhai 3rd | goelball_gorillas DNP
+  [2, 4, 3, null, 5, 6, 1, 7, 8],
   // M8  : sart_wars 1st, rohukannz 2nd, ujju 3rd
   [4, 1, 5, 6, 2, 7, 3, 9, 8],
   // M9  : ujju 1st, gamechangerjassibhai 2nd, sart_wars 3rd
   [5, 3, 2, 7, 4, 6, 1, 8, 9],
   // M10 : suryo 1st, ujju 2nd, rohukannz 3rd
   [1, 4, 6, 7, 3, 5, 2, 9, 8],
-  // M11 : goelball_gorillas 1st, suryo 2nd, ujju 3rd
-  [2, 6, 4, 1, 5, 7, 3, 8, 9],
+  // M11 : goelball_gorillas 1st, suryo 2nd, ujju 3rd | bigrickenergy DNP
+  [2, 6, 4, 1, 5, null, 3, 7, 8],
   // M12 : ujju 1st, suryo 2nd, sart_wars 3rd
   [2, 3, 6, 4, 7, 5, 1, 8, 9],
   // M13 : rohukannz 1st, ujju 2nd, suryo 3rd
   [3, 4, 5, 7, 1, 6, 2, 9, 8],
-  // M14 : suryo 1st, sart_wars 2nd, ujju 3rd
-  [1, 2, 5, 6, 4, 7, 3, 8, 9],
+  // M14 : suryo 1st, sart_wars 2nd, ujju 3rd | baksy DNP
+  [1, 2, 5, 6, 4, 7, 3, 8, null],
   // M15 : ujju 1st, suryo 2nd, sart_wars 3rd
   [2, 3, 6, 5, 4, 7, 1, 9, 8],
 ];
@@ -136,7 +143,14 @@ export async function seedScores(prisma: PrismaClient, seasonId: number) {
 
       for (let playerIdx = 0; playerIdx < PLAYER_ORDER.length; playerIdx++) {
         const userName = PLAYER_ORDER[playerIdx]!;
-        const rank = ranks[playerIdx]!;
+        const rank = ranks[playerIdx];
+
+        // null rank = DNP: no Score row is created, the leaderboard treats
+        // the absent row as "did not play"
+        if (rank === null || rank === undefined) {
+          continue;
+        }
+
         const points = pointsForRank(rank);
         const seasonUserId = userNameToSeasonUserId.get(userName)!;
 

@@ -18,6 +18,9 @@ let LeaderboardController = class LeaderboardController {
     constructor(leaderboardService) {
         this.leaderboardService = leaderboardService;
     }
+    async getSeasonPowerRankings(seasonId) {
+        return this.leaderboardService.getSeasonPowerRankings(seasonId);
+    }
     async getSeasonLeaderboard(seasonId) {
         return this.leaderboardService.getSeasonLeaderboard(seasonId);
     }
@@ -29,6 +32,27 @@ let LeaderboardController = class LeaderboardController {
         };
     }
 };
+__decorate([
+    Get("season/:seasonId/power-rankings"),
+    ApiOperation({
+        summary: "Get season power rankings",
+        description: "Retrieve weighted power rankings based on each player's recent 5-match performance",
+    }),
+    ApiParam({
+        name: "seasonId",
+        type: "number",
+        description: "The season ID",
+        example: 1,
+    }),
+    ApiResponse({
+        status: 200,
+        description: "Season power rankings retrieved successfully",
+    }),
+    __param(0, Param("seasonId", ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], LeaderboardController.prototype, "getSeasonPowerRankings", null);
 __decorate([
     Get("season/:seasonId"),
     ApiOperation({

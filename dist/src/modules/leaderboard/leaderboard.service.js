@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Injectable } from "@nestjs/common";
 import { ChipCode, ChipPlayStatus, MatchStatus, } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
+import { RANK_POINTS } from "../score/points-system.js";
 const getChipShortCode = (chipCode) => {
     switch (chipCode) {
         case ChipCode.DOUBLE_TEAM:
@@ -21,6 +22,10 @@ const getChipShortCode = (chipCode) => {
     }
 };
 const DROP_COUNT = parseInt(process.env.BEST_N_DROP_COUNT ?? "0", 10);
+const POWER_RANKING_WINDOW_SIZE = 5;
+const POWER_MISSED_MATCH_PENALTY = 4;
+const POWER_WIN_BONUS = 2;
+const POWER_PODIUM_BONUS = 1;
 const calcFinalPoints = (playedPoints) => {
     if (playedPoints.length === 0)
         return 0;
@@ -32,10 +37,170 @@ const calcFinalPoints = (playedPoints) => {
         .slice(0, keep)
         .reduce((sum, p) => sum + p, 0);
 };
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const roundToTwo = (value) => Math.round(value * 100) / 100;
 let LeaderboardService = class LeaderboardService {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
+    }
+    async getSeasonPowerRankings(seasonId) {
+        const [completedMatches, seasonUsers] = await Promise.all([
+            this.prisma.client.match.findMany({
+                where: {
+                    seasonId,
+                    status: MatchStatus.COMPLETED,
+                },
+                select: {
+                    id: true,
+                    matchNo: true,
+                    matchDate: true,
+                    homeTeam: {
+                        select: {
+                            shortCode: true,
+                        },
+                    },
+                    awayTeam: {
+                        select: {
+                            shortCode: true,
+                        },
+                    },
+                },
+                orderBy: [{ matchDate: "asc" }, { matchNo: "asc" }],
+            }),
+            this.prisma.client.seasonUser.findMany({
+                where: { seasonId },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            user_name: true,
+                            display_name: true,
+                        },
+                    },
+                    scores: {
+                        where: {
+                            match: {
+                                status: MatchStatus.COMPLETED,
+                            },
+                        },
+                        select: {
+                            matchId: true,
+                            rank: true,
+                            points: true,
+                        },
+                    },
+                },
+            }),
+        ]);
+        const recentMatches = completedMatches.slice(Math.max(completedMatches.length - POWER_RANKING_WINDOW_SIZE, 0));
+        const weights = recentMatches.map((_, index) => index + 1);
+        const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+        const maxPossiblePoints = Math.max(...Object.values(RANK_POINTS), 1);
+        const serializedMatches = recentMatches.map((match) => ({
+            id: match.id,
+            matchNo: match.matchNo,
+            matchDate: match.matchDate.toISOString(),
+            matchLabel: `${match.homeTeam.shortCode} vs ${match.awayTeam.shortCode}`,
+        }));
+        const rankings = seasonUsers
+            .map((seasonUser) => {
+            const scoreByMatchId = new Map(seasonUser.scores.map((score) => [score.matchId, score]));
+            let weightedPointsSum = 0;
+            let playedMatches = 0;
+            let winCount = 0;
+            let podiumCount = 0;
+            const recentWindow = recentMatches.map((match, index) => {
+                const score = scoreByMatchId.get(match.id);
+                const points = score?.points ?? 0;
+                const rank = score?.rank ?? null;
+                const didPlay = score !== undefined;
+                const weight = weights[index] ?? 1;
+                weightedPointsSum += points * weight;
+                if (didPlay) {
+                    playedMatches += 1;
+                }
+                if (rank === 1) {
+                    winCount += 1;
+                }
+                if (rank !== null && rank <= 3) {
+                    podiumCount += 1;
+                }
+                return {
+                    matchId: match.id,
+                    matchNo: match.matchNo,
+                    matchDate: match.matchDate.toISOString(),
+                    matchLabel: `${match.homeTeam.shortCode} vs ${match.awayTeam.shortCode}`,
+                    didPlay,
+                    rank,
+                    points,
+                    weight,
+                    weightedContribution: roundToTwo(points * weight),
+                };
+            });
+            const weightedAveragePoints = totalWeight === 0 ? 0 : weightedPointsSum / totalWeight;
+            const baseScore = maxPossiblePoints === 0
+                ? 0
+                : (weightedAveragePoints / maxPossiblePoints) * 100;
+            const missedMatches = Math.max(recentMatches.length - playedMatches, 0);
+            const participationPenalty = missedMatches * POWER_MISSED_MATCH_PENALTY;
+            const winBonus = winCount * POWER_WIN_BONUS;
+            const podiumBonus = Math.max(podiumCount - winCount, 0) * POWER_PODIUM_BONUS;
+            const firstSlice = recentWindow.slice(0, Math.min(2, recentWindow.length));
+            const lastSlice = recentWindow.slice(Math.max(recentWindow.length - 2, 0));
+            const firstSliceAverage = firstSlice.length === 0
+                ? 0
+                : firstSlice.reduce((sum, row) => sum + row.points, 0) /
+                    firstSlice.length;
+            const lastSliceAverage = lastSlice.length === 0
+                ? 0
+                : lastSlice.reduce((sum, row) => sum + row.points, 0) /
+                    lastSlice.length;
+            const trendBonus = clamp((lastSliceAverage - firstSliceAverage) * 2, -8, 8);
+            const powerScoreRaw = baseScore - participationPenalty + winBonus + podiumBonus + trendBonus;
+            const powerScore = roundToTwo(clamp(powerScoreRaw, 0, 100));
+            return {
+                seasonUserId: seasonUser.id,
+                userId: seasonUser.user.id,
+                userName: seasonUser.user.user_name,
+                displayName: seasonUser.user.display_name,
+                teamName: seasonUser.teamName,
+                powerScore,
+                components: {
+                    weightedAveragePoints: roundToTwo(weightedAveragePoints),
+                    baseScore: roundToTwo(baseScore),
+                    playedMatches,
+                    missedMatches,
+                    participationPenalty: roundToTwo(participationPenalty),
+                    wins: winCount,
+                    podiums: podiumCount,
+                    winBonus: roundToTwo(winBonus),
+                    podiumBonus: roundToTwo(podiumBonus),
+                    trendBonus: roundToTwo(trendBonus),
+                },
+                recentWindow,
+            };
+        })
+            .sort((a, b) => {
+            if (b.powerScore !== a.powerScore) {
+                return b.powerScore - a.powerScore;
+            }
+            if (b.components.baseScore !== a.components.baseScore) {
+                return b.components.baseScore - a.components.baseScore;
+            }
+            return a.displayName.localeCompare(b.displayName);
+        })
+            .map((entry, index) => ({
+            rank: index + 1,
+            ...entry,
+        }));
+        return {
+            seasonId,
+            windowSize: recentMatches.length,
+            weights,
+            recentMatches: serializedMatches,
+            rankings,
+        };
     }
     async getSeasonLeaderboard(seasonId) {
         const [seasonUsers, completedMatches, chipTypes] = await Promise.all([
@@ -147,14 +312,15 @@ let LeaderboardService = class LeaderboardService {
                 ? playedHistory.reduce((total, point) => total + (point.rank ?? 0), 0) /
                     playedHistory.length
                 : null;
-            const recentForm = playedHistory
-                .slice(Math.max(playedHistory.length - 5, 0))
+            const recentForm = history
+                .slice(Math.max(history.length - 5, 0))
                 .reverse()
                 .map((point) => ({
                 matchId: point.matchId,
                 matchNo: point.matchNo,
                 rank: point.rank ?? 0,
                 chipCode: point.chipCode,
+                didPlay: point.didPlay,
             }));
             const powerups = chipTypes.map((chipType) => {
                 const usedCount = player.chipPlays.filter((chipPlay) => chipPlay.chipTypeId === chipType.id).length;
