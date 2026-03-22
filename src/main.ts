@@ -66,6 +66,7 @@ async function bootstrap() {
     .addTag("matches", "Match information and updates")
     .addTag("chips", "Powerup/chip selection and management")
     .addTag("scores", "Score submission and retrieval")
+    .addTag("admin", "Administrative correction and maintenance endpoints")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

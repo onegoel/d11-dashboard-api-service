@@ -206,3 +206,18 @@ model PlayerPick {
   @@index([seasonUserId])
   @@index([matchId])
 }
+
+model AdminAuditLog {
+  id         String @id @default(uuid())
+  action     String
+  entityType String
+  entityId   String?
+  reason     String?
+  metadata   Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+}
