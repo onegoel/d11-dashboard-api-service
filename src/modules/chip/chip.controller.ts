@@ -8,19 +8,27 @@ import {
   ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiTags,
   ApiOperation,
   ApiParam,
   ApiBody,
   ApiResponse,
 } from "@nestjs/swagger";
+import type { AppUserContext } from "../auth/auth.types.js";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+import { CurrentAppUser } from "../auth/current-app-user.decorator.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
 import { SelectPowerupDto } from "./dto/select-powerup.dto.js";
 import { ChipService } from "./chip.service.js";
 
 @Controller("chips")
 @ApiTags("chips")
+@ApiBearerAuth()
+@UseGuards(FirebaseAuthGuard, AppUserGuard)
 export class ChipController {
   constructor(private readonly chipService: ChipService) {}
 
@@ -66,12 +74,15 @@ export class ChipController {
   async selectPowerup(
     @Param("seasonId", ParseIntPipe) seasonId: number,
     @Body() body: SelectPowerupDto,
+    @CurrentAppUser() appUser: AppUserContext,
   ) {
     return this.chipService.selectPowerupForSeasonMatch({
       seasonId,
       seasonUserId: body.seasonUserId,
       chipCode: body.chipCode,
       startMatchId: body.startMatchId,
+      actorUserId: appUser.id,
+      actorRole: appUser.role,
     });
   }
 
@@ -90,7 +101,13 @@ export class ChipController {
     status: 200,
     description: "Powerup deselected successfully",
   })
-  async deselectPowerup(@Param("chipPlayId", ParseUUIDPipe) chipPlayId: string) {
-    return this.chipService.deselectPowerup(chipPlayId);
+  async deselectPowerup(
+    @Param("chipPlayId", ParseUUIDPipe) chipPlayId: string,
+    @CurrentAppUser() appUser: AppUserContext,
+  ) {
+    return this.chipService.deselectPowerup(chipPlayId, {
+      userId: appUser.id,
+      role: appUser.role,
+    });
   }
 }

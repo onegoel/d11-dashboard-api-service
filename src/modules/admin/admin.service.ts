@@ -8,6 +8,7 @@ import {
   ChipPlayStatus,
   MatchStatus,
   Prisma,
+  UserRole,
 } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { ChipService } from "../chip/chip.service.js";
@@ -169,6 +170,41 @@ export class AdminService {
   async getUsers() {
     return this.prisma.client.user.findMany({
       orderBy: [{ display_name: "asc" }],
+    });
+  }
+
+  async updateUserRole(userId: number, role: UserRole, reason?: string) {
+    return this.prisma.client.$transaction(async (tx) => {
+      const existingUser = await tx.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          role: true,
+        },
+      });
+
+      if (!existingUser) {
+        throw new NotFoundException("User not found");
+      }
+
+      const updatedUser = await tx.user.update({
+        where: { id: userId },
+        data: { role },
+      });
+
+      await this.logAction(
+        tx,
+        "user.role.update",
+        "user",
+        String(userId),
+        reason,
+        toAuditJson({
+          previousRole: existingUser.role,
+          nextRole: role,
+        }),
+      );
+
+      return updatedUser;
     });
   }
 

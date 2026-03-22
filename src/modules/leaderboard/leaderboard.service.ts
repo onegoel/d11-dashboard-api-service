@@ -75,6 +75,7 @@ export class LeaderboardService {
               id: true,
               user_name: true,
               display_name: true,
+              photo_url: true,
             },
           },
           scores: {
@@ -194,6 +195,7 @@ export class LeaderboardService {
           userId: seasonUser.user.id,
           userName: seasonUser.user.user_name,
           displayName: seasonUser.user.display_name,
+          photoUrl: seasonUser.user.photo_url,
           teamName: seasonUser.teamName,
           powerScore,
           components: {
@@ -391,6 +393,7 @@ export class LeaderboardService {
           name: displayName,
           displayName,
           userName: player.user.user_name,
+          photoUrl: player.user.photo_url,
           fullName: displayName,
           teamName: player.teamName,
           team: player.teamName,

@@ -4,17 +4,23 @@ import {
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiTags,
   ApiOperation,
   ApiParam,
   ApiResponse,
 } from "@nestjs/swagger";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
 import { LeaderboardService } from "./leaderboard.service.js";
 
 @Controller("leaderboard")
 @ApiTags("leaderboard")
+@ApiBearerAuth()
+@UseGuards(FirebaseAuthGuard, AppUserGuard)
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 

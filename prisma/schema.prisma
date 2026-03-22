@@ -23,18 +23,32 @@ enum ChipPlayStatus {
   CANCELLED
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id   Int    @id @default(autoincrement())
   last_name String
   first_name String
+  full_name String?
   display_name String
   user_name String @unique
+  role UserRole @default(USER)
+  email String? @unique
+  photo_url String?
+  auth_provider String?
+  auth_subject String? @unique
+  onboardedAt DateTime?
+  lastLoginAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   seasonsPlayed SeasonUser[]
   wonSeasons    Season[]     @relation("SeasonWinner")
+  updatedMatches Match[]     @relation("MatchUpdatedBy")
 }
 
 model Season {
@@ -100,6 +114,7 @@ model Match {
 
   homeTeamId String
   awayTeamId String
+  updatedByUserId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -108,6 +123,7 @@ model Match {
 
   homeTeam Team @relation("HomeTeam", fields: [homeTeamId], references: [id])
   awayTeam Team @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  updatedByUser User? @relation("MatchUpdatedBy", fields: [updatedByUserId], references: [id])
 
   scores    Score[]
   chipPlays ChipPlay[]
@@ -116,6 +132,7 @@ model Match {
   @@unique([seasonId, matchNo])
   @@index([seasonId])
   @@index([matchDate])
+  @@index([updatedByUserId])
 }
 
 model ChipType {

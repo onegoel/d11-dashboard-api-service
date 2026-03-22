@@ -91,7 +91,11 @@ export class ScoreService {
     });
   }
 
-  async submitMatchScoresBulk(matchId: string, scores: MatchScore[]) {
+  async submitMatchScoresBulk(
+    matchId: string,
+    scores: MatchScore[],
+    updatedByUserId: number,
+  ) {
     return this.prisma.client.$transaction(async (tx) => {
       if (scores.length === 0) {
         throw new BadRequestException("At least one score entry is required");
@@ -220,7 +224,10 @@ export class ScoreService {
 
       await tx.match.update({
         where: { id: matchId },
-        data: { status: MatchStatus.COMPLETED },
+        data: {
+          status: MatchStatus.COMPLETED,
+          updatedByUserId,
+        },
       });
 
       return submittedScores;

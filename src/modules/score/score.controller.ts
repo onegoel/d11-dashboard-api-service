@@ -7,19 +7,27 @@ import {
   ParseArrayPipe,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiTags,
   ApiOperation,
   ApiParam,
   ApiBody,
   ApiResponse,
 } from "@nestjs/swagger";
+import type { AppUserContext } from "../auth/auth.types.js";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+import { CurrentAppUser } from "../auth/current-app-user.decorator.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
 import { UploadScoreDto } from "./dto/upload-score.dto.js";
 import { ScoreService } from "./score.service.js";
 
 @Controller("scores")
 @ApiTags("scores")
+@ApiBearerAuth()
+@UseGuards(FirebaseAuthGuard, AppUserGuard)
 export class ScoreController {
   constructor(private readonly scoreService: ScoreService) {}
 
@@ -84,8 +92,13 @@ export class ScoreController {
       }),
     )
     scores: UploadScoreDto[],
+    @CurrentAppUser() appUser: AppUserContext,
   ) {
-    const result = await this.scoreService.submitMatchScoresBulk(matchId, scores);
+    const result = await this.scoreService.submitMatchScoresBulk(
+      matchId,
+      scores,
+      appUser.id,
+    );
 
     return {
       message: "Match scores uploaded successfully",

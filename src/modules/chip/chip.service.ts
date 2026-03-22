@@ -5,6 +5,7 @@ import {
   MatchStatus,
   Prisma,
   PrismaClient,
+  UserRole,
 } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 
@@ -62,6 +63,8 @@ type SelectPowerupInput = {
   seasonUserId: string;
   chipCode: ChipCode;
   startMatchId: string;
+  actorUserId: number;
+  actorRole: UserRole;
 };
 
 export class ChipServiceError extends Error {
@@ -563,6 +566,8 @@ const selectPowerupForSeasonMatch = async (
     seasonUserId,
     chipCode,
     startMatchId,
+    actorUserId,
+    actorRole,
   }: SelectPowerupInput,
 ) => {
   const now = new Date();
@@ -573,6 +578,10 @@ const selectPowerupForSeasonMatch = async (
       getChipTypeByCodeTx(tx, chipCode),
       getOrderedSeasonMatches(tx, seasonId),
     ]);
+
+    if (actorRole !== UserRole.ADMIN && seasonUser.userId !== actorUserId) {
+      throw new ChipServiceError(403, "You can only select powerups for yourself");
+    }
 
     const startMatch = orderedMatches.find((match) => match.id === startMatchId);
 
@@ -736,6 +745,10 @@ const selectPowerupForSeasonMatch = async (
 const deselectPowerup = async (
   prismaClient: PrismaClient,
   chipPlayId: string,
+  actor: {
+    userId: number;
+    role: UserRole;
+  },
 ) => {
   const now = new Date();
 
@@ -745,6 +758,11 @@ const deselectPowerup = async (
         id: chipPlayId,
       },
       include: {
+        seasonUser: {
+          select: {
+            userId: true,
+          },
+        },
         chipType: true,
         startMatch: {
           select: {
@@ -770,6 +788,10 @@ const deselectPowerup = async (
 
     if (!chipPlay) {
       throw new ChipServiceError(404, "Powerup selection not found");
+    }
+
+    if (actor.role !== UserRole.ADMIN && chipPlay.seasonUser.userId !== actor.userId) {
+      throw new ChipServiceError(403, "You can only deselect your own powerups");
     }
 
     if (chipPlay.status === ChipPlayStatus.CANCELLED) {
@@ -829,8 +851,14 @@ export class ChipService {
     return selectPowerupForSeasonMatch(this.prisma.client, input);
   }
 
-  async deselectPowerup(chipPlayId: string) {
-    return deselectPowerup(this.prisma.client, chipPlayId);
+  async deselectPowerup(
+    chipPlayId: string,
+    actor: {
+      userId: number;
+      role: UserRole;
+    },
+  ) {
+    return deselectPowerup(this.prisma.client, chipPlayId, actor);
   }
 
   async resolveActiveChipAssignmentsForMatchTx(

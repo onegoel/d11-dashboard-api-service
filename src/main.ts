@@ -1,5 +1,6 @@
 import "dotenv/config";
 import "reflect-metadata";
+import { json, urlencoded } from "express";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
@@ -14,6 +15,10 @@ async function bootstrap() {
 
   const logger = new Logger("Bootstrap");
   app.useLogger(logger);
+
+  // Allow larger payloads for onboarding/profile image submissions.
+  app.use(json({ limit: "5mb" }));
+  app.use(urlencoded({ extended: true, limit: "5mb" }));
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? "")
     .split(",")
@@ -61,6 +66,7 @@ async function bootstrap() {
     .setDescription("Cricket Fantasy League - D11 Dashboard REST API")
     .setVersion("1.0.0")
     .addTag("health", "Health check endpoint")
+    .addTag("auth", "Authentication and onboarding")
     .addTag("leaderboard", "Leaderboard endpoints")
     .addTag("users", "User and season user management")
     .addTag("matches", "Match information and updates")

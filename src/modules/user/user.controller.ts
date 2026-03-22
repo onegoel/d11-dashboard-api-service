@@ -6,20 +6,28 @@ import {
   ParseIntPipe,
   ParseUUIDPipe,
   Patch,
+  UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiTags,
   ApiOperation,
   ApiParam,
   ApiBody,
   ApiResponse,
 } from "@nestjs/swagger";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+import { CurrentAppUser } from "../auth/current-app-user.decorator.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
+import type { AppUserContext } from "../auth/auth.types.js";
 import { UpdateDisplayNameDto } from "./dto/update-display-name.dto.js";
 import { UpdateTeamNameDto } from "./dto/update-team-name.dto.js";
 import { UserService } from "./user.service.js";
 
 @Controller("users")
 @ApiTags("users")
+@ApiBearerAuth()
+@UseGuards(FirebaseAuthGuard, AppUserGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -70,10 +78,15 @@ export class UserController {
   async updateDisplayName(
     @Param("userId", ParseIntPipe) userId: number,
     @Body() body: UpdateDisplayNameDto,
+    @CurrentAppUser() appUser: AppUserContext,
   ) {
     const updatedUser = await this.userService.updateUserDisplayName(
       userId,
       body.displayName,
+      {
+        id: appUser.id,
+        role: appUser.role,
+      },
     );
 
     return {
@@ -112,10 +125,15 @@ export class UserController {
   async updateTeamName(
     @Param("seasonUserId", ParseUUIDPipe) seasonUserId: string,
     @Body() body: UpdateTeamNameDto,
+    @CurrentAppUser() appUser: AppUserContext,
   ) {
     const updatedSeasonUser = await this.userService.updateSeasonUserTeamName(
       seasonUserId,
       body.teamName,
+      {
+        id: appUser.id,
+        role: appUser.role,
+      },
     );
 
     return {

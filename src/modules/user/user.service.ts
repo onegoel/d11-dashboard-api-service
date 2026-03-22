@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { UserRole } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
 
@@ -17,7 +22,15 @@ export class UserService {
     });
   }
 
-  async updateUserDisplayName(userId: number, displayName: string) {
+  async updateUserDisplayName(
+    userId: number,
+    displayName: string,
+    actor: { id: number; role: UserRole },
+  ) {
+    if (actor.role !== UserRole.ADMIN && actor.id !== userId) {
+      throw new ForbiddenException("You can only update your own display name");
+    }
+
     try {
       return await this.prisma.client.user.update({
         where: { id: userId },
@@ -32,7 +45,27 @@ export class UserService {
     }
   }
 
-  async updateSeasonUserTeamName(seasonUserId: string, teamName: string) {
+  async updateSeasonUserTeamName(
+    seasonUserId: string,
+    teamName: string,
+    actor: { id: number; role: UserRole },
+  ) {
+    const seasonUser = await this.prisma.client.seasonUser.findUnique({
+      where: { id: seasonUserId },
+      select: {
+        id: true,
+        userId: true,
+      },
+    });
+
+    if (!seasonUser) {
+      throw new NotFoundException("Season user not found");
+    }
+
+    if (actor.role !== UserRole.ADMIN && seasonUser.userId !== actor.id) {
+      throw new ForbiddenException("You can only update your own team name");
+    }
+
     try {
       return await this.prisma.client.seasonUser.update({
         where: { id: seasonUserId },

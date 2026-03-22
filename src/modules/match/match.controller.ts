@@ -7,8 +7,10 @@ import {
   ParseUUIDPipe,
   Patch,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiTags,
   ApiOperation,
   ApiParam,
@@ -18,10 +20,16 @@ import {
 } from "@nestjs/swagger";
 import { UpdateMatchStatusDto } from "./dto/update-match-status.dto.js";
 import { MatchService } from "./match.service.js";
-import { MatchStatus } from "../../../generated/prisma/client.js";
+import { MatchStatus, UserRole } from "../../../generated/prisma/client.js";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
+import { Roles } from "../auth/roles.decorator.js";
+import { RolesGuard } from "../auth/roles.guard.js";
 
 @Controller("matches")
 @ApiTags("matches")
+@ApiBearerAuth()
+@UseGuards(FirebaseAuthGuard, AppUserGuard)
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
@@ -61,6 +69,8 @@ export class MatchController {
   }
 
   @Patch(":matchId/status")
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: "Update match status",
     description: "Update the status of a specific match",

@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
+import { AuthModule } from "../auth/auth.module.js";
 import { ChipModule } from "../chip/chip.module.js";
 import { AdminController } from "./admin.controller.js";
 import { AdminService } from "./admin.service.js";
 
 @Module({
-  imports: [ChipModule],
+  imports: [AuthModule, ChipModule],
   controllers: [AdminController],
   providers: [AdminService],
 })

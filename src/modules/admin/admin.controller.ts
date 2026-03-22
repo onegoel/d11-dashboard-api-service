@@ -9,8 +9,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -18,6 +20,11 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { UserRole } from "../../../generated/prisma/client.js";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
+import { Roles } from "../auth/roles.decorator.js";
+import { RolesGuard } from "../auth/roles.guard.js";
 import { AdminService } from "./admin.service.js";
 import {
   AddSeasonUserDto,
@@ -31,6 +38,7 @@ import {
   RemoveSeasonUserDto,
   ReplaceMatchScoresDto,
   ReverseChipPlayDto,
+  UpdateUserRoleDto,
   UpdateAdminMatchDto,
   UpdateScoreRankDto,
   UpdateSeasonDto,
@@ -38,6 +46,9 @@ import {
 
 @Controller("admin")
 @ApiTags("admin")
+@ApiBearerAuth()
+@UseGuards(FirebaseAuthGuard, AppUserGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -57,6 +68,17 @@ export class AdminController {
   @ApiOperation({ summary: "Get all users for admin workflows" })
   getUsers() {
     return this.adminService.getUsers();
+  }
+
+  @Patch("users/:userId/role")
+  @ApiOperation({ summary: "Update a user's role" })
+  @ApiParam({ name: "userId", example: 1 })
+  @ApiBody({ type: UpdateUserRoleDto })
+  updateUserRole(
+    @Param("userId", ParseIntPipe) userId: number,
+    @Body() body: UpdateUserRoleDto,
+  ) {
+    return this.adminService.updateUserRole(userId, body.role, body.reason);
   }
 
   @Get("audit-log")

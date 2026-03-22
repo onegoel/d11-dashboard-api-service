@@ -24,6 +24,12 @@ export class MatchService {
       include: {
         homeTeam: true,
         awayTeam: true,
+        updatedByUser: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
       },
     });
   }
@@ -36,6 +42,12 @@ export class MatchService {
         include: {
           homeTeam: true,
           awayTeam: true,
+          updatedByUser: {
+            select: {
+              id: true,
+              display_name: true,
+            },
+          },
         },
       });
     } catch (error) {

@@ -14,7 +14,11 @@ import {
   Min,
   ValidateNested,
 } from "class-validator";
-import { ChipCode, MatchStatus } from "../../../../generated/prisma/client.js";
+import {
+  ChipCode,
+  MatchStatus,
+  UserRole,
+} from "../../../../generated/prisma/client.js";
 
 export class AdminReasonDto {
   @ApiPropertyOptional({
@@ -257,4 +261,11 @@ export class AuditLogQueryDto {
   @IsOptional()
   @IsString()
   entityId?: string;
+}
+
+export class UpdateUserRoleDto extends AdminReasonDto {
+  @ApiProperty({ enum: UserRole, example: UserRole.ADMIN })
+  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @IsEnum(UserRole)
+  role!: UserRole;
 }
