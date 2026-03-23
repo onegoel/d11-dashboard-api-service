@@ -35,4 +35,4 @@ COPY --from=build /app/prisma.config.* ./
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
