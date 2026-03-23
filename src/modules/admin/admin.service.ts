@@ -6,6 +6,7 @@ import {
 import {
   ChipCode,
   ChipPlayStatus,
+  MatchResult,
   MatchStatus,
   Prisma,
   UserRole,
@@ -221,6 +222,7 @@ export class AdminService {
             homeTeamId: dto.homeTeamId,
             awayTeamId: dto.awayTeamId,
             status: dto.status ?? MatchStatus.SCHEDULED,
+            matchResult: dto.matchResult ?? MatchResult.PENDING,
           },
           include: {
             homeTeam: true,
@@ -263,6 +265,7 @@ export class AdminService {
               homeTeamId: matchInput.homeTeamId,
               awayTeamId: matchInput.awayTeamId,
               status: matchInput.status ?? MatchStatus.SCHEDULED,
+              matchResult: matchInput.matchResult ?? MatchResult.PENDING,
             },
             include: {
               homeTeam: true,
@@ -320,6 +323,7 @@ export class AdminService {
             ...(dto.homeTeamId ? { homeTeamId: dto.homeTeamId } : {}),
             ...(dto.awayTeamId ? { awayTeamId: dto.awayTeamId } : {}),
             ...(dto.status ? { status: dto.status } : {}),
+            ...(dto.matchResult ? { matchResult: dto.matchResult } : {}),
           },
           include: {
             homeTeam: true,
@@ -405,7 +409,7 @@ export class AdminService {
 
       const updated = await tx.match.update({
         where: { id: matchId },
-        data: { status },
+        data: { status, matchResult: dto.matchResult ?? MatchResult.PENDING },
       });
 
       await this.logAction(tx, "match.reopen", "match", matchId, dto.reason, toAuditJson({
@@ -421,11 +425,34 @@ export class AdminService {
     return this.prisma.client.$transaction(async (tx) => {
       const match = await tx.match.findUnique({
         where: { id: matchId },
-        select: { id: true, seasonId: true },
+        select: {
+          id: true,
+          seasonId: true,
+          matchResult: true,
+          homeTeamId: true,
+          awayTeamId: true,
+        },
       });
 
       if (!match) {
         throw new NotFoundException("Match not found");
+      }
+
+      if (match.matchResult === MatchResult.ABANDONED) {
+        await tx.score.deleteMany({ where: { matchId } });
+
+        await tx.match.update({
+          where: { id: matchId },
+          data: { status: MatchStatus.COMPLETED },
+        });
+
+        await this.logAction(tx, "score.replace", "match", matchId, dto.reason, toAuditJson({
+          scoreCount: 0,
+          seasonUserIds: [],
+          skippedReason: "match_result_abandoned",
+        }));
+
+        return [];
       }
 
       const submittedSeasonUserIds = dto.scores.map((score) => score.seasonUserId);
@@ -463,13 +490,28 @@ export class AdminService {
           .sort((a, b) => a.rank - b.rank)
           .map((score) => {
             const chipAssignment = activeAssignments.get(score.seasonUserId);
+            const basePoints = RANK_POINTS[score.rank] ?? 0;
+
+            let teamFormDelta = 0;
+
+            if (
+              chipAssignment?.chipCode === ChipCode.TEAM_FORM
+              && chipAssignment.selectedTeamId
+              && (match.matchResult === MatchResult.HOME_WIN || match.matchResult === MatchResult.AWAY_WIN)
+            ) {
+              const isSelectedTeamWinner =
+                (match.matchResult === MatchResult.HOME_WIN && chipAssignment.selectedTeamId === match.homeTeamId)
+                || (match.matchResult === MatchResult.AWAY_WIN && chipAssignment.selectedTeamId === match.awayTeamId);
+
+              teamFormDelta = isSelectedTeamWinner ? 5 : -2;
+            }
 
             return tx.score.create({
               data: {
                 seasonUserId: score.seasonUserId,
                 matchId,
                 rank: score.rank,
-                points: RANK_POINTS[score.rank] ?? 0,
+                points: basePoints + teamFormDelta,
                 rawScore: null,
                 effectiveScore: null,
                 secondaryRawScore: null,
@@ -665,6 +707,11 @@ export class AdminService {
         where: { id: chipPlayId },
         include: {
           chipType: true,
+          selectedTeam: {
+            select: {
+              id: true,
+            },
+          },
           seasonUser: {
             select: {
               seasonId: true,
@@ -687,6 +734,7 @@ export class AdminService {
       const targetSeasonUserId = dto.seasonUserId ?? existing.seasonUserId;
       const targetChipCode = dto.chipCode ?? existing.chipType.code;
       const targetStartMatchId = dto.startMatchId ?? existing.startMatchId;
+      const targetSelectedTeamId = dto.selectedTeamId ?? existing.selectedTeam?.id ?? null;
 
       const [targetSeasonUser, targetStartMatch, targetChipType, orderedMatches, otherScheduledPlays] = await Promise.all([
         tx.seasonUser.findUnique({
@@ -721,6 +769,21 @@ export class AdminService {
 
       if (!targetChipType) {
         throw new NotFoundException("Target chip type not found");
+      }
+
+      if (targetChipCode === ChipCode.TEAM_FORM) {
+        if (!targetSelectedTeamId) {
+          throw new BadRequestException("Team Form reassignment requires selectedTeamId");
+        }
+
+        const selectedTeam = await tx.team.findUnique({
+          where: { id: targetSelectedTeamId },
+          select: { id: true },
+        });
+
+        if (!selectedTeam) {
+          throw new BadRequestException("Selected team not found");
+        }
       }
 
       const newAffectedMatchIds = getAffectedMatches(
@@ -772,6 +835,7 @@ export class AdminService {
             data: {
               status: ChipPlayStatus.SCHEDULED,
               canceledAt: null,
+              selectedTeamId: targetChipCode === ChipCode.TEAM_FORM ? targetSelectedTeamId : null,
             },
           })
         : await tx.chipPlay.create({
@@ -779,6 +843,7 @@ export class AdminService {
               seasonUserId: targetSeasonUserId,
               chipTypeId: targetChipType.id,
               startMatchId: targetStartMatchId,
+              selectedTeamId: targetChipCode === ChipCode.TEAM_FORM ? targetSelectedTeamId : null,
               status: ChipPlayStatus.SCHEDULED,
             },
           });

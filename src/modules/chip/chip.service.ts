@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   ChipCode,
   ChipPlayStatus,
+  MatchResult,
   MatchStatus,
   Prisma,
   PrismaClient,
@@ -16,6 +17,9 @@ type OrderedSeasonMatch = {
   matchNo: number;
   matchDate: Date;
   status: MatchStatus;
+  matchResult: MatchResult;
+  homeTeamId: string;
+  awayTeamId: string;
   homeTeam: {
     shortCode: string;
   };
@@ -56,6 +60,7 @@ export type ActiveChipAssignment = {
   usesSecondaryTeamScore: boolean;
   startMatchId: string;
   startMatchNo: number;
+  selectedTeamId?: string | null;
 };
 
 type SelectPowerupInput = {
@@ -63,6 +68,7 @@ type SelectPowerupInput = {
   seasonUserId: string;
   chipCode: ChipCode;
   startMatchId: string;
+  selectedTeamId?: string;
   actorUserId: number;
   actorRole: UserRole;
 };
@@ -80,11 +86,63 @@ const getChipShortCode = (code: ChipCode) => {
   switch (code) {
     case ChipCode.DOUBLE_TEAM:
       return "DT";
-    case ChipCode.COMEBACK_KID:
-      return "CK";
+    case ChipCode.TEAM_FORM:
+      return "TF";
+    case ChipCode.SWAPPER:
+      return "SW";
+    case ChipCode.ANCHOR_PLAYER:
+      return "AP";
     default:
       return code;
   }
+};
+
+const REGULAR_SEASON_MATCH_COUNT = parseInt(
+  process.env.REGULAR_SEASON_MATCH_COUNT ?? "70",
+  10,
+);
+
+const isRegularSeasonMatch = (matchNo: number) => matchNo <= REGULAR_SEASON_MATCH_COUNT;
+
+const isTeamMatch = (match: OrderedSeasonMatch, teamId: string) => {
+  return match.homeTeamId === teamId || match.awayTeamId === teamId;
+};
+
+const getTeamFormEffectiveMatches = (
+  orderedMatches: OrderedSeasonMatch[],
+  startMatchId: string,
+  selectedTeamId: string,
+  windowSize: number,
+) => {
+  const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+
+  if (startIndex < 0) {
+    return [] as OrderedSeasonMatch[];
+  }
+
+  const teamMatches = orderedMatches
+    .slice(startIndex)
+    .filter((match) => isRegularSeasonMatch(match.matchNo) && isTeamMatch(match, selectedTeamId));
+
+  if (teamMatches.length <= windowSize) {
+    return teamMatches.slice(0, windowSize);
+  }
+
+  const effectiveMatches: OrderedSeasonMatch[] = [];
+
+  for (const match of teamMatches) {
+    if (match.matchResult === MatchResult.ABANDONED) {
+      continue;
+    }
+
+    effectiveMatches.push(match);
+
+    if (effectiveMatches.length >= windowSize) {
+      break;
+    }
+  }
+
+  return effectiveMatches;
 };
 
 const buildMatchLabel = (match: OrderedSeasonMatch) => {
@@ -102,6 +160,9 @@ const getOrderedSeasonMatches = async (
       matchNo: true,
       matchDate: true,
       status: true,
+      matchResult: true,
+      homeTeamId: true,
+      awayTeamId: true,
       homeTeam: {
         select: {
           shortCode: true,
@@ -151,6 +212,9 @@ const getStandingsForSeason = async (
         where: {
           match: {
             status: MatchStatus.COMPLETED,
+            matchResult: {
+              not: MatchResult.ABANDONED,
+            },
           },
         },
         select: {
@@ -246,6 +310,11 @@ export const resolveActiveChipAssignmentsForMatchTx = async (
     },
     include: {
       chipType: true,
+      selectedTeam: {
+        select: {
+          id: true,
+        },
+      },
       startMatch: {
         select: {
           id: true,
@@ -258,11 +327,18 @@ export const resolveActiveChipAssignmentsForMatchTx = async (
   const assignments = new Map<string, ActiveChipAssignment>();
 
   for (const chipPlay of chipPlays) {
-    const affectedMatches = getAffectedMatches(
-      orderedMatches,
-      chipPlay.startMatchId,
-      chipPlay.chipType.effectWindowMatches,
-    );
+    const affectedMatches = chipPlay.chipType.code === ChipCode.TEAM_FORM && chipPlay.selectedTeam?.id
+      ? getTeamFormEffectiveMatches(
+          orderedMatches,
+          chipPlay.startMatchId,
+          chipPlay.selectedTeam.id,
+          chipPlay.chipType.effectWindowMatches,
+        )
+      : getAffectedMatches(
+          orderedMatches,
+          chipPlay.startMatchId,
+          chipPlay.chipType.effectWindowMatches,
+        );
 
     const activeIndex = affectedMatches.findIndex((match) => match.id === matchId);
 
@@ -289,6 +365,7 @@ export const resolveActiveChipAssignmentsForMatchTx = async (
       usesSecondaryTeamScore: chipPlay.chipType.usesSecondaryTeamScore,
       startMatchId: chipPlay.startMatch.id,
       startMatchNo: chipPlay.startMatch.matchNo,
+      selectedTeamId: chipPlay.selectedTeam?.id ?? null,
     });
   }
 
@@ -366,15 +443,33 @@ const serializeChipPlay = (
     chipType: ChipTypeRecord;
     startMatch: OrderedSeasonMatch;
     startMatchId: string;
+    selectedTeamId: string | null;
+    selectedTeam?: {
+      id: string;
+      shortCode: string;
+      name: string;
+    } | null;
   },
   orderedMatches: OrderedSeasonMatch[],
   now: Date,
 ) => {
-  const affectedMatches = serializeAffectedMatches(
-    orderedMatches,
-    chipPlay.startMatchId,
-    chipPlay.chipType.effectWindowMatches,
-  );
+  const affectedMatches = chipPlay.chipType.code === ChipCode.TEAM_FORM && chipPlay.selectedTeamId
+    ? getTeamFormEffectiveMatches(
+        orderedMatches,
+        chipPlay.startMatchId,
+        chipPlay.selectedTeamId,
+        chipPlay.chipType.effectWindowMatches,
+      ).map((match) => ({
+        id: match.id,
+        matchNo: match.matchNo,
+        matchDate: match.matchDate.toISOString(),
+        matchLabel: buildMatchLabel(match),
+      }))
+    : serializeAffectedMatches(
+        orderedMatches,
+        chipPlay.startMatchId,
+        chipPlay.chipType.effectWindowMatches,
+      );
   const hasStarted = chipPlay.startMatch.matchDate <= now;
 
   return {
@@ -383,6 +478,9 @@ const serializeChipPlay = (
     chipCode: chipPlay.chipType.code,
     chipShortCode: getChipShortCode(chipPlay.chipType.code),
     chipName: chipPlay.chipType.name,
+    selectedTeamId: chipPlay.selectedTeamId,
+    selectedTeamShortCode: chipPlay.selectedTeam?.shortCode ?? null,
+    selectedTeamName: chipPlay.selectedTeam?.name ?? null,
     status: chipPlay.status,
     startMatchId: chipPlay.startMatch.id,
     startMatchNo: chipPlay.startMatch.matchNo,
@@ -432,12 +530,22 @@ const getSeasonPowerupsOverview = async (
           },
           include: {
             chipType: true,
+            selectedTeam: {
+              select: {
+                id: true,
+                shortCode: true,
+                name: true,
+              },
+            },
             startMatch: {
               select: {
                 id: true,
                 matchNo: true,
                 matchDate: true,
                 status: true,
+                matchResult: true,
+                homeTeamId: true,
+                awayTeamId: true,
                 homeTeam: {
                   select: {
                     shortCode: true,
@@ -566,6 +674,7 @@ const selectPowerupForSeasonMatch = async (
     seasonUserId,
     chipCode,
     startMatchId,
+    selectedTeamId,
     actorUserId,
     actorRole,
   }: SelectPowerupInput,
@@ -596,13 +705,50 @@ const selectPowerupForSeasonMatch = async (
       );
     }
 
-    const affectedMatches = getAffectedMatches(
-      orderedMatches,
-      startMatchId,
-      chipType.effectWindowMatches,
-    );
+    if (chipType.code === ChipCode.TEAM_FORM) {
+      if (!selectedTeamId) {
+        throw new ChipServiceError(400, "Team Form requires selecting a team");
+      }
 
-    if (affectedMatches.length < chipType.effectWindowMatches) {
+      const selectedTeamExists = await tx.team.findUnique({
+        where: { id: selectedTeamId },
+        select: { id: true },
+      });
+
+      if (!selectedTeamExists) {
+        throw new ChipServiceError(404, "Selected team not found");
+      }
+
+      const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+      const remainingRegularTeamMatches = orderedMatches
+        .slice(Math.max(startIndex, 0))
+        .filter((match) => isRegularSeasonMatch(match.matchNo) && isTeamMatch(match, selectedTeamId));
+
+      if (remainingRegularTeamMatches.length === 0) {
+        throw new ChipServiceError(
+          400,
+          "Selected team has no remaining regular-season fixtures from this match",
+        );
+      }
+    }
+
+    const affectedMatches = chipType.code === ChipCode.TEAM_FORM && selectedTeamId
+      ? getTeamFormEffectiveMatches(
+          orderedMatches,
+          startMatchId,
+          selectedTeamId,
+          chipType.effectWindowMatches,
+        )
+      : getAffectedMatches(
+          orderedMatches,
+          startMatchId,
+          chipType.effectWindowMatches,
+        );
+
+    if (
+      chipType.code !== ChipCode.TEAM_FORM
+      && affectedMatches.length < chipType.effectWindowMatches
+    ) {
       throw new ChipServiceError(
         400,
         `${chipType.name} needs ${chipType.effectWindowMatches} consecutive matches from the selected start match`,
@@ -619,6 +765,13 @@ const selectPowerupForSeasonMatch = async (
       },
       include: {
         chipType: true,
+        selectedTeam: {
+          select: {
+            id: true,
+            shortCode: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -643,6 +796,11 @@ const selectPowerupForSeasonMatch = async (
       },
       include: {
         chipType: true,
+        selectedTeam: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -681,11 +839,19 @@ const selectPowerupForSeasonMatch = async (
     const newAffectedMatchIds = affectedMatches.map((match) => match.id);
 
     for (const existingPlay of scheduledPlays) {
-      const existingAffectedMatches = getAffectedMatches(
-        orderedMatches,
-        existingPlay.startMatchId,
-        existingPlay.chipType.effectWindowMatches,
-      );
+      const existingAffectedMatches =
+        existingPlay.chipType.code === ChipCode.TEAM_FORM && existingPlay.selectedTeam?.id
+          ? getTeamFormEffectiveMatches(
+              orderedMatches,
+              existingPlay.startMatchId,
+              existingPlay.selectedTeam.id,
+              existingPlay.chipType.effectWindowMatches,
+            )
+          : getAffectedMatches(
+              orderedMatches,
+              existingPlay.startMatchId,
+              existingPlay.chipType.effectWindowMatches,
+            );
       const existingAffectedMatchIds = existingAffectedMatches.map((match) => match.id);
 
       if (hasOverlap(newAffectedMatchIds, existingAffectedMatchIds)) {
@@ -704,9 +870,17 @@ const selectPowerupForSeasonMatch = async (
         data: {
           status: ChipPlayStatus.SCHEDULED,
           canceledAt: null,
+          selectedTeamId: chipType.code === ChipCode.TEAM_FORM ? selectedTeamId ?? null : null,
         },
         include: {
           chipType: true,
+          selectedTeam: {
+            select: {
+              id: true,
+              shortCode: true,
+              name: true,
+            },
+          },
         },
       });
 
@@ -725,9 +899,17 @@ const selectPowerupForSeasonMatch = async (
         seasonUserId,
         chipTypeId: chipType.id,
         startMatchId,
+        selectedTeamId: chipType.code === ChipCode.TEAM_FORM ? selectedTeamId ?? null : null,
       },
       include: {
         chipType: true,
+        selectedTeam: {
+          select: {
+            id: true,
+            shortCode: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -764,12 +946,22 @@ const deselectPowerup = async (
           },
         },
         chipType: true,
+        selectedTeam: {
+          select: {
+            id: true,
+            shortCode: true,
+            name: true,
+          },
+        },
         startMatch: {
           select: {
             id: true,
             matchNo: true,
             matchDate: true,
             status: true,
+            matchResult: true,
+            homeTeamId: true,
+            awayTeamId: true,
             homeTeam: {
               select: {
                 shortCode: true,

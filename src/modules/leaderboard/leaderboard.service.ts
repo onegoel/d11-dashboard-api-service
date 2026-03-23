@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   ChipCode,
   ChipPlayStatus,
+  MatchResult,
   MatchStatus,
 } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
@@ -11,8 +12,12 @@ const getChipShortCode = (chipCode: ChipCode) => {
   switch (chipCode) {
     case ChipCode.DOUBLE_TEAM:
       return "DT";
-    case ChipCode.COMEBACK_KID:
-      return "CK";
+    case ChipCode.TEAM_FORM:
+      return "TF";
+    case ChipCode.SWAPPER:
+      return "SW";
+    case ChipCode.ANCHOR_PLAYER:
+      return "AP";
     default:
       return chipCode;
   }
@@ -49,6 +54,9 @@ export class LeaderboardService {
         where: {
           seasonId,
           status: MatchStatus.COMPLETED,
+          matchResult: {
+            not: MatchResult.ABANDONED,
+          },
         },
         select: {
           id: true,
@@ -82,6 +90,9 @@ export class LeaderboardService {
             where: {
               match: {
                 status: MatchStatus.COMPLETED,
+                matchResult: {
+                  not: MatchResult.ABANDONED,
+                },
               },
             },
             select: {
@@ -248,6 +259,9 @@ export class LeaderboardService {
             where: {
               match: {
                 status: MatchStatus.COMPLETED,
+                matchResult: {
+                  not: MatchResult.ABANDONED,
+                },
               },
             },
             include: {
@@ -286,6 +300,9 @@ export class LeaderboardService {
         where: {
           seasonId,
           status: MatchStatus.COMPLETED,
+          matchResult: {
+            not: MatchResult.ABANDONED,
+          },
         },
         select: {
           id: true,

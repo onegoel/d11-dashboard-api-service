@@ -1,4 +1,8 @@
-import { MatchStatus, PrismaClient } from "../../generated/prisma/client.js";
+import {
+  MatchResult,
+  MatchStatus,
+  PrismaClient,
+} from "../../generated/prisma/client.js";
 
 // Rank → leaderboard points (mirrors src/services/points-system.ts)
 const RANK_POINTS: Record<number, number> = {
@@ -13,6 +17,9 @@ const RANK_POINTS: Record<number, number> = {
 };
 
 const pointsForRank = (rank: number) => RANK_POINTS[rank] ?? 0;
+
+const getSeededMatchResult = (matchNo: number): MatchResult =>
+  matchNo % 2 === 0 ? MatchResult.AWAY_WIN : MatchResult.HOME_WIN;
 
 /**
  * Ranks for matches 1-15 (index 0 = match 1).
@@ -171,7 +178,10 @@ export async function seedScores(prisma: PrismaClient, seasonId: number) {
       // Mark match as COMPLETED so leaderboard service includes it
       await tx.match.update({
         where: { id: match.id },
-        data: { status: MatchStatus.COMPLETED },
+        data: {
+          status: MatchStatus.COMPLETED,
+          matchResult: getSeededMatchResult(match.matchNo),
+        },
       });
     });
 

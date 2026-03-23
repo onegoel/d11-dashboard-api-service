@@ -93,6 +93,8 @@ export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
         matchDate: new Date(fixture.date),
         homeTeamId,
         awayTeamId,
+        status: "SCHEDULED",
+        matchResult: "PENDING",
       },
       create: {
         seasonId,
@@ -100,6 +102,8 @@ export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
         matchDate: new Date(fixture.date),
         homeTeamId,
         awayTeamId,
+        status: "SCHEDULED",
+        matchResult: "PENDING",
       },
     });
   }

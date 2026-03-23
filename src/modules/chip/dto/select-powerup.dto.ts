@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsEnum, IsUUID } from "class-validator";
+import { IsEnum, IsOptional, IsUUID } from "class-validator";
 import { ChipCode } from "../../../../generated/prisma/client.js";
 
 export class SelectPowerupDto {
@@ -30,4 +30,14 @@ export class SelectPowerupDto {
   )
   @IsEnum(ChipCode)
   chipCode!: ChipCode;
+
+  @ApiProperty({
+    format: "uuid",
+    required: false,
+    example: "550e8400-e29b-41d4-a716-446655440000",
+    description: "Required for TEAM_FORM: selected team ID",
+  })
+  @IsOptional()
+  @IsUUID()
+  selectedTeamId?: string;
 }

@@ -15,7 +15,16 @@ enum MatchStatus {
 
 enum ChipCode {
   DOUBLE_TEAM
-  COMEBACK_KID
+  TEAM_FORM
+  SWAPPER
+  ANCHOR_PLAYER
+}
+
+enum MatchResult {
+  HOME_WIN
+  AWAY_WIN
+  ABANDONED
+  PENDING
 }
 
 enum ChipPlayStatus {
@@ -103,6 +112,7 @@ model Team {
 
   homeMatches Match[] @relation("HomeTeam")
   awayMatches Match[] @relation("AwayTeam")
+  chipPlaysTeamForm ChipPlay[] @relation("TeamFormSelection")
 }
 
 model Match {
@@ -111,6 +121,7 @@ model Match {
   matchNo   Int
   matchDate DateTime
   status    MatchStatus @default(SCHEDULED)
+  matchResult MatchResult @default(PENDING)
 
   homeTeamId String
   awayTeamId String
@@ -159,6 +170,7 @@ model ChipPlay {
   startMatchId String
   status       ChipPlayStatus @default(SCHEDULED)
   canceledAt   DateTime?
+  selectedTeamId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -166,6 +178,7 @@ model ChipPlay {
   seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
   chipType   ChipType   @relation(fields: [chipTypeId], references: [id])
   startMatch Match      @relation(fields: [startMatchId], references: [id])
+  selectedTeam Team?    @relation("TeamFormSelection", fields: [selectedTeamId], references: [id])
 
   scores Score[]
 

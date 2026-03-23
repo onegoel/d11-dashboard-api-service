@@ -81,6 +81,7 @@ export class ChipController {
       seasonUserId: body.seasonUserId,
       chipCode: body.chipCode,
       startMatchId: body.startMatchId,
+      ...(body.selectedTeamId ? { selectedTeamId: body.selectedTeamId } : {}),
       actorUserId: appUser.id,
       actorRole: appUser.role,
     });

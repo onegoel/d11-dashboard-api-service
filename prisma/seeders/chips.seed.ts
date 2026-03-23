@@ -24,14 +24,36 @@ const chipSeeds: ChipSeed[] = [
     usesSecondaryTeamScore: true,
   },
   {
-    code: ChipCode.COMEBACK_KID,
-    name: "Comeback Kid",
+    code: ChipCode.TEAM_FORM,
+    name: "Team Form",
     description:
-      "Bottom-half players can boost Dream11 score by 1.1x for 3 consecutive matches.",
-    multiplier: 1.1,
+      "Select a team. For the next 3 matches: +5 points if they win, -2 points if they lose. No points for abandoned matches.",
+    multiplier: 1,
     maxUsesPerSeason: 2,
     effectWindowMatches: 3,
-    requiresBottomHalf: true,
+    requiresBottomHalf: false,
+    usesSecondaryTeamScore: false,
+  },
+  {
+    code: ChipCode.SWAPPER,
+    name: "Swapper",
+    description:
+      "Swap out a player during the innings break. Points calculated manually.",
+    multiplier: 1,
+    maxUsesPerSeason: 2,
+    effectWindowMatches: 1,
+    requiresBottomHalf: false,
+    usesSecondaryTeamScore: false,
+  },
+  {
+    code: ChipCode.ANCHOR_PLAYER,
+    name: "Anchor Player",
+    description:
+      "Select a cricketer in the match. If they score 50+ points, their D11 points are 1.1x. Points calculated manually.",
+    multiplier: 1,
+    maxUsesPerSeason: 2,
+    effectWindowMatches: 1,
+    requiresBottomHalf: false,
     usesSecondaryTeamScore: false,
   },
 ];

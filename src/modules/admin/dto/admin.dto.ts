@@ -16,6 +16,7 @@ import {
 } from "class-validator";
 import {
   ChipCode,
+  MatchResult,
   MatchStatus,
   UserRole,
 } from "../../../../generated/prisma/client.js";
@@ -58,6 +59,12 @@ export class CreateAdminMatchDto extends AdminReasonDto {
   @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
   @IsEnum(MatchStatus)
   status?: MatchStatus;
+
+  @ApiPropertyOptional({ enum: MatchResult, example: MatchResult.PENDING })
+  @IsOptional()
+  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @IsEnum(MatchResult)
+  matchResult?: MatchResult;
 }
 
 export class BulkCreateAdminMatchesDto extends AdminReasonDto {
@@ -96,6 +103,12 @@ export class UpdateAdminMatchDto extends AdminReasonDto {
   @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
   @IsEnum(MatchStatus)
   status?: MatchStatus;
+
+  @ApiPropertyOptional({ enum: MatchResult })
+  @IsOptional()
+  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @IsEnum(MatchResult)
+  matchResult?: MatchResult;
 }
 
 export class DeleteAdminMatchDto extends AdminReasonDto {
@@ -111,6 +124,12 @@ export class ReopenMatchDto extends AdminReasonDto {
   @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
   @IsEnum(MatchStatus)
   status?: MatchStatus;
+
+  @ApiPropertyOptional({ enum: [MatchResult.PENDING], example: MatchResult.PENDING })
+  @IsOptional()
+  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @IsEnum(MatchResult)
+  matchResult?: MatchResult;
 }
 
 export class AdminScoreEntryDto {
@@ -158,6 +177,11 @@ export class ReassignChipPlayDto extends AdminReasonDto {
   @IsOptional()
   @IsUUID()
   startMatchId?: string;
+
+  @ApiPropertyOptional({ format: "uuid" })
+  @IsOptional()
+  @IsUUID()
+  selectedTeamId?: string;
 }
 
 export class AddSeasonUserDto extends AdminReasonDto {

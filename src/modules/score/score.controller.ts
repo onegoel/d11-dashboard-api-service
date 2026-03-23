@@ -4,7 +4,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseArrayPipe,
   ParseUUIDPipe,
   Post,
   UseGuards,
@@ -21,7 +20,7 @@ import type { AppUserContext } from "../auth/auth.types.js";
 import { AppUserGuard } from "../auth/app-user.guard.js";
 import { CurrentAppUser } from "../auth/current-app-user.decorator.js";
 import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
-import { UploadScoreDto } from "./dto/upload-score.dto.js";
+import { SubmitMatchScoresDto } from "./dto/submit-match-scores.dto.js";
 import { ScoreService } from "./score.service.js";
 
 @Controller("scores")
@@ -51,6 +50,7 @@ export class ScoreController {
 
     return {
       matchId,
+      matchResult: response.matchResult,
       scores: response.scores,
       chipAssignments: response.chipAssignments,
     };
@@ -69,8 +69,8 @@ export class ScoreController {
     example: "550e8400-e29b-41d4-a716-446655440000",
   })
   @ApiBody({
-    type: [UploadScoreDto],
-    description: "Array of score entries to upload",
+    type: SubmitMatchScoresDto,
+    description: "Score entries and match result",
   })
   @ApiResponse({
     status: 200,
@@ -84,19 +84,13 @@ export class ScoreController {
   })
   async uploadMatchScores(
     @Param("matchId", ParseUUIDPipe) matchId: string,
-    @Body(
-      new ParseArrayPipe({
-        items: UploadScoreDto,
-        whitelist: true,
-        forbidNonWhitelisted: true,
-      }),
-    )
-    scores: UploadScoreDto[],
+    @Body() body: SubmitMatchScoresDto,
     @CurrentAppUser() appUser: AppUserContext,
   ) {
     const result = await this.scoreService.submitMatchScoresBulk(
       matchId,
-      scores,
+      body.scores,
+      body.matchResult,
       appUser.id,
     );
 
