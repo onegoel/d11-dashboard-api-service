@@ -25,6 +25,27 @@ steps:
       - |
         EXTRA_ARGS=()
         if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
+          EXTRA_ARGS+=(--set-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
+        fi
+
+        gcloud run jobs deploy "${_MIGRATION_JOB_NAME}" \
+          --project "${PROJECT_ID}" \
+          --region "${_REGION}" \
+          --image "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}" \
+          --service-account "${_RUNTIME_SERVICE_ACCOUNT}" \
+          --command npx \
+          --args prisma,migrate,deploy \
+          --set-env-vars "NODE_ENV=production" \
+          --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
+          "${EXTRA_ARGS[@]}"
+
+        gcloud run jobs execute "${_MIGRATION_JOB_NAME}" \
+          --project "${PROJECT_ID}" \
+          --region "${_REGION}" \
+          --wait
+
+        EXTRA_ARGS=()
+        if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
           EXTRA_ARGS+=(--add-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
         fi
 
@@ -40,9 +61,6 @@ steps:
           --set-secrets "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest" \
           --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
           --set-secrets "FIREBASE_PRIVATE_KEY=FIREBASE_PRIVATE_KEY:latest" \
-          --set-secrets "WEB_PUSH_PUBLIC_KEY=WEB_PUSH_PUBLIC_KEY:latest" \
-          --set-secrets "WEB_PUSH_PRIVATE_KEY=WEB_PUSH_PRIVATE_KEY:latest" \
-          --set-secrets "WEB_PUSH_SUBJECT=WEB_PUSH_SUBJECT:latest" \
           "${EXTRA_ARGS[@]}"
 
 images:
@@ -52,6 +70,7 @@ images:
 substitutions:
   _REGION: asia-south1
   _SERVICE_NAME: d11-dashboard-api-service
+  _MIGRATION_JOB_NAME: d11-dashboard-api-service-migrate
   _AR_REPO: d11-dashboard-api-container-repo
   _RUNTIME_SERVICE_ACCOUNT: ""
   _CLOUD_SQL_INSTANCE: ""
