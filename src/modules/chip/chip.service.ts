@@ -502,78 +502,62 @@ const getSeasonPowerupsOverview = async (
   const now = new Date();
 
   const [chipTypes, seasonUsers, orderedMatches, chipPlays, standings] =
-    await prismaClient.$transaction(async (tx) => {
-      const [
-        loadedChipTypes,
-        loadedSeasonUsers,
-        loadedOrderedMatches,
-        loadedChipPlays,
-        loadedStandings,
-      ] = await Promise.all([
-        tx.chipType.findMany({
-          orderBy: {
-            id: "asc",
+    await Promise.all([
+      prismaClient.chipType.findMany({
+        orderBy: {
+          id: "asc",
+        },
+      }),
+      prismaClient.seasonUser.findMany({
+        where: { seasonId },
+        include: {
+          user: true,
+        },
+      }),
+      getOrderedSeasonMatches(prismaClient, seasonId),
+      prismaClient.chipPlay.findMany({
+        where: {
+          seasonUser: {
+            seasonId,
           },
-        }),
-        tx.seasonUser.findMany({
-          where: { seasonId },
-          include: {
-            user: true,
-          },
-        }),
-        getOrderedSeasonMatches(tx, seasonId),
-        tx.chipPlay.findMany({
-          where: {
-            seasonUser: {
-              seasonId,
+        },
+        include: {
+          chipType: true,
+          selectedTeam: {
+            select: {
+              id: true,
+              shortCode: true,
+              name: true,
             },
           },
-          include: {
-            chipType: true,
-            selectedTeam: {
-              select: {
-                id: true,
-                shortCode: true,
-                name: true,
-              },
-            },
-            startMatch: {
-              select: {
-                id: true,
-                matchNo: true,
-                matchDate: true,
-                status: true,
-                matchResult: true,
-                homeTeamId: true,
-                awayTeamId: true,
-                homeTeam: {
-                  select: {
-                    shortCode: true,
-                  },
+          startMatch: {
+            select: {
+              id: true,
+              matchNo: true,
+              matchDate: true,
+              status: true,
+              matchResult: true,
+              homeTeamId: true,
+              awayTeamId: true,
+              homeTeam: {
+                select: {
+                  shortCode: true,
                 },
-                awayTeam: {
-                  select: {
-                    shortCode: true,
-                  },
+              },
+              awayTeam: {
+                select: {
+                  shortCode: true,
                 },
               },
             },
           },
-          orderBy: {
-            createdAt: "asc",
-          },
-        }),
-        getStandingsForSeason(tx, seasonId),
-      ]);
-
-      return [
-        loadedChipTypes,
-        loadedSeasonUsers,
-        loadedOrderedMatches,
-        loadedChipPlays,
-        loadedStandings,
-      ];
-    });
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      }),
+      getStandingsForSeason(prismaClient, seasonId),
+    ]);
 
   const playsBySeasonUserId = new Map<string, typeof chipPlays>();
 
@@ -681,80 +665,82 @@ const selectPowerupForSeasonMatch = async (
 ) => {
   const now = new Date();
 
+  // Reads and validation outside transaction
+  const [seasonUser, chipType, orderedMatches] = await Promise.all([
+    getSeasonUserTx(prismaClient, seasonUserId, seasonId),
+    getChipTypeByCodeTx(prismaClient, chipCode),
+    getOrderedSeasonMatches(prismaClient, seasonId),
+  ]);
+
+  if (actorRole !== UserRole.ADMIN && seasonUser.userId !== actorUserId) {
+    throw new ChipServiceError(403, "You can only select powerups for yourself");
+  }
+
+  const startMatch = orderedMatches.find((match) => match.id === startMatchId);
+
+  if (!startMatch) {
+    throw new ChipServiceError(404, "Selected match not found in this season");
+  }
+
+  if (startMatch.matchDate <= now) {
+    throw new ChipServiceError(
+      400,
+      "Powerup selection is locked once the selected match has started",
+    );
+  }
+
+  if (chipType.code === ChipCode.TEAM_FORM) {
+    if (!selectedTeamId) {
+      throw new ChipServiceError(400, "Team Form requires selecting a team");
+    }
+
+    const selectedTeamExists = await prismaClient.team.findUnique({
+      where: { id: selectedTeamId },
+      select: { id: true },
+    });
+
+    if (!selectedTeamExists) {
+      throw new ChipServiceError(404, "Selected team not found");
+    }
+
+    const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+    const remainingRegularTeamMatches = orderedMatches
+      .slice(Math.max(startIndex, 0))
+      .filter((match) => isRegularSeasonMatch(match.matchNo) && isTeamMatch(match, selectedTeamId));
+
+    if (remainingRegularTeamMatches.length === 0) {
+      throw new ChipServiceError(
+        400,
+        "Selected team has no remaining regular-season fixtures from this match",
+      );
+    }
+  }
+
+  const affectedMatches = chipType.code === ChipCode.TEAM_FORM && selectedTeamId
+    ? getTeamFormEffectiveMatches(
+        orderedMatches,
+        startMatchId,
+        selectedTeamId,
+        chipType.effectWindowMatches,
+      )
+    : getAffectedMatches(
+        orderedMatches,
+        startMatchId,
+        chipType.effectWindowMatches,
+      );
+
+  if (
+    chipType.code !== ChipCode.TEAM_FORM
+    && affectedMatches.length < chipType.effectWindowMatches
+  ) {
+    throw new ChipServiceError(
+      400,
+      `${chipType.name} needs ${chipType.effectWindowMatches} consecutive matches from the selected start match`,
+    );
+  }
+
+  // Short write transaction: uniqueness checks + DB write only
   return prismaClient.$transaction(async (tx) => {
-    const [seasonUser, chipType, orderedMatches] = await Promise.all([
-      getSeasonUserTx(tx, seasonUserId, seasonId),
-      getChipTypeByCodeTx(tx, chipCode),
-      getOrderedSeasonMatches(tx, seasonId),
-    ]);
-
-    if (actorRole !== UserRole.ADMIN && seasonUser.userId !== actorUserId) {
-      throw new ChipServiceError(403, "You can only select powerups for yourself");
-    }
-
-    const startMatch = orderedMatches.find((match) => match.id === startMatchId);
-
-    if (!startMatch) {
-      throw new ChipServiceError(404, "Selected match not found in this season");
-    }
-
-    if (startMatch.matchDate <= now) {
-      throw new ChipServiceError(
-        400,
-        "Powerup selection is locked once the selected match has started",
-      );
-    }
-
-    if (chipType.code === ChipCode.TEAM_FORM) {
-      if (!selectedTeamId) {
-        throw new ChipServiceError(400, "Team Form requires selecting a team");
-      }
-
-      const selectedTeamExists = await tx.team.findUnique({
-        where: { id: selectedTeamId },
-        select: { id: true },
-      });
-
-      if (!selectedTeamExists) {
-        throw new ChipServiceError(404, "Selected team not found");
-      }
-
-      const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
-      const remainingRegularTeamMatches = orderedMatches
-        .slice(Math.max(startIndex, 0))
-        .filter((match) => isRegularSeasonMatch(match.matchNo) && isTeamMatch(match, selectedTeamId));
-
-      if (remainingRegularTeamMatches.length === 0) {
-        throw new ChipServiceError(
-          400,
-          "Selected team has no remaining regular-season fixtures from this match",
-        );
-      }
-    }
-
-    const affectedMatches = chipType.code === ChipCode.TEAM_FORM && selectedTeamId
-      ? getTeamFormEffectiveMatches(
-          orderedMatches,
-          startMatchId,
-          selectedTeamId,
-          chipType.effectWindowMatches,
-        )
-      : getAffectedMatches(
-          orderedMatches,
-          startMatchId,
-          chipType.effectWindowMatches,
-        );
-
-    if (
-      chipType.code !== ChipCode.TEAM_FORM
-      && affectedMatches.length < chipType.effectWindowMatches
-    ) {
-      throw new ChipServiceError(
-        400,
-        `${chipType.name} needs ${chipType.effectWindowMatches} consecutive matches from the selected start match`,
-      );
-    }
-
     const existingPlayForMatch = await tx.chipPlay.findUnique({
       where: {
         seasonUserId_chipTypeId_startMatchId: {
@@ -786,33 +772,34 @@ const selectPowerupForSeasonMatch = async (
       );
     }
 
-    const scheduledPlays = await tx.chipPlay.findMany({
-      where: {
-        seasonUserId,
-        status: ChipPlayStatus.SCHEDULED,
-        seasonUser: {
-          seasonId,
-        },
-      },
-      include: {
-        chipType: true,
-        selectedTeam: {
-          select: {
-            id: true,
+    const [scheduledPlays, activeUsageCount] = await Promise.all([
+      tx.chipPlay.findMany({
+        where: {
+          seasonUserId,
+          status: ChipPlayStatus.SCHEDULED,
+          seasonUser: {
+            seasonId,
           },
         },
-      },
-    });
-
-    const activeUsageCount = await tx.chipPlay.count({
-      where: {
-        seasonUserId,
-        chipTypeId: chipType.id,
-        status: {
-          not: ChipPlayStatus.CANCELLED,
+        include: {
+          chipType: true,
+          selectedTeam: {
+            select: {
+              id: true,
+            },
+          },
         },
-      },
-    });
+      }),
+      tx.chipPlay.count({
+        where: {
+          seasonUserId,
+          chipTypeId: chipType.id,
+          status: {
+            not: ChipPlayStatus.CANCELLED,
+          },
+        },
+      }),
+    ]);
 
     if (activeUsageCount >= chipType.maxUsesPerSeason) {
       throw new ChipServiceError(

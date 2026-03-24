@@ -1,0 +1,61 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}
+      - -t
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:latest
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:latest
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        EXTRA_ARGS=()
+        if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
+          EXTRA_ARGS+=(--add-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
+        fi
+
+        gcloud run deploy "${_SERVICE_NAME}" \
+          --project "${PROJECT_ID}" \
+          --region "${_REGION}" \
+          --platform managed \
+          --image "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}" \
+          --service-account "${_RUNTIME_SERVICE_ACCOUNT}" \
+          --allow-unauthenticated \
+          --set-env-vars "NODE_ENV=production,CORS_ORIGIN=${_CORS_ORIGIN}" \
+          --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
+          --set-secrets "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest" \
+          --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
+          --set-secrets "FIREBASE_PRIVATE_KEY=FIREBASE_PRIVATE_KEY:latest" \
+          --set-secrets "WEB_PUSH_PUBLIC_KEY=WEB_PUSH_PUBLIC_KEY:latest" \
+          --set-secrets "WEB_PUSH_PRIVATE_KEY=WEB_PUSH_PRIVATE_KEY:latest" \
+          --set-secrets "WEB_PUSH_SUBJECT=WEB_PUSH_SUBJECT:latest" \
+          "${EXTRA_ARGS[@]}"
+
+images:
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:latest
+
+substitutions:
+  _REGION: asia-south1
+  _SERVICE_NAME: d11-dashboard-api-service
+  _AR_REPO: d11-dashboard-api-container-repo
+  _RUNTIME_SERVICE_ACCOUNT: ""
+  _CLOUD_SQL_INSTANCE: ""
+  _CORS_ORIGIN: ""
+
+options:
+  logging: CLOUD_LOGGING_ONLY

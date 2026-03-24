@@ -9,6 +9,7 @@ import {
   MatchResult,
   MatchStatus,
   Prisma,
+  PrismaClient,
   UserRole,
 } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
@@ -30,7 +31,7 @@ import type {
   UpdateSeasonDto,
 } from "./dto/admin.dto.js";
 
-type PrismaExecutor = Prisma.TransactionClient;
+type PrismaExecutor = Prisma.TransactionClient | PrismaClient;
 
 const toAuditJson = (value: unknown): Prisma.InputJsonValue => {
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
@@ -422,23 +423,23 @@ export class AdminService {
   }
 
   async replaceMatchScores(matchId: string, dto: ReplaceMatchScoresDto) {
-    return this.prisma.client.$transaction(async (tx) => {
-      const match = await tx.match.findUnique({
-        where: { id: matchId },
-        select: {
-          id: true,
-          seasonId: true,
-          matchResult: true,
-          homeTeamId: true,
-          awayTeamId: true,
-        },
-      });
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: {
+        id: true,
+        seasonId: true,
+        matchResult: true,
+        homeTeamId: true,
+        awayTeamId: true,
+      },
+    });
 
-      if (!match) {
-        throw new NotFoundException("Match not found");
-      }
+    if (!match) {
+      throw new NotFoundException("Match not found");
+    }
 
-      if (match.matchResult === MatchResult.ABANDONED) {
+    if (match.matchResult === MatchResult.ABANDONED) {
+      await this.prisma.client.$transaction(async (tx) => {
         await tx.score.deleteMany({ where: { matchId } });
 
         await tx.match.update({
@@ -451,75 +452,77 @@ export class AdminService {
           seasonUserIds: [],
           skippedReason: "match_result_abandoned",
         }));
-
-        return [];
-      }
-
-      const submittedSeasonUserIds = dto.scores.map((score) => score.seasonUserId);
-      const uniqueSeasonUserIds = [...new Set(submittedSeasonUserIds)];
-
-      if (uniqueSeasonUserIds.length !== submittedSeasonUserIds.length) {
-        throw new BadRequestException("Duplicate seasonUserId entries are not allowed");
-      }
-
-      this.validateContiguousRanks(dto.scores.map((score) => score.rank));
-
-      const seasonUsers = await tx.seasonUser.findMany({
-        where: {
-          seasonId: match.seasonId,
-          id: { in: uniqueSeasonUserIds },
-        },
-        select: { id: true },
       });
 
-      if (seasonUsers.length !== uniqueSeasonUserIds.length) {
-        throw new BadRequestException("Scores include players outside this season");
+      return [];
+    }
+
+    const submittedSeasonUserIds = dto.scores.map((score) => score.seasonUserId);
+    const uniqueSeasonUserIds = [...new Set(submittedSeasonUserIds)];
+
+    if (uniqueSeasonUserIds.length !== submittedSeasonUserIds.length) {
+      throw new BadRequestException("Duplicate seasonUserId entries are not allowed");
+    }
+
+    this.validateContiguousRanks(dto.scores.map((score) => score.rank));
+
+    const seasonUsers = await this.prisma.client.seasonUser.findMany({
+      where: {
+        seasonId: match.seasonId,
+        id: { in: uniqueSeasonUserIds },
+      },
+      select: { id: true },
+    });
+
+    if (seasonUsers.length !== uniqueSeasonUserIds.length) {
+      throw new BadRequestException("Scores include players outside this season");
+    }
+
+    const activeAssignments = await this.chipService.resolveActiveChipAssignmentsForMatchTx(
+      this.prisma.client,
+      match.seasonId,
+      matchId,
+      uniqueSeasonUserIds,
+    );
+
+    const sortedScores = [...dto.scores].sort((a, b) => a.rank - b.rank);
+
+    const scoreRows: Prisma.ScoreCreateManyInput[] = sortedScores.map((score) => {
+      const chipAssignment = activeAssignments.get(score.seasonUserId);
+      const basePoints = RANK_POINTS[score.rank] ?? 0;
+
+      let teamFormDelta = 0;
+
+      if (
+        chipAssignment?.chipCode === ChipCode.TEAM_FORM
+        && chipAssignment.selectedTeamId
+        && (match.matchResult === MatchResult.HOME_WIN || match.matchResult === MatchResult.AWAY_WIN)
+      ) {
+        const isSelectedTeamWinner =
+          (match.matchResult === MatchResult.HOME_WIN && chipAssignment.selectedTeamId === match.homeTeamId)
+          || (match.matchResult === MatchResult.AWAY_WIN && chipAssignment.selectedTeamId === match.awayTeamId);
+
+        teamFormDelta = isSelectedTeamWinner ? 5 : -2;
       }
 
-      const activeAssignments = await this.chipService.resolveActiveChipAssignmentsForMatchTx(
-        tx,
-        match.seasonId,
+      return {
+        seasonUserId: score.seasonUserId,
         matchId,
-        uniqueSeasonUserIds,
-      );
+        rank: score.rank,
+        points: basePoints + teamFormDelta,
+        rawScore: null,
+        effectiveScore: null,
+        secondaryRawScore: null,
+        chipPlayId: chipAssignment?.chipPlayId ?? null,
+      };
+    });
 
+    await this.prisma.client.$transaction(async (tx) => {
       await tx.score.deleteMany({ where: { matchId } });
 
-      const createdScores = await Promise.all(
-        [...dto.scores]
-          .sort((a, b) => a.rank - b.rank)
-          .map((score) => {
-            const chipAssignment = activeAssignments.get(score.seasonUserId);
-            const basePoints = RANK_POINTS[score.rank] ?? 0;
-
-            let teamFormDelta = 0;
-
-            if (
-              chipAssignment?.chipCode === ChipCode.TEAM_FORM
-              && chipAssignment.selectedTeamId
-              && (match.matchResult === MatchResult.HOME_WIN || match.matchResult === MatchResult.AWAY_WIN)
-            ) {
-              const isSelectedTeamWinner =
-                (match.matchResult === MatchResult.HOME_WIN && chipAssignment.selectedTeamId === match.homeTeamId)
-                || (match.matchResult === MatchResult.AWAY_WIN && chipAssignment.selectedTeamId === match.awayTeamId);
-
-              teamFormDelta = isSelectedTeamWinner ? 5 : -2;
-            }
-
-            return tx.score.create({
-              data: {
-                seasonUserId: score.seasonUserId,
-                matchId,
-                rank: score.rank,
-                points: basePoints + teamFormDelta,
-                rawScore: null,
-                effectiveScore: null,
-                secondaryRawScore: null,
-                chipPlayId: chipAssignment?.chipPlayId ?? null,
-              },
-            });
-          }),
-      );
+      if (scoreRows.length > 0) {
+        await tx.score.createMany({ data: scoreRows });
+      }
 
       await tx.match.update({
         where: { id: matchId },
@@ -527,11 +530,14 @@ export class AdminService {
       });
 
       await this.logAction(tx, "score.replace", "match", matchId, dto.reason, toAuditJson({
-        scoreCount: createdScores.length,
+        scoreCount: scoreRows.length,
         seasonUserIds: uniqueSeasonUserIds,
       }));
+    });
 
-      return createdScores;
+    return this.prisma.client.score.findMany({
+      where: { matchId },
+      orderBy: { rank: "asc" },
     });
   }
 
@@ -546,48 +552,85 @@ export class AdminService {
         throw new NotFoundException("Score not found");
       }
 
-      const scores = await tx.score.findMany({
+      const totalScores = await tx.score.count({
         where: { matchId: target.matchId },
-        orderBy: { rank: "asc" },
       });
 
-      if (dto.rank > scores.length) {
-        throw new BadRequestException(`Rank must be between 1 and ${scores.length}`);
+      if (dto.rank > totalScores) {
+        throw new BadRequestException(`Rank must be between 1 and ${totalScores}`);
       }
 
-      const nextScores = scores.map((score) => {
-        if (score.id === target.id) {
-          return { ...score, rank: dto.rank, points: RANK_POINTS[dto.rank] ?? 0 };
-        }
+      if (dto.rank < target.rank) {
+        await tx.score.updateMany({
+          where: {
+            matchId: target.matchId,
+            rank: {
+              gte: dto.rank,
+              lt: target.rank,
+            },
+          },
+          data: {
+            rank: { increment: 1 },
+          },
+        });
+      }
 
-        let nextRank = score.rank;
+      if (dto.rank > target.rank) {
+        await tx.score.updateMany({
+          where: {
+            matchId: target.matchId,
+            rank: {
+              gt: target.rank,
+              lte: dto.rank,
+            },
+          },
+          data: {
+            rank: { decrement: 1 },
+          },
+        });
+      }
 
-        if (dto.rank < target.rank && score.rank >= dto.rank && score.rank < target.rank) {
-          nextRank = score.rank + 1;
-        }
-
-        if (dto.rank > target.rank && score.rank <= dto.rank && score.rank > target.rank) {
-          nextRank = score.rank - 1;
-        }
-
-        return {
-          ...score,
-          rank: nextRank,
-          points: RANK_POINTS[nextRank] ?? 0,
-        };
+      await tx.score.update({
+        where: { id: target.id },
+        data: {
+          rank: dto.rank,
+          points: RANK_POINTS[dto.rank] ?? 0,
+        },
       });
 
-      await Promise.all(
-        nextScores.map((score) =>
-          tx.score.update({
-            where: { id: score.id },
-            data: {
-              rank: score.rank,
-              points: score.points,
-            },
-          }),
-        ),
-      );
+      if (dto.rank !== target.rank) {
+        const shiftedScores = await tx.score.findMany({
+          where: {
+            matchId: target.matchId,
+            id: { not: target.id },
+            rank:
+              dto.rank < target.rank
+                ? {
+                    gt: dto.rank,
+                    lte: target.rank,
+                  }
+                : {
+                    gte: target.rank,
+                    lt: dto.rank,
+                  },
+          },
+          select: {
+            id: true,
+            rank: true,
+          },
+        });
+
+        await Promise.all(
+          shiftedScores.map((score) =>
+            tx.score.update({
+              where: { id: score.id },
+              data: {
+                points: RANK_POINTS[score.rank] ?? 0,
+              },
+            }),
+          ),
+        );
+      }
 
       await this.logAction(tx, "score.update-rank", "score", scoreId, dto.reason, toAuditJson({
         matchId: target.matchId,
@@ -613,34 +656,45 @@ export class AdminService {
         throw new NotFoundException("Score not found");
       }
 
-      const scores = await tx.score.findMany({
-        where: { matchId: target.matchId },
-        orderBy: { rank: "asc" },
-      });
-
       await tx.score.delete({ where: { id: scoreId } });
 
-      const remainingScores = scores
-        .filter((score) => score.id !== scoreId)
-        .map((score, index) => ({
-          ...score,
-          rank: index + 1,
-          points: RANK_POINTS[index + 1] ?? 0,
-        }));
+      await tx.score.updateMany({
+        where: {
+          matchId: target.matchId,
+          rank: { gt: target.rank },
+        },
+        data: {
+          rank: { decrement: 1 },
+        },
+      });
+
+      const shiftedScores = await tx.score.findMany({
+        where: {
+          matchId: target.matchId,
+          rank: { gte: target.rank },
+        },
+        select: {
+          id: true,
+          rank: true,
+        },
+      });
 
       await Promise.all(
-        remainingScores.map((score) =>
+        shiftedScores.map((score) =>
           tx.score.update({
             where: { id: score.id },
             data: {
-              rank: score.rank,
-              points: score.points,
+              points: RANK_POINTS[score.rank] ?? 0,
             },
           }),
         ),
       );
 
-      if (remainingScores.length === 0) {
+      const remainingCount = await tx.score.count({
+        where: { matchId: target.matchId },
+      });
+
+      if (remainingCount === 0) {
         await tx.match.update({
           where: { id: target.matchId },
           data: { status: MatchStatus.SCHEDULED },
@@ -702,110 +756,115 @@ export class AdminService {
   }
 
   async reassignChipPlay(chipPlayId: string, dto: ReassignChipPlayDto) {
-    return this.prisma.client.$transaction(async (tx) => {
-      const existing = await tx.chipPlay.findUnique({
-        where: { id: chipPlayId },
-        include: {
-          chipType: true,
-          selectedTeam: {
-            select: {
-              id: true,
-            },
-          },
-          seasonUser: {
-            select: {
-              seasonId: true,
-            },
-          },
-          startMatch: {
-            select: {
-              id: true,
-              seasonId: true,
-            },
+    const existing = await this.prisma.client.chipPlay.findUnique({
+      where: { id: chipPlayId },
+      include: {
+        chipType: true,
+        selectedTeam: {
+          select: {
+            id: true,
           },
         },
+        seasonUser: {
+          select: {
+            seasonId: true,
+          },
+        },
+        startMatch: {
+          select: {
+            id: true,
+            seasonId: true,
+          },
+        },
+      },
+    });
+
+    if (!existing) {
+      throw new NotFoundException("Chip play not found");
+    }
+
+    const seasonId = existing.seasonUser.seasonId;
+    const targetSeasonUserId = dto.seasonUserId ?? existing.seasonUserId;
+    const targetChipCode = dto.chipCode ?? existing.chipType.code;
+    const targetStartMatchId = dto.startMatchId ?? existing.startMatchId;
+    const targetSelectedTeamId = dto.selectedTeamId ?? existing.selectedTeam?.id ?? null;
+
+    const [targetSeasonUser, targetStartMatch, targetChipType, orderedMatches, otherScheduledPlays] = await Promise.all([
+      this.prisma.client.seasonUser.findUnique({
+        where: { id: targetSeasonUserId },
+        select: { id: true, seasonId: true },
+      }),
+      this.prisma.client.match.findUnique({
+        where: { id: targetStartMatchId },
+        select: { id: true, seasonId: true },
+      }),
+      this.prisma.client.chipType.findUnique({
+        where: { code: targetChipCode },
+      }),
+      this.getOrderedSeasonMatches(this.prisma.client, seasonId),
+      this.prisma.client.chipPlay.findMany({
+        where: {
+          seasonUserId: targetSeasonUserId,
+          status: ChipPlayStatus.SCHEDULED,
+          id: { not: chipPlayId },
+        },
+        include: { chipType: true },
+      }),
+    ]);
+
+    if (!targetSeasonUser || targetSeasonUser.seasonId !== seasonId) {
+      throw new BadRequestException("Target season user is not part of this season");
+    }
+
+    if (!targetStartMatch || targetStartMatch.seasonId !== seasonId) {
+      throw new BadRequestException("Target start match is not part of this season");
+    }
+
+    if (!targetChipType) {
+      throw new NotFoundException("Target chip type not found");
+    }
+
+    if (targetChipCode === ChipCode.TEAM_FORM) {
+      if (!targetSelectedTeamId) {
+        throw new BadRequestException("Team Form reassignment requires selectedTeamId");
+      }
+
+      const selectedTeam = await this.prisma.client.team.findUnique({
+        where: { id: targetSelectedTeamId },
+        select: { id: true },
       });
 
-      if (!existing) {
-        throw new NotFoundException("Chip play not found");
+      if (!selectedTeam) {
+        throw new BadRequestException("Selected team not found");
       }
+    }
 
-      const seasonId = existing.seasonUser.seasonId;
-      const targetSeasonUserId = dto.seasonUserId ?? existing.seasonUserId;
-      const targetChipCode = dto.chipCode ?? existing.chipType.code;
-      const targetStartMatchId = dto.startMatchId ?? existing.startMatchId;
-      const targetSelectedTeamId = dto.selectedTeamId ?? existing.selectedTeam?.id ?? null;
+    const newAffectedMatchIds = getAffectedMatches(
+      orderedMatches,
+      targetStartMatchId,
+      targetChipType.effectWindowMatches,
+    ).map((match) => match.id);
 
-      const [targetSeasonUser, targetStartMatch, targetChipType, orderedMatches, otherScheduledPlays] = await Promise.all([
-        tx.seasonUser.findUnique({
-          where: { id: targetSeasonUserId },
-          select: { id: true, seasonId: true },
-        }),
-        tx.match.findUnique({
-          where: { id: targetStartMatchId },
-          select: { id: true, seasonId: true },
-        }),
-        tx.chipType.findUnique({
-          where: { code: targetChipCode },
-        }),
-        this.getOrderedSeasonMatches(tx, seasonId),
-        tx.chipPlay.findMany({
-          where: {
-            seasonUserId: targetSeasonUserId,
-            status: ChipPlayStatus.SCHEDULED,
-            id: { not: chipPlayId },
-          },
-          include: { chipType: true },
-        }),
-      ]);
-
-      if (!targetSeasonUser || targetSeasonUser.seasonId !== seasonId) {
-        throw new BadRequestException("Target season user is not part of this season");
-      }
-
-      if (!targetStartMatch || targetStartMatch.seasonId !== seasonId) {
-        throw new BadRequestException("Target start match is not part of this season");
-      }
-
-      if (!targetChipType) {
-        throw new NotFoundException("Target chip type not found");
-      }
-
-      if (targetChipCode === ChipCode.TEAM_FORM) {
-        if (!targetSelectedTeamId) {
-          throw new BadRequestException("Team Form reassignment requires selectedTeamId");
-        }
-
-        const selectedTeam = await tx.team.findUnique({
-          where: { id: targetSelectedTeamId },
-          select: { id: true },
-        });
-
-        if (!selectedTeam) {
-          throw new BadRequestException("Selected team not found");
-        }
-      }
-
-      const newAffectedMatchIds = getAffectedMatches(
+    for (const scheduledPlay of otherScheduledPlays) {
+      const existingAffectedIds = getAffectedMatches(
         orderedMatches,
-        targetStartMatchId,
-        targetChipType.effectWindowMatches,
+        scheduledPlay.startMatchId,
+        scheduledPlay.chipType.effectWindowMatches,
       ).map((match) => match.id);
 
-      for (const scheduledPlay of otherScheduledPlays) {
-        const existingAffectedIds = getAffectedMatches(
-          orderedMatches,
-          scheduledPlay.startMatchId,
-          scheduledPlay.chipType.effectWindowMatches,
-        ).map((match) => match.id);
-
-        if (hasOverlap(newAffectedMatchIds, existingAffectedIds)) {
-          throw new BadRequestException(
-            "Target chip assignment overlaps with another scheduled powerup for this player",
-          );
-        }
+      if (hasOverlap(newAffectedMatchIds, existingAffectedIds)) {
+        throw new BadRequestException(
+          "Target chip assignment overlaps with another scheduled powerup for this player",
+        );
       }
+    }
 
+    const completedAffectedMatchIds = orderedMatches
+      .filter((match) => match.status === MatchStatus.COMPLETED)
+      .filter((match) => newAffectedMatchIds.includes(match.id))
+      .map((match) => match.id);
+
+    return this.prisma.client.$transaction(async (tx) => {
       await tx.chipPlay.update({
         where: { id: chipPlayId },
         data: {
@@ -847,11 +906,6 @@ export class AdminService {
               status: ChipPlayStatus.SCHEDULED,
             },
           });
-
-      const completedAffectedMatchIds = orderedMatches
-        .filter((match) => match.status === MatchStatus.COMPLETED)
-        .filter((match) => newAffectedMatchIds.includes(match.id))
-        .map((match) => match.id);
 
       if (completedAffectedMatchIds.length > 0) {
         await tx.score.updateMany({
