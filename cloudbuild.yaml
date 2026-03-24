@@ -56,7 +56,7 @@ steps:
           --image "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}" \
           --service-account "${_RUNTIME_SERVICE_ACCOUNT}" \
           --allow-unauthenticated \
-          --set-env-vars "NODE_ENV=production,CORS_ORIGIN=${_CORS_ORIGIN}" \
+          --set-env-vars "NODE_ENV=production,CORS_ORIGIN=${_CORS_ORIGIN},BEST_N_DROP_COUNT=${_BEST_N_DROP_COUNT}" \
           --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
           --set-secrets "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest" \
           --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
@@ -75,6 +75,7 @@ substitutions:
   _RUNTIME_SERVICE_ACCOUNT: ""
   _CLOUD_SQL_INSTANCE: ""
   _CORS_ORIGIN: ""
+  _BEST_N_DROP_COUNT: "5"
 
 options:
   logging: CLOUD_LOGGING_ONLY
