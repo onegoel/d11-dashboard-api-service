@@ -3,3 +3,11 @@ dist
 .env
 /generated/prisma
 *firebase-adminsdk*.json
+eslint.config.mjs
+eslint.config.mjs.map
+eslint.config.d.mts
+eslint.config.d.mts.map
+prisma.config.js
+prisma.config.js.map
+prisma.config.d.ts
+prisma.config.d.ts.map
