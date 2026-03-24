@@ -68,7 +68,4 @@ jobs:
             --set-secrets "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest" \
             --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
             --set-secrets "FIREBASE_PRIVATE_KEY=FIREBASE_PRIVATE_KEY:latest" \
-            --set-secrets "WEB_PUSH_PUBLIC_KEY=WEB_PUSH_PUBLIC_KEY:latest" \
-            --set-secrets "WEB_PUSH_PRIVATE_KEY=WEB_PUSH_PRIVATE_KEY:latest" \
-            --set-secrets "WEB_PUSH_SUBJECT=WEB_PUSH_SUBJECT:latest" \
             "${EXTRA_ARGS[@]}"
