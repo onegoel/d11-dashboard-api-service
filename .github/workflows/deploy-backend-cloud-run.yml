@@ -1,0 +1,74 @@
+name: Deploy Backend To Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend-cloud-run
+  cancel-in-progress: true
+
+env:
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ vars.GCP_REGION }}
+  SERVICE_NAME: ${{ vars.BACKEND_SERVICE_NAME }}
+  AR_REPO: ${{ vars.BACKEND_AR_REPO }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SA }}
+
+      - name: Setup gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build and push image
+        env:
+          IMAGE_URI: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        run: |
+          docker build -t "$IMAGE_URI" .
+          docker push "$IMAGE_URI"
+          echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
+
+      - name: Deploy to Cloud Run
+        run: |
+          EXTRA_ARGS=()
+          if [[ -n "${{ vars.BACKEND_CLOUD_SQL_INSTANCE }}" ]]; then
+            EXTRA_ARGS+=(--add-cloudsql-instances "${{ vars.BACKEND_CLOUD_SQL_INSTANCE }}")
+          fi
+
+          gcloud run deploy "$SERVICE_NAME" \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --platform managed \
+            --image "$IMAGE_URI" \
+            --allow-unauthenticated \
+            --service-account "${{ vars.BACKEND_RUNTIME_SA }}" \
+            --set-env-vars "NODE_ENV=production,CORS_ORIGIN=${{ vars.BACKEND_CORS_ORIGIN }}" \
+            --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
+            --set-secrets "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest" \
+            --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
+            --set-secrets "FIREBASE_PRIVATE_KEY=FIREBASE_PRIVATE_KEY:latest" \
+            --set-secrets "WEB_PUSH_PUBLIC_KEY=WEB_PUSH_PUBLIC_KEY:latest" \
+            --set-secrets "WEB_PUSH_PRIVATE_KEY=WEB_PUSH_PRIVATE_KEY:latest" \
+            --set-secrets "WEB_PUSH_SUBJECT=WEB_PUSH_SUBJECT:latest" \
+            "${EXTRA_ARGS[@]}"
