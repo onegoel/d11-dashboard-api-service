@@ -3,11 +3,22 @@ name: Deploy Backend To Cloud Run
 on:
   push:
     branches:
+      - develop
       - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment target"
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - dev
+          - prod
 
 concurrency:
-  group: deploy-backend-cloud-run
+  group: deploy-backend-cloud-run-${{ github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -20,6 +31,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'auto' && github.event.inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}
     permissions:
       contents: read
       id-token: write
@@ -27,6 +39,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate target environment
+        run: |
+          TARGET_ENV="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'auto' && github.event.inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}"
+          if [[ "$TARGET_ENV" == "prod" && "${GITHUB_REF_NAME}" != "main" ]]; then
+            echo "Prod deployments are only allowed from main"
+            exit 1
+          fi
+          echo "Deploying to environment: $TARGET_ENV"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -69,6 +90,30 @@ jobs:
             "${EXTRA_ARGS[@]}"
 
           gcloud run jobs execute "$MIGRATION_JOB_NAME" \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --wait
+
+      - name: Seed reference data
+        run: |
+          SEED_JOB_NAME="${MIGRATION_JOB_NAME%-migrate}-seed"
+          EXTRA_ARGS=()
+          if [[ -n "${{ vars.BACKEND_CLOUD_SQL_INSTANCE }}" ]]; then
+            EXTRA_ARGS+=(--set-cloudsql-instances "${{ vars.BACKEND_CLOUD_SQL_INSTANCE }}")
+          fi
+
+          gcloud run jobs deploy "$SEED_JOB_NAME" \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --image "$IMAGE_URI" \
+            --service-account "${{ vars.BACKEND_RUNTIME_SA }}" \
+            --command npx \
+            --args tsx,prisma/seed.ts \
+            --set-env-vars "NODE_ENV=production,SEED_ENV=production" \
+            --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
+            "${EXTRA_ARGS[@]}"
+
+          gcloud run jobs execute "$SEED_JOB_NAME" \
             --project "$GCP_PROJECT_ID" \
             --region "$GCP_REGION" \
             --wait

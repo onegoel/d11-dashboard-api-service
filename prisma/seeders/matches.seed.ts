@@ -65,7 +65,11 @@ const unlockOneScheduledMatchForTesting = async (
   );
 };
 
-export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
+export async function seedFixtures(
+  prisma: PrismaClient,
+  seasonId: number,
+  skipTestUnlock = false,
+) {
   console.log("Seeding fixtures...");
 
   const teams = await prisma.team.findMany();
@@ -108,7 +112,11 @@ export async function seedFixtures(prisma: PrismaClient, seasonId: number) {
     });
   }
 
-  await unlockOneScheduledMatchForTesting(prisma, seasonId);
+  if (!skipTestUnlock) {
+    await unlockOneScheduledMatchForTesting(prisma, seasonId);
+  } else {
+    console.log("Skipping test-unlock (prod mode)");
+  }
 
   console.log(`Seeded ${fixtures.length} fixtures`);
 }

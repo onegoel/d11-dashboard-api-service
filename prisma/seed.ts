@@ -11,13 +11,22 @@ import { seedScores } from "./seeders/scores.seed.js";
 async function main() {
   console.log("Seeding database...");
 
-  await seedUsers(prisma);
+  const isProd = process.env.SEED_ENV === "production";
+
+  // Reference data — safe for prod
   await seedTeams(prisma);
   await seedChipTypes(prisma);
   const season = await seedSeason(prisma);
-  await seedSeasonUsers(prisma, season.id);
-  await seedFixtures(prisma, season.id);
-  await seedScores(prisma, season.id);
+  await seedFixtures(prisma, season.id, isProd);
+
+  if (!isProd) {
+    // Dev/test data only
+    await seedUsers(prisma);
+    await seedSeasonUsers(prisma, season.id);
+    await seedScores(prisma, season.id);
+  } else {
+    console.log("Skipping user/score seeders (SEED_ENV=production)");
+  }
 
   console.log("Seed complete");
 }
