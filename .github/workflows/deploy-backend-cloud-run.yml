@@ -3,11 +3,22 @@ name: Deploy Backend To Cloud Run
 on:
   push:
     branches:
+      - develop
       - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment target"
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - dev
+          - prod
 
 concurrency:
-  group: deploy-backend-cloud-run
+  group: deploy-backend-cloud-run-${{ github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -20,6 +31,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'auto' && github.event.inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}
     permissions:
       contents: read
       id-token: write
@@ -27,6 +39,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate target environment
+        run: |
+          TARGET_ENV="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'auto' && github.event.inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}"
+          if [[ "$TARGET_ENV" == "prod" && "${GITHUB_REF_NAME}" != "main" ]]; then
+            echo "Prod deployments are only allowed from main"
+            exit 1
+          fi
+          echo "Deploying to environment: $TARGET_ENV"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
