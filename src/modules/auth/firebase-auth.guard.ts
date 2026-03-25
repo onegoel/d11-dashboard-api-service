@@ -33,6 +33,7 @@ export class FirebaseAuthGuard implements CanActivate {
         email: decoded.email ?? null,
         name: decoded.name ?? null,
         picture: decoded.picture ?? null,
+        claimedRole: typeof decoded["role"] === "string" ? decoded["role"] : null,
       };
 
       return true;

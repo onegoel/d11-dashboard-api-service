@@ -5,8 +5,10 @@ import { AuthService } from "./auth.service.js";
 import { FirebaseAdminService } from "./firebase-admin.service.js";
 import { FirebaseAuthGuard } from "./firebase-auth.guard.js";
 import { RolesGuard } from "./roles.guard.js";
+import { DatabaseModule } from "../../common/database/database.module.js";
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [AuthController],
   providers: [
     AuthService,

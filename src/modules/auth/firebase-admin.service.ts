@@ -4,7 +4,6 @@ import { getAuth } from "firebase-admin/auth";
 import { getStorage } from "firebase-admin/storage";
 import type { DecodedIdToken } from "firebase-admin/auth";
 import type { App } from "firebase-admin/app";
-import type { Bucket } from "@google-cloud/storage";
 
 @Injectable()
 export class FirebaseAdminService {
@@ -36,7 +35,7 @@ export class FirebaseAdminService {
           clientEmail,
           privateKey,
         }),
-        storageBucket: this.storageBucketName ?? undefined,
+        ...(this.storageBucketName ? { storageBucket: this.storageBucketName } : {}),
       },
       appName,
     );
@@ -52,7 +51,7 @@ export class FirebaseAdminService {
     return getAuth(this.app).verifyIdToken(token);
   }
 
-  getProfilePhotoBucket(): Bucket {
+  getProfilePhotoBucket() {
     if (!this.app || !this.storageBucketName) {
       throw new ServiceUnavailableException(
         "Profile photo storage is not configured. Set PROFILE_PHOTO_BUCKET (or FIREBASE_STORAGE_BUCKET).",
@@ -60,5 +59,15 @@ export class FirebaseAdminService {
     }
 
     return getStorage(this.app).bucket(this.storageBucketName);
+  }
+
+  async setCustomClaims(uid: string, claims: Record<string, unknown>): Promise<void> {
+    if (!this.app) {
+      throw new ServiceUnavailableException(
+        "Firebase Admin is not configured on the API. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.",
+      );
+    }
+
+    await getAuth(this.app).setCustomUserClaims(uid, claims);
   }
 }
