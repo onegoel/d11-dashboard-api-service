@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Post,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
@@ -20,6 +21,7 @@ import { AppUserGuard } from "../auth/app-user.guard.js";
 import { CurrentAppUser } from "../auth/current-app-user.decorator.js";
 import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
 import type { AppUserContext } from "../auth/auth.types.js";
+import { CreateProfilePhotoUploadDto } from "./dto/create-profile-photo-upload.dto.js";
 import { UpdateDisplayNameDto } from "./dto/update-display-name.dto.js";
 import { UpdateTeamNameDto } from "./dto/update-team-name.dto.js";
 import { UserService } from "./user.service.js";
@@ -48,6 +50,41 @@ export class UserController {
   })
   async getSeasonPlayers(@Param("seasonId", ParseIntPipe) seasonId: number) {
     return this.userService.getSeasonUsers(seasonId);
+  }
+
+  @Post(":userId/profile-photo-upload-url")
+  @ApiOperation({
+    summary: "Create signed upload URL for a profile photo",
+    description: "Returns a short-lived signed URL for direct image upload to Cloud Storage",
+  })
+  @ApiParam({
+    name: "userId",
+    type: "number",
+    description: "The user ID",
+    example: 1,
+  })
+  @ApiBody({
+    type: CreateProfilePhotoUploadDto,
+    description: "Profile photo upload metadata",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Signed upload URL created",
+  })
+  async createProfilePhotoUploadUrl(
+    @Param("userId", ParseIntPipe) userId: number,
+    @Body() body: CreateProfilePhotoUploadDto,
+    @CurrentAppUser() appUser: AppUserContext,
+  ) {
+    return this.userService.createProfilePhotoUploadUrl(
+      userId,
+      body.contentType,
+      body.sizeBytes,
+      {
+        id: appUser.id,
+        role: appUser.role,
+      },
+    );
   }
 
   @Patch(":userId/display-name")
@@ -83,6 +120,7 @@ export class UserController {
     const updatedUser = await this.userService.updateUserDisplayName(
       userId,
       body.displayName,
+      body.photoUrl,
       {
         id: appUser.id,
         role: appUser.role,

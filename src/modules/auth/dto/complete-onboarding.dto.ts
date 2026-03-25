@@ -16,14 +16,13 @@ export class CompleteOnboardingDto {
 
   @ApiPropertyOptional({
     example: "https://lh3.googleusercontent.com/a/default-user=s96-c",
-    description: "Optional profile photo URL override (https URL or data URI)",
+    description: "Optional profile photo URL override (must be a hosted https URL)",
   })
   @IsOptional()
   @IsString()
-  @Matches(
-    /^(https?:\/\/.+|data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+)$/,
-    { message: "photoUrl must be a valid https URL or image data URI" },
-  )
-  @MaxLength(3_000_000)
+  @Matches(/^https:\/\/.+/, {
+    message: "photoUrl must be a valid https URL",
+  })
+  @MaxLength(2048)
   photoUrl?: string;
 }

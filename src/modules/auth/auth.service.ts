@@ -112,7 +112,7 @@ export class AuthService {
         updateData.email = authUser.email;
       }
 
-      if (authUser.picture !== null) {
+      if (authUser.picture !== null && !existingBySubject.photo_url) {
         updateData.photo_url = authUser.picture;
       }
 
@@ -149,7 +149,7 @@ export class AuthService {
           auth_provider: GOOGLE_PROVIDER,
           auth_subject: authUser.uid,
           email: authUser.email,
-          photo_url: authUser.picture,
+          photo_url: existingByEmail.photo_url || authUser.picture,
           full_name: nameParts.fullName || existingByEmail.full_name,
           first_name: existingByEmail.first_name || nameParts.firstName,
           last_name: existingByEmail.last_name || nameParts.lastName,
