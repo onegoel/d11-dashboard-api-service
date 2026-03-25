@@ -4,6 +4,7 @@ import { getAuth } from "firebase-admin/auth";
 import { getStorage } from "firebase-admin/storage";
 import type { DecodedIdToken } from "firebase-admin/auth";
 import type { App } from "firebase-admin/app";
+import type { Storage } from "firebase-admin/storage";
 
 @Injectable()
 export class FirebaseAdminService {
@@ -51,7 +52,7 @@ export class FirebaseAdminService {
     return getAuth(this.app).verifyIdToken(token);
   }
 
-  getProfilePhotoBucket() {
+  getProfilePhotoBucket(): ReturnType<Storage["bucket"]> {
     if (!this.app || !this.storageBucketName) {
       throw new ServiceUnavailableException(
         "Profile photo storage is not configured. Set PROFILE_PHOTO_BUCKET (or FIREBASE_STORAGE_BUCKET).",
