@@ -15,7 +15,7 @@ import { PrismaService } from "../../common/database/prisma.service.js";
 import { ChipService } from "../chip/chip.service.js";
 import { RANK_POINTS } from "./points-system.js";
 
-export interface MatchScore {
+interface MatchScore {
   seasonUserId: string;
   rank: number;
   points?: number;
@@ -46,7 +46,10 @@ export class ScoreService {
     matchId: string,
     matchResult: MatchResult,
   ) {
-    if (matchResult !== MatchResult.HOME_WIN && matchResult !== MatchResult.AWAY_WIN) {
+    if (
+      matchResult !== MatchResult.HOME_WIN &&
+      matchResult !== MatchResult.AWAY_WIN
+    ) {
       return new Map<string, number>();
     }
 
@@ -99,7 +102,9 @@ export class ScoreService {
         continue;
       }
 
-      const startIndex = orderedMatches.findIndex((m) => m.id === play.startMatchId);
+      const startIndex = orderedMatches.findIndex(
+        (m) => m.id === play.startMatchId,
+      );
 
       if (startIndex < 0) {
         continue;
@@ -110,7 +115,8 @@ export class ScoreService {
         .filter(
           (m) =>
             ScoreService.isRegularSeasonMatch(m.matchNo) &&
-            (m.homeTeamId === selectedTeamId || m.awayTeamId === selectedTeamId),
+            (m.homeTeamId === selectedTeamId ||
+              m.awayTeamId === selectedTeamId),
         );
 
       if (teamMatches.length === 0) {
@@ -120,7 +126,9 @@ export class ScoreService {
       const effectiveWindow: typeof teamMatches = [];
 
       if (teamMatches.length <= ScoreService.TEAM_FORM_WINDOW) {
-        effectiveWindow.push(...teamMatches.slice(0, ScoreService.TEAM_FORM_WINDOW));
+        effectiveWindow.push(
+          ...teamMatches.slice(0, ScoreService.TEAM_FORM_WINDOW),
+        );
       } else {
         for (const teamMatch of teamMatches) {
           if (teamMatch.matchResult === MatchResult.ABANDONED) {
@@ -142,8 +150,10 @@ export class ScoreService {
       }
 
       const isSelectedTeamWinner =
-        (matchResult === MatchResult.HOME_WIN && targetMatch.homeTeamId === selectedTeamId) ||
-        (matchResult === MatchResult.AWAY_WIN && targetMatch.awayTeamId === selectedTeamId);
+        (matchResult === MatchResult.HOME_WIN &&
+          targetMatch.homeTeamId === selectedTeamId) ||
+        (matchResult === MatchResult.AWAY_WIN &&
+          targetMatch.awayTeamId === selectedTeamId);
 
       bonusByUser.set(
         play.seasonUserId,
@@ -288,7 +298,9 @@ export class ScoreService {
     });
 
     if (seasonUsers.length !== uniqueSeasonUserIds.length) {
-      throw new BadRequestException("Scores include players outside this season");
+      throw new BadRequestException(
+        "Scores include players outside this season",
+      );
     }
 
     const activeAssignments =
@@ -329,16 +341,19 @@ export class ScoreService {
         };
       });
 
-    const teamFormBonusBySeasonUserId = await this.getTeamFormBonusBySeasonUserId(
-      this.prisma.client,
-      match.seasonId,
-      matchId,
-      matchResult,
-    );
+    const teamFormBonusBySeasonUserId =
+      await this.getTeamFormBonusBySeasonUserId(
+        this.prisma.client,
+        match.seasonId,
+        matchId,
+        matchResult,
+      );
 
     const adjustedScores = rankedScores.map((score) => ({
       ...score,
-      points: score.points + (teamFormBonusBySeasonUserId.get(score.seasonUserId) ?? 0),
+      points:
+        score.points +
+        (teamFormBonusBySeasonUserId.get(score.seasonUserId) ?? 0),
     }));
 
     const scoreUpserts = adjustedScores.map((score) =>
