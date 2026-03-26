@@ -125,21 +125,15 @@ export class ScoreService {
 
       const effectiveWindow: typeof teamMatches = [];
 
-      if (teamMatches.length <= ScoreService.TEAM_FORM_WINDOW) {
-        effectiveWindow.push(
-          ...teamMatches.slice(0, ScoreService.TEAM_FORM_WINDOW),
-        );
-      } else {
-        for (const teamMatch of teamMatches) {
-          if (teamMatch.matchResult === MatchResult.ABANDONED) {
-            continue;
-          }
+      for (const teamMatch of teamMatches) {
+        if (teamMatch.matchResult === MatchResult.ABANDONED) {
+          continue;
+        }
 
-          effectiveWindow.push(teamMatch);
+        effectiveWindow.push(teamMatch);
 
-          if (effectiveWindow.length >= ScoreService.TEAM_FORM_WINDOW) {
-            break;
-          }
+        if (effectiveWindow.length >= ScoreService.TEAM_FORM_WINDOW) {
+          break;
         }
       }
 
