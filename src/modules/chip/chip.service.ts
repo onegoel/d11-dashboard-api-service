@@ -131,10 +131,6 @@ const getTeamFormEffectiveMatches = (
         isTeamMatch(match, selectedTeamId),
     );
 
-  if (teamMatches.length <= windowSize) {
-    return teamMatches.slice(0, windowSize);
-  }
-
   const effectiveMatches: OrderedSeasonMatch[] = [];
 
   for (const match of teamMatches) {
@@ -710,6 +706,16 @@ const selectPowerupForSeasonMatch = async (
   if (chipType.code === ChipCode.TEAM_FORM) {
     if (!selectedTeamId) {
       throw new ChipServiceError(400, "Team Form requires selecting a team");
+    }
+
+    if (
+      selectedTeamId !== startMatch.homeTeamId &&
+      selectedTeamId !== startMatch.awayTeamId
+    ) {
+      throw new ChipServiceError(
+        400,
+        "Team Form can only be activated for a team in the selected fixture",
+      );
     }
 
     const selectedTeamExists = await prismaClient.team.findUnique({
