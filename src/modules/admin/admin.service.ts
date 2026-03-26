@@ -14,6 +14,7 @@ import {
 } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { ChipService } from "../chip/chip.service.js";
+import { FirebaseAdminService } from "../auth/firebase-admin.service.js";
 import { RANK_POINTS } from "../score/points-system.js";
 import type {
   AddSeasonUserDto,
@@ -69,6 +70,7 @@ export class AdminService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly chipService: ChipService,
+    private readonly firebaseAdminService: FirebaseAdminService,
   ) {}
 
   private async logAction(
@@ -176,12 +178,13 @@ export class AdminService {
   }
 
   async updateUserRole(userId: number, role: UserRole, reason?: string) {
-    return this.prisma.client.$transaction(async (tx) => {
+    const { updatedUser, authSubject } = await this.prisma.client.$transaction(async (tx) => {
       const existingUser = await tx.user.findUnique({
         where: { id: userId },
         select: {
           id: true,
           role: true,
+          auth_subject: true,
         },
       });
 
@@ -206,8 +209,16 @@ export class AdminService {
         }),
       );
 
-      return updatedUser;
+      return { updatedUser, authSubject: existingUser.auth_subject };
     });
+
+    // Sync the new role into the Firebase JWT custom claims so tokens issued
+    // after this carry the correct role (enables the fast-path in AppUserGuard).
+    if (authSubject) {
+      await this.firebaseAdminService.setCustomClaims(authSubject, { role });
+    }
+
+    return updatedUser;
   }
 
   async createMatch(dto: CreateAdminMatchDto) {

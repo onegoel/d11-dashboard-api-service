@@ -6,6 +6,8 @@ export type AuthenticatedUser = {
   email: string | null;
   name: string | null;
   picture: string | null;
+  /** Role from Firebase custom JWT claims, if already set. */
+  claimedRole?: string | null;
 };
 
 export type AppUserContext = {

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsString, MaxLength, MinLength } from "class-validator";
+import { IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class UpdateDisplayNameDto {
   @ApiProperty({
@@ -16,4 +16,17 @@ export class UpdateDisplayNameDto {
   @MinLength(1)
   @MaxLength(80)
   displayName!: string;
+
+  @ApiProperty({
+    required: false,
+    example: "https://lh3.googleusercontent.com/a/default-user=s96-c",
+    description: "Optional profile photo URL override (must be a hosted https URL)",
+  })
+  @IsOptional()
+  @IsString()
+  @Matches(/^https:\/\/.+/, {
+    message: "photoUrl must be a valid https URL",
+  })
+  @MaxLength(2048)
+  photoUrl?: string | null;
 }

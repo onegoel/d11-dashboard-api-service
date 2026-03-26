@@ -48,7 +48,7 @@ type ChipTypeRecord = {
   usesSecondaryTeamScore: boolean;
 };
 
-export type ActiveChipAssignment = {
+type ActiveChipAssignment = {
   seasonUserId: string;
   chipPlayId: string;
   chipCode: ChipCode;
@@ -73,7 +73,7 @@ type SelectPowerupInput = {
   actorRole: UserRole;
 };
 
-export class ChipServiceError extends Error {
+class ChipServiceError extends Error {
   statusCode: number;
 
   constructor(statusCode: number, message: string) {
@@ -102,7 +102,8 @@ const REGULAR_SEASON_MATCH_COUNT = parseInt(
   10,
 );
 
-const isRegularSeasonMatch = (matchNo: number) => matchNo <= REGULAR_SEASON_MATCH_COUNT;
+const isRegularSeasonMatch = (matchNo: number) =>
+  matchNo <= REGULAR_SEASON_MATCH_COUNT;
 
 const isTeamMatch = (match: OrderedSeasonMatch, teamId: string) => {
   return match.homeTeamId === teamId || match.awayTeamId === teamId;
@@ -114,7 +115,9 @@ const getTeamFormEffectiveMatches = (
   selectedTeamId: string,
   windowSize: number,
 ) => {
-  const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+  const startIndex = orderedMatches.findIndex(
+    (match) => match.id === startMatchId,
+  );
 
   if (startIndex < 0) {
     return [] as OrderedSeasonMatch[];
@@ -122,7 +125,11 @@ const getTeamFormEffectiveMatches = (
 
   const teamMatches = orderedMatches
     .slice(startIndex)
-    .filter((match) => isRegularSeasonMatch(match.matchNo) && isTeamMatch(match, selectedTeamId));
+    .filter(
+      (match) =>
+        isRegularSeasonMatch(match.matchNo) &&
+        isTeamMatch(match, selectedTeamId),
+    );
 
   if (teamMatches.length <= windowSize) {
     return teamMatches.slice(0, windowSize);
@@ -183,7 +190,9 @@ const getAffectedMatches = (
   startMatchId: string,
   windowSize: number,
 ) => {
-  const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+  const startIndex = orderedMatches.findIndex(
+    (match) => match.id === startMatchId,
+  );
 
   if (startIndex < 0) {
     return [] as OrderedSeasonMatch[];
@@ -200,10 +209,7 @@ const hasOverlap = (firstIds: string[], secondIds: string[]) => {
   return secondIds.some((id) => firstSet.has(id));
 };
 
-const getStandingsForSeason = async (
-  tx: PrismaExecutor,
-  seasonId: number,
-) => {
+const getStandingsForSeason = async (tx: PrismaExecutor, seasonId: number) => {
   const seasonUsers = await tx.seasonUser.findMany({
     where: { seasonId },
     include: {
@@ -232,10 +238,11 @@ const getStandingsForSeason = async (
         0,
       );
 
-      const averageRank = seasonUser.scores.length > 0
-        ? seasonUser.scores.reduce((sum, score) => sum + score.rank, 0) /
-          seasonUser.scores.length
-        : Number.POSITIVE_INFINITY;
+      const averageRank =
+        seasonUser.scores.length > 0
+          ? seasonUser.scores.reduce((sum, score) => sum + score.rank, 0) /
+            seasonUser.scores.length
+          : Number.POSITIVE_INFINITY;
 
       const wins = seasonUser.scores.filter((score) => score.rank === 1).length;
 
@@ -283,7 +290,7 @@ const isBottomHalfPosition = (position: number, totalPlayers: number) => {
   return position > Math.ceil(totalPlayers / 2);
 };
 
-export const resolveActiveChipAssignmentsForMatchTx = async (
+const resolveActiveChipAssignmentsForMatchTx = async (
   tx: PrismaExecutor,
   seasonId: number,
   matchId: string,
@@ -327,20 +334,23 @@ export const resolveActiveChipAssignmentsForMatchTx = async (
   const assignments = new Map<string, ActiveChipAssignment>();
 
   for (const chipPlay of chipPlays) {
-    const affectedMatches = chipPlay.chipType.code === ChipCode.TEAM_FORM && chipPlay.selectedTeam?.id
-      ? getTeamFormEffectiveMatches(
-          orderedMatches,
-          chipPlay.startMatchId,
-          chipPlay.selectedTeam.id,
-          chipPlay.chipType.effectWindowMatches,
-        )
-      : getAffectedMatches(
-          orderedMatches,
-          chipPlay.startMatchId,
-          chipPlay.chipType.effectWindowMatches,
-        );
+    const affectedMatches =
+      chipPlay.chipType.code === ChipCode.TEAM_FORM && chipPlay.selectedTeam?.id
+        ? getTeamFormEffectiveMatches(
+            orderedMatches,
+            chipPlay.startMatchId,
+            chipPlay.selectedTeam.id,
+            chipPlay.chipType.effectWindowMatches,
+          )
+        : getAffectedMatches(
+            orderedMatches,
+            chipPlay.startMatchId,
+            chipPlay.chipType.effectWindowMatches,
+          );
 
-    const activeIndex = affectedMatches.findIndex((match) => match.id === matchId);
+    const activeIndex = affectedMatches.findIndex(
+      (match) => match.id === matchId,
+    );
 
     if (activeIndex < 0) {
       continue;
@@ -425,12 +435,14 @@ const serializeAffectedMatches = (
   startMatchId: string,
   windowSize: number,
 ) => {
-  return getAffectedMatches(orderedMatches, startMatchId, windowSize).map((match) => ({
-    id: match.id,
-    matchNo: match.matchNo,
-    matchDate: match.matchDate.toISOString(),
-    matchLabel: buildMatchLabel(match),
-  }));
+  return getAffectedMatches(orderedMatches, startMatchId, windowSize).map(
+    (match) => ({
+      id: match.id,
+      matchNo: match.matchNo,
+      matchDate: match.matchDate.toISOString(),
+      matchLabel: buildMatchLabel(match),
+    }),
+  );
 };
 
 const serializeChipPlay = (
@@ -453,23 +465,24 @@ const serializeChipPlay = (
   orderedMatches: OrderedSeasonMatch[],
   now: Date,
 ) => {
-  const affectedMatches = chipPlay.chipType.code === ChipCode.TEAM_FORM && chipPlay.selectedTeamId
-    ? getTeamFormEffectiveMatches(
-        orderedMatches,
-        chipPlay.startMatchId,
-        chipPlay.selectedTeamId,
-        chipPlay.chipType.effectWindowMatches,
-      ).map((match) => ({
-        id: match.id,
-        matchNo: match.matchNo,
-        matchDate: match.matchDate.toISOString(),
-        matchLabel: buildMatchLabel(match),
-      }))
-    : serializeAffectedMatches(
-        orderedMatches,
-        chipPlay.startMatchId,
-        chipPlay.chipType.effectWindowMatches,
-      );
+  const affectedMatches =
+    chipPlay.chipType.code === ChipCode.TEAM_FORM && chipPlay.selectedTeamId
+      ? getTeamFormEffectiveMatches(
+          orderedMatches,
+          chipPlay.startMatchId,
+          chipPlay.selectedTeamId,
+          chipPlay.chipType.effectWindowMatches,
+        ).map((match) => ({
+          id: match.id,
+          matchNo: match.matchNo,
+          matchDate: match.matchDate.toISOString(),
+          matchLabel: buildMatchLabel(match),
+        }))
+      : serializeAffectedMatches(
+          orderedMatches,
+          chipPlay.startMatchId,
+          chipPlay.chipType.effectWindowMatches,
+        );
   const hasStarted = chipPlay.startMatch.matchDate <= now;
 
   return {
@@ -488,7 +501,8 @@ const serializeChipPlay = (
     startMatchLabel: buildMatchLabel(chipPlay.startMatch),
     affectedMatches,
     canDeselect:
-      chipPlay.status === ChipPlayStatus.SCHEDULED && chipPlay.startMatch.matchDate > now,
+      chipPlay.status === ChipPlayStatus.SCHEDULED &&
+      chipPlay.startMatch.matchDate > now,
     hasStarted,
     canceledAt: chipPlay.canceledAt?.toISOString() ?? null,
     createdAt: chipPlay.createdAt.toISOString(),
@@ -570,7 +584,8 @@ const getSeasonPowerupsOverview = async (
   const users = seasonUsers
     .map((seasonUser) => {
       const userPlays = playsBySeasonUserId.get(seasonUser.id) ?? [];
-      const position = standings.positionBySeasonUserId.get(seasonUser.id) ?? null;
+      const position =
+        standings.positionBySeasonUserId.get(seasonUser.id) ?? null;
 
       const chipInventory = chipTypes.map((chipType) => {
         const usedCount = userPlays.filter(
@@ -673,7 +688,10 @@ const selectPowerupForSeasonMatch = async (
   ]);
 
   if (actorRole !== UserRole.ADMIN && seasonUser.userId !== actorUserId) {
-    throw new ChipServiceError(403, "You can only select powerups for yourself");
+    throw new ChipServiceError(
+      403,
+      "You can only select powerups for yourself",
+    );
   }
 
   const startMatch = orderedMatches.find((match) => match.id === startMatchId);
@@ -703,10 +721,16 @@ const selectPowerupForSeasonMatch = async (
       throw new ChipServiceError(404, "Selected team not found");
     }
 
-    const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+    const startIndex = orderedMatches.findIndex(
+      (match) => match.id === startMatchId,
+    );
     const remainingRegularTeamMatches = orderedMatches
       .slice(Math.max(startIndex, 0))
-      .filter((match) => isRegularSeasonMatch(match.matchNo) && isTeamMatch(match, selectedTeamId));
+      .filter(
+        (match) =>
+          isRegularSeasonMatch(match.matchNo) &&
+          isTeamMatch(match, selectedTeamId),
+      );
 
     if (remainingRegularTeamMatches.length === 0) {
       throw new ChipServiceError(
@@ -716,22 +740,23 @@ const selectPowerupForSeasonMatch = async (
     }
   }
 
-  const affectedMatches = chipType.code === ChipCode.TEAM_FORM && selectedTeamId
-    ? getTeamFormEffectiveMatches(
-        orderedMatches,
-        startMatchId,
-        selectedTeamId,
-        chipType.effectWindowMatches,
-      )
-    : getAffectedMatches(
-        orderedMatches,
-        startMatchId,
-        chipType.effectWindowMatches,
-      );
+  const affectedMatches =
+    chipType.code === ChipCode.TEAM_FORM && selectedTeamId
+      ? getTeamFormEffectiveMatches(
+          orderedMatches,
+          startMatchId,
+          selectedTeamId,
+          chipType.effectWindowMatches,
+        )
+      : getAffectedMatches(
+          orderedMatches,
+          startMatchId,
+          chipType.effectWindowMatches,
+        );
 
   if (
-    chipType.code !== ChipCode.TEAM_FORM
-    && affectedMatches.length < chipType.effectWindowMatches
+    chipType.code !== ChipCode.TEAM_FORM &&
+    affectedMatches.length < chipType.effectWindowMatches
   ) {
     throw new ChipServiceError(
       400,
@@ -827,7 +852,8 @@ const selectPowerupForSeasonMatch = async (
 
     for (const existingPlay of scheduledPlays) {
       const existingAffectedMatches =
-        existingPlay.chipType.code === ChipCode.TEAM_FORM && existingPlay.selectedTeam?.id
+        existingPlay.chipType.code === ChipCode.TEAM_FORM &&
+        existingPlay.selectedTeam?.id
           ? getTeamFormEffectiveMatches(
               orderedMatches,
               existingPlay.startMatchId,
@@ -839,7 +865,9 @@ const selectPowerupForSeasonMatch = async (
               existingPlay.startMatchId,
               existingPlay.chipType.effectWindowMatches,
             );
-      const existingAffectedMatchIds = existingAffectedMatches.map((match) => match.id);
+      const existingAffectedMatchIds = existingAffectedMatches.map(
+        (match) => match.id,
+      );
 
       if (hasOverlap(newAffectedMatchIds, existingAffectedMatchIds)) {
         throw new ChipServiceError(
@@ -857,7 +885,10 @@ const selectPowerupForSeasonMatch = async (
         data: {
           status: ChipPlayStatus.SCHEDULED,
           canceledAt: null,
-          selectedTeamId: chipType.code === ChipCode.TEAM_FORM ? selectedTeamId ?? null : null,
+          selectedTeamId:
+            chipType.code === ChipCode.TEAM_FORM
+              ? (selectedTeamId ?? null)
+              : null,
         },
         include: {
           chipType: true,
@@ -886,7 +917,10 @@ const selectPowerupForSeasonMatch = async (
         seasonUserId,
         chipTypeId: chipType.id,
         startMatchId,
-        selectedTeamId: chipType.code === ChipCode.TEAM_FORM ? selectedTeamId ?? null : null,
+        selectedTeamId:
+          chipType.code === ChipCode.TEAM_FORM
+            ? (selectedTeamId ?? null)
+            : null,
       },
       include: {
         chipType: true,
@@ -969,8 +1003,14 @@ const deselectPowerup = async (
       throw new ChipServiceError(404, "Powerup selection not found");
     }
 
-    if (actor.role !== UserRole.ADMIN && chipPlay.seasonUser.userId !== actor.userId) {
-      throw new ChipServiceError(403, "You can only deselect your own powerups");
+    if (
+      actor.role !== UserRole.ADMIN &&
+      chipPlay.seasonUser.userId !== actor.userId
+    ) {
+      throw new ChipServiceError(
+        403,
+        "You can only deselect your own powerups",
+      );
     }
 
     if (chipPlay.status === ChipPlayStatus.CANCELLED) {

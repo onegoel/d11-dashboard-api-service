@@ -3,7 +3,7 @@ import { MatchStatus } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
 
-export type GetSeasonMatchesOptions = {
+type GetSeasonMatchesOptions = {
   status?: MatchStatus;
 };
 
