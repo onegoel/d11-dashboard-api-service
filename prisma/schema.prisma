@@ -126,6 +126,9 @@ model Match {
   homeTeamId String
   awayTeamId String
   updatedByUserId Int?
+  
+  stadium String?
+  venue String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
