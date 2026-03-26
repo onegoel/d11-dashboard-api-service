@@ -1,11 +1,13 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
-import fixtures from "../data/ipl-2026/schedule-phase-1.json" with { type: "json" };
+import fixtures from "../data/ipl-2026/league-stage-ipl-2026.json" with { type: "json" };
 
 type Fixture = {
-  match_no: number;
+  matchNo: number;
   home: string;
   away: string;
   date: string;
+  stadium?: string;
+  venue?: string;
 };
 
 const unlockOneScheduledMatchForTesting = async (
@@ -82,7 +84,7 @@ export async function seedFixtures(
 
     if (!homeTeamId || !awayTeamId) {
       throw new Error(
-        `Unknown team in fixture ${fixture.match_no}: ${fixture.home} vs ${fixture.away}`,
+        `Unknown team in fixture ${fixture.matchNo}: ${fixture.home} vs ${fixture.away}`,
       );
     }
 
@@ -90,22 +92,26 @@ export async function seedFixtures(
       where: {
         seasonId_matchNo: {
           seasonId,
-          matchNo: fixture.match_no,
+          matchNo: fixture.matchNo,
         },
       },
       update: {
         matchDate: new Date(fixture.date),
         homeTeamId,
         awayTeamId,
+        stadium: fixture.stadium,
+        venue: fixture.venue,
         status: "SCHEDULED",
         matchResult: "PENDING",
       },
       create: {
         seasonId,
-        matchNo: fixture.match_no,
+        matchNo: fixture.matchNo,
         matchDate: new Date(fixture.date),
         homeTeamId,
         awayTeamId,
+        stadium: fixture.stadium,
+        venue: fixture.venue,
         status: "SCHEDULED",
         matchResult: "PENDING",
       },
