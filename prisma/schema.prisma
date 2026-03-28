@@ -70,6 +70,7 @@ model Season {
   endDate   DateTime?
 
   winnerUserId Int?
+  cricApiSeriesId String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -129,6 +130,8 @@ model Match {
   
   stadium String?
   venue String?
+
+  cricApiMatchId String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
