@@ -46,6 +46,28 @@ steps:
 
         EXTRA_ARGS=()
         if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
+          EXTRA_ARGS+=(--set-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
+        fi
+
+        gcloud run jobs deploy "${_SYNC_IDS_JOB_NAME}" \
+          --project "${PROJECT_ID}" \
+          --region "${_REGION}" \
+          --image "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}" \
+          --service-account "${_RUNTIME_SERVICE_ACCOUNT}" \
+          --command npx \
+          --args tsx,scripts/sync-cricapi-ids.ts,--apply,--optional \
+          --set-env-vars "NODE_ENV=production,CRICAPI_DB_SEASON_ID=${_CRICAPI_DB_SEASON_ID},CRICAPI_SERIES_ID=${_CRICAPI_SERIES_ID},CRICAPI_IPL_2026_DB_SEASON_ID=${_CRICAPI_IPL_2026_DB_SEASON_ID},CRICAPI_IPL_2026_SERIES_ID=${_CRICAPI_IPL_2026_SERIES_ID}" \
+          --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
+          --set-secrets "CRICAPI_API_KEY=CRICAPI_API_KEY:latest" \
+          "${EXTRA_ARGS[@]}"
+
+        gcloud run jobs execute "${_SYNC_IDS_JOB_NAME}" \
+          --project "${PROJECT_ID}" \
+          --region "${_REGION}" \
+          --wait
+
+        EXTRA_ARGS=()
+        if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
           EXTRA_ARGS+=(--add-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
         fi
 
@@ -72,11 +94,16 @@ substitutions:
   _REGION: asia-south1
   _SERVICE_NAME: d11-dashboard-api-service
   _MIGRATION_JOB_NAME: d11-dashboard-api-service-migrate
+  _SYNC_IDS_JOB_NAME: d11-dashboard-api-service-sync-cricapi-ids
   _AR_REPO: d11-dashboard-api-container-repo
   _RUNTIME_SERVICE_ACCOUNT: ""
   _CLOUD_SQL_INSTANCE: ""
   _CORS_ORIGIN: ""
   _BEST_N_DROP_COUNT: "5"
+  _CRICAPI_DB_SEASON_ID: "1"
+  _CRICAPI_SERIES_ID: "87c62aac-bc3c-4738-ab93-19da0690488f"
+  _CRICAPI_IPL_2026_DB_SEASON_ID: "1"
+  _CRICAPI_IPL_2026_SERIES_ID: "87c62aac-bc3c-4738-ab93-19da0690488f"
   _CRICAPI_SCORE_SOURCE: "live"
   _CRICAPI_ENABLE_SCORE_POLLER: "true"
   _CRICAPI_ENABLE_MOCK_SCORE_FALLBACK: "false"
