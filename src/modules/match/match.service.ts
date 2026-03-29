@@ -78,14 +78,27 @@ export class MatchService {
       matchInfo.data.matchEnded,
     );
 
+    // Guard against feed lag/regressions that can temporarily report
+    // non-ended state for a match that is already finalized in DB.
+    const finalStatus =
+      match.status === MatchStatus.COMPLETED &&
+      nextStatus !== MatchStatus.COMPLETED
+        ? match.status
+        : nextStatus;
+    const finalResult =
+      match.matchResult !== MatchResult.PENDING &&
+      nextResult === MatchResult.PENDING
+        ? match.matchResult
+        : nextResult;
+
     await this.prisma.client.match.update({
       where: { id: matchId },
       data: {
         cricApiScore: score,
         cricApiStatus: matchInfo.data.status || null,
         cricApiLastSyncedAt: new Date(),
-        status: nextStatus,
-        matchResult: nextResult,
+        status: finalStatus,
+        matchResult: finalResult,
       },
     });
 
