@@ -133,6 +133,10 @@ model Match {
 
   cricApiMatchId String? @unique
 
+  cricApiScore  Json?
+  cricApiStatus String?
+  cricApiLastSyncedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
