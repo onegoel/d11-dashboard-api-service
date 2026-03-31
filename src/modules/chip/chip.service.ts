@@ -923,7 +923,7 @@ const selectPowerupForSeasonMatch = async (
               ? ({
                   anchorPlayerName: anchorPlayerName?.trim(),
                 } as Prisma.InputJsonValue)
-              : null,
+              : {},
         },
         include: {
           chipType: true,
@@ -961,7 +961,7 @@ const selectPowerupForSeasonMatch = async (
             ? ({
                 anchorPlayerName: anchorPlayerName?.trim(),
               } as Prisma.InputJsonValue)
-            : null,
+            : {},
       },
       include: {
         chipType: true,
