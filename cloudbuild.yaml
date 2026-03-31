@@ -49,28 +49,6 @@ steps:
           EXTRA_ARGS+=(--set-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
         fi
 
-        gcloud run jobs deploy "${_SYNC_IDS_JOB_NAME}" \
-          --project "${PROJECT_ID}" \
-          --region "${_REGION}" \
-          --image "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${SHORT_SHA}" \
-          --service-account "${_RUNTIME_SERVICE_ACCOUNT}" \
-          --command npx \
-          --args tsx,scripts/sync-cricapi-ids.ts,--apply,--seasonId=${_CRICAPI_DB_SEASON_ID},--seriesId=${_CRICAPI_SERIES_ID} \
-          --set-env-vars "NODE_ENV=production,CRICAPI_DB_SEASON_ID=${_CRICAPI_DB_SEASON_ID},CRICAPI_SERIES_ID=${_CRICAPI_SERIES_ID},CRICAPI_IPL_2026_DB_SEASON_ID=${_CRICAPI_IPL_2026_DB_SEASON_ID},CRICAPI_IPL_2026_SERIES_ID=${_CRICAPI_IPL_2026_SERIES_ID}" \
-          --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
-          --set-secrets "CRICAPI_API_KEY=CRICAPI_API_KEY:latest" \
-          "${EXTRA_ARGS[@]}"
-
-        gcloud run jobs execute "${_SYNC_IDS_JOB_NAME}" \
-          --project "${PROJECT_ID}" \
-          --region "${_REGION}" \
-          --wait
-
-        EXTRA_ARGS=()
-        if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
-          EXTRA_ARGS+=(--add-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
-        fi
-
         gcloud run deploy "${_SERVICE_NAME}" \
           --project "${PROJECT_ID}" \
           --region "${_REGION}" \

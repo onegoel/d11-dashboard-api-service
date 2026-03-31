@@ -35,7 +35,8 @@ export class ChipController {
   @Get("season/:seasonId")
   @ApiOperation({
     summary: "Get season powerups overview",
-    description: "Retrieve all available powerups and their eligibility information for a season",
+    description:
+      "Retrieve all available powerups and their eligibility information for a season",
   })
   @ApiParam({
     name: "seasonId",
@@ -55,7 +56,8 @@ export class ChipController {
   @HttpCode(200)
   @ApiOperation({
     summary: "Select a powerup",
-    description: "Select and activate a powerup for a season user at a specific match",
+    description:
+      "Select and activate a powerup for a season user at a specific match",
   })
   @ApiParam({
     name: "seasonId",
@@ -82,6 +84,9 @@ export class ChipController {
       chipCode: body.chipCode,
       startMatchId: body.startMatchId,
       ...(body.selectedTeamId ? { selectedTeamId: body.selectedTeamId } : {}),
+      ...(body.anchorPlayerName
+        ? { anchorPlayerName: body.anchorPlayerName }
+        : {}),
       actorUserId: appUser.id,
       actorRole: appUser.role,
     });

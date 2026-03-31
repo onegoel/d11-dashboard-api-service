@@ -69,6 +69,7 @@ type SelectPowerupInput = {
   chipCode: ChipCode;
   startMatchId: string;
   selectedTeamId?: string;
+  anchorPlayerName?: string;
   actorUserId: number;
   actorRole: UserRole;
 };
@@ -452,6 +453,7 @@ const serializeChipPlay = (
     startMatch: OrderedSeasonMatch;
     startMatchId: string;
     selectedTeamId: string | null;
+    extraInfo?: Prisma.JsonValue | null;
     selectedTeam?: {
       id: string;
       shortCode: string;
@@ -480,6 +482,15 @@ const serializeChipPlay = (
           chipPlay.chipType.effectWindowMatches,
         );
   const hasStarted = chipPlay.startMatch.matchDate <= now;
+  const anchorPlayerName =
+    chipPlay.extraInfo &&
+    typeof chipPlay.extraInfo === "object" &&
+    !Array.isArray(chipPlay.extraInfo) &&
+    typeof (chipPlay.extraInfo as Record<string, unknown>).anchorPlayerName ===
+      "string"
+      ? ((chipPlay.extraInfo as Record<string, unknown>)
+          .anchorPlayerName as string)
+      : null;
 
   return {
     id: chipPlay.id,
@@ -488,6 +499,8 @@ const serializeChipPlay = (
     chipShortCode: getChipShortCode(chipPlay.chipType.code),
     chipName: chipPlay.chipType.name,
     selectedTeamId: chipPlay.selectedTeamId,
+    extraInfo: chipPlay.extraInfo ?? null,
+    anchorPlayerName,
     selectedTeamShortCode: chipPlay.selectedTeam?.shortCode ?? null,
     selectedTeamName: chipPlay.selectedTeam?.name ?? null,
     status: chipPlay.status,
@@ -670,6 +683,7 @@ const selectPowerupForSeasonMatch = async (
     chipCode,
     startMatchId,
     selectedTeamId,
+    anchorPlayerName,
     actorUserId,
     actorRole,
   }: SelectPowerupInput,
@@ -742,6 +756,15 @@ const selectPowerupForSeasonMatch = async (
       throw new ChipServiceError(
         400,
         "Selected team has no remaining regular-season fixtures from this match",
+      );
+    }
+  }
+
+  if (chipType.code === ChipCode.ANCHOR_PLAYER) {
+    if (!anchorPlayerName || anchorPlayerName.trim().length === 0) {
+      throw new ChipServiceError(
+        400,
+        "Anchor Player requires entering the anchor player name",
       );
     }
   }
@@ -895,6 +918,12 @@ const selectPowerupForSeasonMatch = async (
             chipType.code === ChipCode.TEAM_FORM
               ? (selectedTeamId ?? null)
               : null,
+          extraInfo:
+            chipType.code === ChipCode.ANCHOR_PLAYER
+              ? ({
+                  anchorPlayerName: anchorPlayerName?.trim(),
+                } as Prisma.InputJsonValue)
+              : null,
         },
         include: {
           chipType: true,
@@ -926,6 +955,12 @@ const selectPowerupForSeasonMatch = async (
         selectedTeamId:
           chipType.code === ChipCode.TEAM_FORM
             ? (selectedTeamId ?? null)
+            : null,
+        extraInfo:
+          chipType.code === ChipCode.ANCHOR_PLAYER
+            ? ({
+                anchorPlayerName: anchorPlayerName?.trim(),
+              } as Prisma.InputJsonValue)
             : null,
       },
       include: {
