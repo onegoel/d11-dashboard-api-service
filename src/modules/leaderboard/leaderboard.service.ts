@@ -42,8 +42,10 @@ const POWER_PODIUM_BONUS = 1;
 const calcFinalPoints = (
   playedPoints: number[],
   totalMatchesSoFar: number,
-): number => {
-  if (playedPoints.length === 0) return 0;
+): { finalPoints: number; effectiveDrop: number } => {
+  if (playedPoints.length === 0) {
+    return { finalPoints: 0, effectiveDrop: 0 };
+  }
 
   let effectiveDrop = 0;
 
@@ -54,7 +56,9 @@ const calcFinalPoints = (
   const sorted = [...playedPoints].sort((a, b) => a - b);
   const remaining = sorted.slice(effectiveDrop);
 
-  return remaining.reduce((sum, p) => sum + p, 0);
+  const finalPoints = remaining.reduce((sum, p) => sum + p, 0);
+
+  return { finalPoints, effectiveDrop };
 };
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
@@ -434,7 +438,7 @@ export class LeaderboardService {
           history.length > 0
             ? history[history.length - 1]!.cumulativePoints
             : 0;
-        const finalPoints = calcFinalPoints(
+        const { finalPoints, effectiveDrop } = calcFinalPoints(
           playedHistory.map((point) => point.points),
           completedMatches.length,
         );
@@ -451,6 +455,7 @@ export class LeaderboardService {
           points: totalPoints,
           gamesDropCount: DROP_COUNT,
           finalPoints,
+          effectiveDrop,
           played: playedHistory.length,
           wins: playedHistory.filter((point) => point.rank === 1).length,
           averageRank,
