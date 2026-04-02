@@ -436,6 +436,7 @@ export class LeaderboardService {
             : 0;
         const finalPoints = calcFinalPoints(
           playedHistory.map((point) => point.points),
+          completedMatches.length,
         );
 
         return {
