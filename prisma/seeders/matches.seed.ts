@@ -101,8 +101,6 @@ export async function seedFixtures(
         awayTeamId,
         stadium: fixture.stadium,
         venue: fixture.venue,
-        status: "SCHEDULED",
-        matchResult: "PENDING",
       },
       create: {
         seasonId,
