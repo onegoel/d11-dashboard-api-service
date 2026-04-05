@@ -21,7 +21,7 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: "5mb" }));
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? "")
-    .split(",")
+    .split("|")
     .map((origin) => origin.trim())
     .filter(Boolean);
 

@@ -439,7 +439,7 @@ export class LeaderboardService {
             ? history[history.length - 1]!.cumulativePoints
             : 0;
         const { finalPoints, effectiveDrop } = calcFinalPoints(
-          playedHistory.map((point) => point.points),
+          history.map((point) => (point.didPlay ? point.points : 0)),
           completedMatches.length,
         );
 
