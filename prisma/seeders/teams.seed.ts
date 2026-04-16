@@ -3,11 +3,54 @@ import { PrismaClient } from "../../generated/prisma/client.js";
 export async function seedTeams(prisma: PrismaClient) {
   console.log("Seeding IPL teams...");
 
+  const IPL_TEAMS = [
+    {
+      name: "Chennai Super Kings",
+      shortName: "CSK",
+    },
+    {
+      name: "Delhi Capitals",
+      shortName: "DC",
+    },
+    {
+      name: "Punjab Kings",
+      shortName: "PBKS",
+    },
+    {
+      name: "Kolkata Knight Riders",
+      shortName: "KKR",
+    },
+    {
+      name: "Mumbai Indians",
+      shortName: "MI",
+    },
+    {
+      name: "Rajasthan Royals",
+      shortName: "RR",
+    },
+    {
+      name: "Royal Challengers Bengaluru",
+      shortName: "RCB",
+    },
+    {
+      name: "Sunrisers Hyderabad",
+      shortName: "SRH",
+    },
+    {
+      name: "Gujarat Titans",
+      shortName: "GT",
+    },
+    {
+      name: "Lucknow Super Giants",
+      shortName: "LSG",
+    },
+  ];
+
   await prisma.team.createMany({
     data: [
       { name: "Mumbai Indians", shortCode: "MI" },
       { name: "Chennai Super Kings", shortCode: "CSK" },
-      { name: "Royal Challengers Bangalore", shortCode: "RCB" },
+      { name: "Royal Challengers Bengaluru", shortCode: "RCB" },
       { name: "Kolkata Knight Riders", shortCode: "KKR" },
       { name: "Delhi Capitals", shortCode: "DC" },
       { name: "Rajasthan Royals", shortCode: "RR" },
@@ -19,25 +62,18 @@ export async function seedTeams(prisma: PrismaClient) {
     skipDuplicates: true,
   });
 
-  // Update existing teams with Cricbuzz team IDs
-  const teamUpdates = [
-    { shortCode: "MI", cricbuzzTeamId: "62" },
-    { shortCode: "CSK", cricbuzzTeamId: "58" },
-    { shortCode: "RCB", cricbuzzTeamId: "59" },
-    { shortCode: "KKR", cricbuzzTeamId: "63" },
-    { shortCode: "DC", cricbuzzTeamId: "61" },
-    { shortCode: "RR", cricbuzzTeamId: "64" },
-    { shortCode: "SRH", cricbuzzTeamId: "255" },
-    { shortCode: "PBKS", cricbuzzTeamId: "65" },
-    { shortCode: "GT", cricbuzzTeamId: "971" },
-    { shortCode: "LSG", cricbuzzTeamId: "966" },
-  ];
-
-  // Idempotently update teams with Cricbuzz IDs
-  for (const { shortCode, cricbuzzTeamId } of teamUpdates) {
-    await prisma.team.updateMany({
-      where: { shortCode },
-      data: { cricbuzzTeamId },
+  // Idempotent upsert to set CA team IDs based on short codes
+  for (const team of IPL_TEAMS) {
+    await prisma.team.upsert({
+      where: { shortCode: team.shortName },
+      update: {
+        name: team.name,
+        shortCode: team.shortName,
+      },
+      create: {
+        name: team.name,
+        shortCode: team.shortName,
+      },
     });
   }
 

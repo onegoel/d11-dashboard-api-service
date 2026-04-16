@@ -1,0 +1,4347 @@
+{
+  "matchId": 117620,
+  "sportsType": 1,
+  "gameType": 1,
+  "maxCreditsAllowed": 100,
+  "players": [
+    {
+      "id": 92538,
+      "name": "Vaibhav Suryavanshi",
+      "dName": "Vaibhav Suryavanshi",
+      "sName": "V Sooryavanshi",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/92538/MD74X3CU9G_vaibhav_suryavanshi.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 448,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 211,
+        "num100s": 0,
+        "num50s": 2,
+        "strikeRate": 245.35,
+        "wickets": 0,
+        "economy": 13.64,
+        "innings": 0,
+        "highestScore": "78",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 174,
+              "isBestXI": true,
+              "selectPerc": 73
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 87,
+              "isBestXI": true,
+              "selectPerc": 80
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 71,
+              "isBestXI": true,
+              "selectPerc": 84
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 116,
+              "isBestXI": true,
+              "selectPerc": 81
+            },
+            {
+              "mid": 0,
+              "dname": "BIHAR vs MAH",
+              "stime": 1764653400000,
+              "points": 204,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 91,
+      "isTopPlayer": false,
+      "selCapPerc": 31.8,
+      "selVcPerc": 16.6,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 2,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 4,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3664,
+      "name": "Dhruv Jurel",
+      "dName": "Dhruv Jurel",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3664/ITAN4EVBCF_dhruv_jurel.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 404,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 207,
+        "num100s": 0,
+        "num50s": 2,
+        "strikeRate": 189.91,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "81",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 161,
+              "isBestXI": true,
+              "selectPerc": 76
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 22,
+              "isBestXI": true,
+              "selectPerc": 75
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 161,
+              "isBestXI": true,
+              "selectPerc": 60
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 60,
+              "isBestXI": true,
+              "selectPerc": 62
+            },
+            {
+              "mid": 0,
+              "dname": "CHE vs RAJ",
+              "stime": 1747749620000,
+              "points": 79,
+              "isBestXI": true,
+              "selectPerc": 47
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 86,
+      "isTopPlayer": false,
+      "selCapPerc": 7.4,
+      "selVcPerc": 8.8,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 3,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 4800,
+      "name": "Yashasvi Jaiswal",
+      "dName": "Yashasvi Jaiswal",
+      "sName": "Y Jaiswal",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/4800/KCR1LRL772_ybk_jaiswal.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 385,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 198,
+        "num100s": 0,
+        "num50s": 2,
+        "strikeRate": 154.69,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "77",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 29,
+              "isBestXI": false,
+              "selectPerc": 84
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 171,
+              "isBestXI": true,
+              "selectPerc": 78
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 113,
+              "isBestXI": true,
+              "selectPerc": 82
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 72,
+              "isBestXI": true,
+              "selectPerc": 84
+            },
+            {
+              "mid": 0,
+              "dname": "CHE vs RAJ",
+              "stime": 1747749620000,
+              "points": 90,
+              "isBestXI": true,
+              "selectPerc": 94
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 90,
+      "isTopPlayer": false,
+      "selCapPerc": 14,
+      "selVcPerc": 17.2,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 1,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6442,
+      "name": "Ravi Bishnoi",
+      "dName": "Ravi Bishnoi",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6442/7R7WR4IXRT_ravi_bishnoi.png",
+      "role": 2,
+      "roleSubType": 2,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 349,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 25,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 166.67,
+        "wickets": 10,
+        "economy": 8.82,
+        "innings": 0,
+        "highestScore": "25",
+        "average": 0,
+        "bestBowling": "4/41",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 80,
+              "isBestXI": true,
+              "selectPerc": 59
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 68,
+              "isBestXI": true,
+              "selectPerc": 34
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 139,
+              "isBestXI": true,
+              "selectPerc": 10
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 62,
+              "isBestXI": true,
+              "selectPerc": 28
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 77,
+      "isTopPlayer": false,
+      "selCapPerc": 1.6,
+      "selVcPerc": 3,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 11,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3431,
+      "name": "Heinrich Klaasen",
+      "dName": "Heinrich Klaasen",
+      "sName": "H Klaasen",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3431/EKGCHHAN31_h_klaasen_.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 334,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 213,
+        "num100s": 0,
+        "num50s": 2,
+        "strikeRate": 140.13,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "62",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 65,
+              "isBestXI": true,
+              "selectPerc": 74
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 110,
+              "isBestXI": true,
+              "selectPerc": 76
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 88,
+              "isBestXI": true,
+              "selectPerc": 74
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 71,
+              "isBestXI": true,
+              "selectPerc": 62
+            },
+            {
+              "mid": 0,
+              "dname": "LK-DUR vs RAJ-PR",
+              "stime": 1768647600000,
+              "points": 59,
+              "isBestXI": true,
+              "selectPerc": 47
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 80,
+      "isTopPlayer": false,
+      "selCapPerc": 4.9,
+      "selVcPerc": 7,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 4,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3401,
+      "name": "Ishan Kishan",
+      "dName": "Ishan Kishan",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3401/HNY4IP1LJC_ishan_kishan.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 296,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 223,
+        "num100s": 1,
+        "num50s": 1,
+        "strikeRate": 190.6,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "101",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 57,
+              "isBestXI": true,
+              "selectPerc": 80
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 29,
+              "isBestXI": false,
+              "selectPerc": 84
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 46,
+              "isBestXI": false,
+              "selectPerc": 85
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 164,
+              "isBestXI": true,
+              "selectPerc": 86
+            },
+            {
+              "mid": 0,
+              "dname": "JHA vs UK",
+              "stime": 1764826200000,
+              "points": 59,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 81,
+      "isTopPlayer": false,
+      "selCapPerc": 12.4,
+      "selVcPerc": 10,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 3,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": true,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5439,
+      "name": "Abhishek Sharma",
+      "dName": "Abhishek Sharma",
+      "sName": "A Sharma",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/5439/3S7IVTFNIX_abhishek_sharma.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 283,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 191,
+        "num100s": 0,
+        "num50s": 2,
+        "strikeRate": 205.38,
+        "wickets": 2,
+        "economy": 7.83,
+        "innings": 0,
+        "highestScore": "74",
+        "average": 0,
+        "bestBowling": "2/8",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 161,
+              "isBestXI": true,
+              "selectPerc": 73
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 2,
+              "isBestXI": false,
+              "selectPerc": 81
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 103,
+              "isBestXI": true,
+              "selectPerc": 75
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 17,
+              "isBestXI": false,
+              "selectPerc": 87
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 88,
+      "isTopPlayer": false,
+      "selCapPerc": 12.7,
+      "selVcPerc": 14.6,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 1,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 7971,
+      "name": "Nithish Reddy",
+      "dName": "Nitish K Reddy",
+      "sName": "Kumar Reddy",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/7971/RF766RKMAV_nitish_kumar_reddy.png",
+      "role": 4,
+      "roleSubType": 1,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 282,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 141,
+        "num100s": 0,
+        "num50s": 1,
+        "strikeRate": 163.95,
+        "wickets": 4,
+        "economy": 9.27,
+        "innings": 0,
+        "highestScore": "56",
+        "average": 0,
+        "bestBowling": "2/17",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 11,
+              "isBestXI": false,
+              "selectPerc": 70
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 123,
+              "isBestXI": true,
+              "selectPerc": 59
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 138,
+              "isBestXI": true,
+              "selectPerc": 19
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 10,
+              "isBestXI": false,
+              "selectPerc": 18
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs KOL",
+              "stime": 1748181650000,
+              "points": 21,
+              "isBestXI": false,
+              "selectPerc": 33
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 52,
+      "isTopPlayer": false,
+      "selCapPerc": 1.1,
+      "selVcPerc": 1.8,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 7,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6923,
+      "name": "Jofra Archer",
+      "dName": "Jofra Archer",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6923/IFH7DR7E55_jofra_archer.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 249,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 13,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 130,
+        "wickets": 6,
+        "economy": 8.06,
+        "innings": 0,
+        "highestScore": "12",
+        "average": 0,
+        "bestBowling": "2/33",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 66,
+              "isBestXI": true,
+              "selectPerc": 49
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 57,
+              "isBestXI": true,
+              "selectPerc": 62
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 31,
+              "isBestXI": false,
+              "selectPerc": 69
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 95,
+              "isBestXI": true,
+              "selectPerc": 73
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs RAJ",
+              "stime": 1746352820000,
+              "points": 61,
+              "isBestXI": true,
+              "selectPerc": 81
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 70,
+      "isTopPlayer": false,
+      "selCapPerc": 0.9,
+      "selVcPerc": 1.6,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 8,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 28230,
+      "name": "Harsh Dubey",
+      "dName": "Harsh Dubey",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/28230/96UOOBSOSP_hs_dubey.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 235,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 24,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 133.33,
+        "wickets": 7,
+        "economy": 8.06,
+        "innings": 0,
+        "highestScore": "11",
+        "average": 0,
+        "bestBowling": "2/18",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 48,
+              "isBestXI": false,
+              "selectPerc": 26
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 80,
+              "isBestXI": true,
+              "selectPerc": 20
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 62,
+              "isBestXI": false,
+              "selectPerc": 29
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 45,
+              "isBestXI": false,
+              "selectPerc": 6
+            },
+            {
+              "mid": 0,
+              "dname": "RAI vs VID",
+              "stime": 1765018800000,
+              "points": 73,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 24,
+      "isTopPlayer": false,
+      "selCapPerc": 0.3,
+      "selVcPerc": 0.5,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 8,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5369,
+      "name": "Travis Head",
+      "dName": "Travis Head",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/5369/5OBQM6DIWE_SRH_travis_head.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 216,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 178,
+        "num100s": 0,
+        "num50s": 1,
+        "strikeRate": 176.24,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "76",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 76,
+              "isBestXI": true,
+              "selectPerc": 77
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 15,
+              "isBestXI": false,
+              "selectPerc": 85
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 102,
+              "isBestXI": true,
+              "selectPerc": 70
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 23,
+              "isBestXI": false,
+              "selectPerc": 84
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs KOL",
+              "stime": 1748181650000,
+              "points": 158,
+              "isBestXI": true,
+              "selectPerc": 86
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 82,
+      "isTopPlayer": false,
+      "selCapPerc": 8,
+      "selVcPerc": 10.5,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 2,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 4581,
+      "name": "Nandre Burger",
+      "dName": "Nandre Burger",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/4581/6QGA1RFL12_nandre_burger.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 206,
+      "credits": 7,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 17,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 154.55,
+        "wickets": 6,
+        "economy": 9.62,
+        "innings": 0,
+        "highestScore": "17",
+        "average": 0,
+        "bestBowling": "2/21",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 9,
+              "isBestXI": false,
+              "selectPerc": 36
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 68,
+              "isBestXI": true,
+              "selectPerc": 32
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 41,
+              "isBestXI": false,
+              "selectPerc": 44
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 88,
+              "isBestXI": true,
+              "selectPerc": 10
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ-PR vs CHE-JO",
+              "stime": 1769095800000,
+              "points": 75,
+              "isBestXI": true,
+              "selectPerc": 34
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 25,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.5,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 9,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3444,
+      "name": "Jaydev Unadkat",
+      "dName": "Jaydev Unadkat",
+      "sName": "J Unadkat",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3444/MVBO64XNP4_jaydev_unadkat.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 187,
+      "credits": 8.5,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 4,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 133.33,
+        "wickets": 7,
+        "economy": 10.1,
+        "innings": 0,
+        "highestScore": "4",
+        "average": 0,
+        "bestBowling": "3/21",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 2,
+              "isBestXI": false,
+              "selectPerc": 35
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 4,
+              "isBestXI": false,
+              "selectPerc": 71
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 129,
+              "isBestXI": true,
+              "selectPerc": 52
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 52,
+              "isBestXI": true,
+              "selectPerc": 26
+            },
+            {
+              "mid": 0,
+              "dname": "SAU vs TN",
+              "stime": 1765191600000,
+              "points": 105,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 30,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.5,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 4,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 106892,
+      "name": "Shivang Kumar",
+      "dName": "Shivang Kumar",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/106892/8UW58E72KP_shivang_kumar.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 178,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 11,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 91.67,
+        "wickets": 5,
+        "economy": 9,
+        "innings": 0,
+        "highestScore": "5",
+        "average": 0,
+        "bestBowling": "3/33",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 106,
+              "isBestXI": true,
+              "selectPerc": 11
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 48,
+              "isBestXI": true,
+              "selectPerc": 10
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 24,
+              "isBestXI": false,
+              "selectPerc": 4
+            },
+            {
+              "mid": 0,
+              "dname": "BIHAR vs MP",
+              "stime": 1764307800000,
+              "points": 135,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 31,
+      "isTopPlayer": false,
+      "selCapPerc": 0.5,
+      "selVcPerc": 0.8,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 9,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 4344,
+      "name": "Ravindra Jadeja",
+      "dName": "Ravindra Jadeja",
+      "sName": "R Jadeja",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/4344/ZDBRH1PZD1_ravindra_jadeja.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 177,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 52,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 104,
+        "wickets": 5,
+        "economy": 7.4,
+        "innings": 0,
+        "highestScore": "24",
+        "average": 0,
+        "bestBowling": "2/18",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 64,
+              "isBestXI": true,
+              "selectPerc": 45
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 4,
+              "isBestXI": false,
+              "selectPerc": 66
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 24,
+              "isBestXI": false,
+              "selectPerc": 81
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 85,
+              "isBestXI": true,
+              "selectPerc": 75
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs CHE",
+              "stime": 1748167220000,
+              "points": 104,
+              "isBestXI": true,
+              "selectPerc": 92
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 48,
+      "isTopPlayer": false,
+      "selCapPerc": 0.8,
+      "selVcPerc": 1.6,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "orderId": 6,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5486,
+      "name": "Sandeep Sharma",
+      "dName": "Sandeep Sharma",
+      "sName": "S Sharma",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/5486/V1XVFFFF4X_sandeep_sharma.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 175,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 6,
+        "economy": 9.72,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "2/26",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 37,
+              "isBestXI": false,
+              "selectPerc": 20
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 89,
+              "isBestXI": true,
+              "selectPerc": 13
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 12,
+              "isBestXI": false,
+              "selectPerc": 15
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 37,
+              "isBestXI": false,
+              "selectPerc": 17
+            },
+            {
+              "mid": 0,
+              "dname": "CGARH vs UP",
+              "stime": 1764826200000,
+              "points": 159,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 17,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.4,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 10,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 89993,
+      "name": "Aniket Verma",
+      "dName": "Aniket Verma",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/89993/ZUR6YQ54CJ_aniket_verma.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 152,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 95,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 182.69,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "43",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 40,
+              "isBestXI": false,
+              "selectPerc": 24
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 6,
+              "isBestXI": false,
+              "selectPerc": 35
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 13,
+              "isBestXI": false,
+              "selectPerc": 41
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 93,
+              "isBestXI": true,
+              "selectPerc": 8
+            },
+            {
+              "mid": 0,
+              "dname": "JK vs MP",
+              "stime": 1765191600000,
+              "points": 14,
+              "isBestXI": false,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 13,
+      "isTopPlayer": false,
+      "selCapPerc": 0.3,
+      "selVcPerc": 0.5,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 5,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 53509,
+      "name": "Eshan Malinga",
+      "dName": "Eshan Malinga",
+      "teamId": 638,
+      "teamName": "HYD",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 144,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 3,
+        "economy": 11.8,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "2/14",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 4,
+              "isBestXI": false,
+              "selectPerc": 30
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 43,
+              "isBestXI": true,
+              "selectPerc": 15
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 96,
+              "isBestXI": true,
+              "selectPerc": 3
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 1,
+              "isBestXI": false,
+              "selectPerc": 13
+            },
+            {
+              "mid": 0,
+              "dname": "GREENS vs GREYS",
+              "stime": 1755331925000,
+              "points": 1,
+              "isBestXI": false,
+              "selectPerc": 74
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 17,
+      "isTopPlayer": false,
+      "selCapPerc": 0.1,
+      "selVcPerc": 0.3,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 11,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 125241,
+      "name": "Brijesh Sharma",
+      "dName": "Brijesh Sharma",
+      "sName": "B Sharma",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/125241/OF2SOU9D93_brijesh_sharma.png",
+      "role": 4,
+      "roleSubType": 1,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 140,
+      "credits": 7,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 3,
+        "economy": 7.71,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "2/37",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 84,
+              "isBestXI": true,
+              "selectPerc": 5
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 56,
+              "isBestXI": true,
+              "selectPerc": 3
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 15,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.3,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": true,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6651,
+      "name": "Riyan Parag",
+      "dName": "Riyan Parag",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6651/CN9M1CR21D_RR_ABNR0003_Parag.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 132,
+      "credits": 10.5,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 59,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 120.41,
+        "wickets": 1,
+        "economy": 11,
+        "innings": 0,
+        "highestScore": "20",
+        "average": 0,
+        "bestBowling": "1/11",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 7,
+              "isBestXI": false,
+              "selectPerc": 71
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 46,
+              "isBestXI": true,
+              "selectPerc": 60
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 51,
+              "isBestXI": true,
+              "selectPerc": 64
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 28,
+              "isBestXI": false,
+              "selectPerc": 65
+            },
+            {
+              "mid": 0,
+              "dname": "ASSAM vs VID",
+              "stime": 1764826200000,
+              "points": 13,
+              "isBestXI": false,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 31,
+      "isTopPlayer": false,
+      "selCapPerc": 1,
+      "selVcPerc": 1.5,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 5,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": true,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3633,
+      "name": "Shimron Hetmyer",
+      "dName": "Shimron Hetmyer",
+      "sName": "S Hetmyer",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3633/ARSFCVKW3T_shimron_hetmyer.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 104,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 31,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 155,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "18",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 30,
+              "isBestXI": false,
+              "selectPerc": 20
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 18,
+              "isBestXI": false,
+              "selectPerc": 28
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 46,
+              "isBestXI": false,
+              "selectPerc": 36
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs CHE",
+              "stime": 1774879270000,
+              "points": 10,
+              "isBestXI": false,
+              "selectPerc": 40
+            },
+            {
+              "mid": 0,
+              "dname": "ADK vs DES V",
+              "stime": 1765895400000,
+              "points": 15,
+              "isBestXI": false,
+              "selectPerc": 53
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 19,
+      "isTopPlayer": false,
+      "selCapPerc": 0.6,
+      "selVcPerc": 1,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 4,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3581,
+      "name": "Tushar Deshpande",
+      "dName": "Tushar Deshpande",
+      "sName": "T Deshpande",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3581/PVAUKBVOKC_tu_deshpande.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 80,
+      "credits": 8.5,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 1,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 50,
+        "wickets": 4,
+        "economy": 11.8,
+        "innings": 0,
+        "highestScore": "1",
+        "average": 0,
+        "bestBowling": "1/29",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 31,
+              "isBestXI": false,
+              "selectPerc": 16
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 49,
+              "isBestXI": true,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "MUM vs ODISHA",
+              "stime": 1765191600000,
+              "points": 22,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "CHA vs MUM",
+              "stime": 1764999000000,
+              "points": 71,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "AND vs MUM",
+              "stime": 1764500400000,
+              "points": 122,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 2,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "inLastMatchBestXI": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 4012,
+      "name": "David Payne",
+      "dName": "David Payne",
+      "teamId": 638,
+      "teamName": "HYD",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 69,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 7,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 116.67,
+        "wickets": 9,
+        "economy": 8.19,
+        "innings": 0,
+        "highestScore": "6",
+        "average": 0,
+        "bestBowling": "3/18",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": -2,
+              "isBestXI": false,
+              "selectPerc": 55
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 71,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "PER-S vs SYD-S",
+              "stime": 1769329240000,
+              "points": 122,
+              "isBestXI": true,
+              "selectPerc": 31
+            },
+            {
+              "mid": 0,
+              "dname": "PER-S vs SYD-S",
+              "stime": 1768898005000,
+              "points": 98,
+              "isBestXI": true,
+              "selectPerc": 23
+            },
+            {
+              "mid": 0,
+              "dname": "PER-S vs MEL-S",
+              "stime": 1768641300000,
+              "points": 77,
+              "isBestXI": true,
+              "selectPerc": 25
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "inLastMatchBestXI": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3666,
+      "name": "Salil Arora",
+      "dName": "Salil Arora",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3666/3PTCJHFSK6_salil_arora.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 40,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 110,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 166.67,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "50",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 19,
+              "isBestXI": false,
+              "selectPerc": 5
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs HYD",
+              "stime": 1775138467000,
+              "points": 2,
+              "isBestXI": false,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 19,
+              "isBestXI": false,
+              "selectPerc": 5
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 4,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.2,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 6,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 4011,
+      "name": "Liam Livingstone",
+      "dName": "Liam Livingstone",
+      "sName": "L Livingstone",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/4011/ALUYS29QAA_liam_livingstone.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 40,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 79,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 117.91,
+        "wickets": 2,
+        "economy": 10.44,
+        "innings": 0,
+        "highestScore": "32",
+        "average": 0,
+        "bestBowling": "1/25",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 40,
+              "isBestXI": false,
+              "selectPerc": 16
+            },
+            {
+              "mid": 0,
+              "dname": "LK-DUR vs RAJ-PR",
+              "stime": 1768647600000,
+              "points": 80,
+              "isBestXI": true,
+              "selectPerc": 37
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ-PR vs LK-DUR",
+              "stime": 1768318200000,
+              "points": 75,
+              "isBestXI": true,
+              "selectPerc": 35
+            },
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs LK-DUR",
+              "stime": 1768138200000,
+              "points": 59,
+              "isBestXI": true,
+              "selectPerc": 31
+            },
+            {
+              "mid": 0,
+              "dname": "MUM-EM vs ADK",
+              "stime": 1767364200000,
+              "points": 2,
+              "isBestXI": false,
+              "selectPerc": 71
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0.1,
+      "isLastMatchPlayed": false,
+      "inLastMatchBestXI": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5493,
+      "name": "Harshal Patel",
+      "dName": "Harshal Patel",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/5493/R16OG7IYVQ_hv_patel.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 23,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 21,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 140,
+        "wickets": 2,
+        "economy": 12.57,
+        "innings": 0,
+        "highestScore": "12",
+        "average": 0,
+        "bestBowling": "2/46",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "PUN vs HYD",
+              "stime": 1775901670000,
+              "points": 0,
+              "isBestXI": false,
+              "selectPerc": 22
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs LKN",
+              "stime": 1775383254000,
+              "points": 22,
+              "isBestXI": false,
+              "selectPerc": 19
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1774706665000,
+              "points": 1,
+              "isBestXI": false,
+              "selectPerc": 73
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs KOL",
+              "stime": 1748181650000,
+              "points": 7,
+              "isBestXI": false,
+              "selectPerc": 31
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs HYD",
+              "stime": 1748008850000,
+              "points": 49,
+              "isBestXI": false,
+              "selectPerc": 66
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 18,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.3,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 10,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6684,
+      "name": "Donavon Ferreira",
+      "dName": "Donavon Ferreira",
+      "sName": "D Ferreira",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6684/4SUK2XV48B_donavan_ferreira.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 21,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 12,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 92.31,
+        "wickets": 2,
+        "economy": 8.33,
+        "innings": 0,
+        "highestScore": "11",
+        "average": 0,
+        "bestBowling": "2/25",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs BLR",
+              "stime": 1775833833000,
+              "points": 12,
+              "isBestXI": false,
+              "selectPerc": 8
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1775580066000,
+              "points": 4,
+              "isBestXI": false,
+              "selectPerc": 10
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs RAJ",
+              "stime": 1775311275000,
+              "points": 5,
+              "isBestXI": false,
+              "selectPerc": 11
+            },
+            {
+              "mid": 0,
+              "dname": "CHE-JO vs DEL-PC",
+              "stime": 1768663800000,
+              "points": 8,
+              "isBestXI": false,
+              "selectPerc": 80
+            },
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs CHE-JO",
+              "stime": 1768404600000,
+              "points": 97,
+              "isBestXI": true,
+              "selectPerc": 75
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 4,
+      "isTopPlayer": false,
+      "selCapPerc": 0.2,
+      "selVcPerc": 0.2,
+      "isLastMatchPlayed": true,
+      "inLastMatchBestXI": false,
+      "orderId": 7,
+      "sectionId": 100,
+      "lastMatchPlayedPlrType": 1,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5392,
+      "name": "Shivam Mavi",
+      "dName": "Shivam Mavi",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/5392/4QXPFNR5VA_shivam_mavi.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 9.5,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 31,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 88.57,
+        "wickets": 3,
+        "economy": 9.76,
+        "innings": 0,
+        "highestScore": "13",
+        "average": 0,
+        "bestBowling": "1/47",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "MAH vs UP",
+              "stime": 1765018800000,
+              "points": 9,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "CGARH vs UP",
+              "stime": 1764826200000,
+              "points": 45,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs UP",
+              "stime": 1764673200000,
+              "points": 46,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "DEL vs UP",
+              "stime": 1733914800000,
+              "points": 2,
+              "isBestXI": false,
+              "selectPerc": 22
+            },
+            {
+              "mid": 0,
+              "dname": "AND vs UP",
+              "stime": 1733742000000,
+              "points": 38,
+              "isBestXI": true,
+              "selectPerc": 23
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6300,
+      "name": "Adam Milne",
+      "dName": "Adam Milne",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6300/1XF7F1WR69_adam_fraser_milne.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 6,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 120,
+        "wickets": 5,
+        "economy": 9.26,
+        "innings": 0,
+        "highestScore": "6",
+        "average": 0,
+        "bestBowling": "2/36",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs MUM-CT",
+              "stime": 1768743000000,
+              "points": 5,
+              "isBestXI": false,
+              "selectPerc": 65
+            },
+            {
+              "mid": 0,
+              "dname": "MUM-CT vs HYD-EC",
+              "stime": 1768577400000,
+              "points": 54,
+              "isBestXI": true,
+              "selectPerc": 44
+            },
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs CHE-JO",
+              "stime": 1768404600000,
+              "points": 50,
+              "isBestXI": true,
+              "selectPerc": 63
+            },
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs LK-DUR",
+              "stime": 1768138200000,
+              "points": 41,
+              "isBestXI": false,
+              "selectPerc": 51
+            },
+            {
+              "mid": 0,
+              "dname": "DEL-PC vs HYD-EC",
+              "stime": 1767627000000,
+              "points": 76,
+              "isBestXI": true,
+              "selectPerc": 77
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5251,
+      "name": "Dasun Shanaka",
+      "dName": "Dasun Shanaka",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/5251/TWSQ5LO4TL_dasun_shanaka.png",
+      "role": 4,
+      "roleSubType": 1,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 0,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 47,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 127.03,
+        "wickets": 2,
+        "economy": 10.71,
+        "innings": 0,
+        "highestScore": "29",
+        "average": 0,
+        "bestBowling": "2/19",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "SHA-WR vs DEL-DU",
+              "stime": 1766154600000,
+              "points": 9,
+              "isBestXI": false,
+              "selectPerc": 77
+            },
+            {
+              "mid": 0,
+              "dname": "DEL-DU vs MUM-EM",
+              "stime": 1765981800000,
+              "points": 15,
+              "isBestXI": false,
+              "selectPerc": 79
+            },
+            {
+              "mid": 0,
+              "dname": "DES V vs DEL-DU",
+              "stime": 1765722600000,
+              "points": 119,
+              "isBestXI": true,
+              "selectPerc": 21
+            },
+            {
+              "mid": 0,
+              "dname": "ADK vs DEL-DU",
+              "stime": 1765636200000,
+              "points": 23,
+              "isBestXI": false,
+              "selectPerc": 37
+            },
+            {
+              "mid": 0,
+              "dname": "DEL-DU vs ADK",
+              "stime": 1765117800000,
+              "points": 5,
+              "isBestXI": false,
+              "selectPerc": 81
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 5341,
+      "name": "Kamindu Mendis",
+      "dName": "Kamindu Mendis",
+      "sName": "K Mendis",
+      "teamId": 638,
+      "teamName": "HYD",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 0,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 112,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 147.37,
+        "wickets": 6,
+        "economy": 7.45,
+        "innings": 0,
+        "highestScore": "50",
+        "average": 0,
+        "bestBowling": "3/21",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "DEL-DU vs MUM-EM",
+              "stime": 1765981800000,
+              "points": 74,
+              "isBestXI": true,
+              "selectPerc": 5
+            },
+            {
+              "mid": 0,
+              "dname": "MUM-EM vs SHA-WR",
+              "stime": 1765706400000,
+              "points": 5,
+              "isBestXI": false,
+              "selectPerc": 65
+            },
+            {
+              "mid": 0,
+              "dname": "MUM-EM vs ADK",
+              "stime": 1765463400000,
+              "points": 129,
+              "isBestXI": true,
+              "selectPerc": 13
+            },
+            {
+              "mid": 0,
+              "dname": "GREENS vs GREYS",
+              "stime": 1755331925000,
+              "points": 161,
+              "isBestXI": true,
+              "selectPerc": 87
+            },
+            {
+              "mid": 0,
+              "dname": "GREENS vs BLUES",
+              "stime": 1754899200000,
+              "points": 90,
+              "isBestXI": true,
+              "selectPerc": 92
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 46543,
+      "name": "Kwena Maphaka",
+      "dName": "Kwena Maphaka",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/46543/EUCD6F8ZWC_kwena_maphaka.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 1,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 20,
+        "wickets": 3,
+        "economy": 10.64,
+        "innings": 0,
+        "highestScore": "1",
+        "average": 0,
+        "bestBowling": "1/10",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "LK-DUR vs RAJ-PR",
+              "stime": 1768647600000,
+              "points": 50,
+              "isBestXI": true,
+              "selectPerc": 12
+            },
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs LK-DUR",
+              "stime": 1768138200000,
+              "points": 47,
+              "isBestXI": false,
+              "selectPerc": 16
+            },
+            {
+              "mid": 0,
+              "dname": "LK-DUR vs DEL-PC",
+              "stime": 1767799800000,
+              "points": 42,
+              "isBestXI": false,
+              "selectPerc": 23
+            },
+            {
+              "mid": 0,
+              "dname": "DEL-PC vs LK-DUR",
+              "stime": 1767457800000,
+              "points": 0,
+              "isBestXI": false,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "CHE-JO vs LK-DUR",
+              "stime": 1767281400000,
+              "points": 6,
+              "isBestXI": false,
+              "selectPerc": 13
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 80308,
+      "name": "Lhuan-dre Pretorius",
+      "dName": "Lhuan-dre Pretorius",
+      "sName": "L Pretorius",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/80308/R98ER7TA13_lhuan_dre_pretorius.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 0,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 94,
+        "num100s": 0,
+        "num50s": 1,
+        "strikeRate": 111.9,
+        "wickets": 0,
+        "economy": 16.5,
+        "innings": 0,
+        "highestScore": "51",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "HYD-EC vs RAJ-PR",
+              "stime": 1769182240000,
+              "points": 8,
+              "isBestXI": false,
+              "selectPerc": 66
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ-PR vs CHE-JO",
+              "stime": 1769095800000,
+              "points": 105,
+              "isBestXI": true,
+              "selectPerc": 61
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ-PR vs CHE-JO",
+              "stime": 1768836600000,
+              "points": 56,
+              "isBestXI": true,
+              "selectPerc": 40
+            },
+            {
+              "mid": 0,
+              "dname": "LK-DUR vs RAJ-PR",
+              "stime": 1768647600000,
+              "points": 19,
+              "isBestXI": false,
+              "selectPerc": 49
+            },
+            {
+              "mid": 0,
+              "dname": "DEL-PC vs RAJ-PR",
+              "stime": 1768491000000,
+              "points": 5,
+              "isBestXI": false,
+              "selectPerc": 64
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 65362,
+      "name": "Yash Punja",
+      "dName": "Yash Punja",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/65362/NNLJKPDBCQ_yash_raj_punja.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 0,
+      "credits": 9,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 42866,
+      "name": "Aman Perala",
+      "dName": "Aman Perala",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/42866/T4DQR31M35_aman_rao.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 129,
+        "num100s": 0,
+        "num50s": 1,
+        "strikeRate": 163.29,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "52",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "HYD vs UP",
+              "stime": 1764673200000,
+              "points": 60,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "GOA vs HYD",
+              "stime": 1764480600000,
+              "points": 84,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 20944,
+      "name": "Amit Kumar",
+      "dName": "Amit Kumar",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/20944/3W2GQVTQXZ_amit_kumar.png",
+      "role": 4,
+      "roleSubType": 2,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 3,
+        "economy": 8.3,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "2/36",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "JHA vs RAJ",
+              "stime": 1765171800000,
+              "points": 37,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "JHA vs UK",
+              "stime": 1764826200000,
+              "points": 12,
+              "isBestXI": false,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 117656,
+      "name": "Krains Fuletra",
+      "dName": "Krains Fuletra",
+      "sName": "K Fuletra",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/117656/NO6QYPAO77_kb_fuletra.png",
+      "role": 2,
+      "roleSubType": 2,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 1,
+        "economy": 10.05,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "1/30",
+        "balls": 0
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6658,
+      "name": "Kuldeep Sen",
+      "dName": "Kuldeep Sen",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6658/841PPKR25S_kuldeep_sen.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 7,
+        "economy": 10.81,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "3/41",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "KOL vs RAJ",
+              "stime": 1713276000000,
+              "points": 50,
+              "isBestXI": true,
+              "selectPerc": 15
+            },
+            {
+              "mid": 0,
+              "dname": "PUN vs RAJ",
+              "stime": 1713016800000,
+              "points": 37,
+              "isBestXI": true,
+              "selectPerc": 24
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs GUJ",
+              "stime": 1712758235000,
+              "points": 105,
+              "isBestXI": true,
+              "selectPerc": 5
+            },
+            {
+              "mid": 0,
+              "dname": "DEL vs TN",
+              "stime": 1698058800000,
+              "points": 4,
+              "isBestXI": false,
+              "selectPerc": 26
+            },
+            {
+              "mid": 0,
+              "dname": "TN vs TRP",
+              "stime": 1697693400000,
+              "points": 60,
+              "isBestXI": true,
+              "selectPerc": 16
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 124601,
+      "name": "Onkar Tarmale",
+      "dName": "Onkar Tarmale",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/124601/LOVPFYCUGF_onkar_tarmale.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 42238,
+      "name": "Praful Hinge",
+      "dName": "Praful Hinge",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/42238/4ELX94V77R_praful_hinge.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 1,
+        "economy": 5.75,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "1/23",
+        "balls": 0
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 131674,
+      "name": "Ravi Singh",
+      "dName": "Ravi Singh",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/131674/4KTCM366HM_ravi_singh.png",
+      "role": 3,
+      "roleName": "WICKET_KEEPER",
+      "roleOrder": 1,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 167,
+        "num100s": 0,
+        "num50s": 1,
+        "strikeRate": 179.57,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "68",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAI vs VID",
+              "stime": 1765018800000,
+              "points": 126,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "ODISHA vs RAI",
+              "stime": 1764846000000,
+              "points": 40,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "AND vs RAI",
+              "stime": 1764653400000,
+              "points": 113,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": true,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 28251,
+      "name": "Shubham Dubey",
+      "dName": "Shubham Dubey",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/28251/SJB18LPABC_sb_dubey.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 62,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 155,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "25",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "RAJ vs PUN",
+              "stime": 1747562450000,
+              "points": 11,
+              "isBestXI": false,
+              "selectPerc": 1
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs RAJ",
+              "stime": 1746352820000,
+              "points": 55,
+              "isBestXI": true,
+              "selectPerc": 1
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs MUM",
+              "stime": 1746108020000,
+              "points": 33,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "BLR vs RAJ",
+              "stime": 1745503220000,
+              "points": 26,
+              "isBestXI": false,
+              "selectPerc": 6
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs LKN",
+              "stime": 1745071260000,
+              "points": 15,
+              "isBestXI": false,
+              "selectPerc": 12
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 42831,
+      "name": "Smaran Ravichandran",
+      "dName": "Smaran Ravichandran",
+      "sName": "R Smaran",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/42831/QKQ8FWALQZ_smaran_ravichandran.png",
+      "role": 1,
+      "roleName": "BATSMAN",
+      "roleOrder": 2,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 220,
+        "num100s": 0,
+        "num50s": 1,
+        "strikeRate": 167.94,
+        "wickets": 0,
+        "economy": 0,
+        "innings": 0,
+        "highestScore": "72",
+        "average": 0,
+        "bestBowling": "0/0",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "KAR vs SAU",
+              "stime": 1764999000000,
+              "points": 58,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "KAR vs RAJ",
+              "stime": 1764480600000,
+              "points": 88,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "JHA vs KAR",
+              "stime": 1764327600000,
+              "points": 58,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs KAR",
+              "stime": 1733376600000,
+              "points": 84,
+              "isBestXI": true,
+              "selectPerc": 34
+            },
+            {
+              "mid": 0,
+              "dname": "BRD vs KAR",
+              "stime": 1733212800000,
+              "points": 51,
+              "isBestXI": true,
+              "selectPerc": 35
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 3670,
+      "name": "Sushant Mishra",
+      "dName": "Sushant Mishra",
+      "sName": "S Mishra",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/3670/8KWTT3BFNF_sushant_mishra.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 10,
+        "economy": 9,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "3/27",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "JHA vs RAJ",
+              "stime": 1765171800000,
+              "points": 110,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "JHA vs UK",
+              "stime": 1764826200000,
+              "points": 77,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "JHA vs KAR",
+              "stime": 1764327600000,
+              "points": 107,
+              "isBestXI": true,
+              "selectPerc": 0
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 29098,
+      "name": "Vignesh Puthur",
+      "dName": "Vignesh Puthur",
+      "sName": "V Puthur",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/29098/BLNHTM9MHC_vignesh_puthur.png",
+      "role": 4,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 6,
+        "economy": 9.27,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "2/31",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "KER vs VID",
+              "stime": 1764673200000,
+              "points": 42,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "CHA vs KER",
+              "stime": 1764480600000,
+              "points": 88,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs MUM",
+              "stime": 1745416890000,
+              "points": 14,
+              "isBestXI": false,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "MUM vs BLR",
+              "stime": 1744034470000,
+              "points": 30,
+              "isBestXI": false,
+              "selectPerc": 18
+            },
+            {
+              "mid": 0,
+              "dname": "LKN vs MUM",
+              "stime": 1743775214000,
+              "points": 45,
+              "isBestXI": true,
+              "selectPerc": 17
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 6713,
+      "name": "Yudhvir Singh",
+      "dName": "Yudhvir Singh",
+      "teamId": 645,
+      "teamName": "RAJ",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/6713/I3DALPCUQU_yudhvir_singh.png",
+      "role": 4,
+      "roleSubType": 1,
+      "roleName": "ALL_ROUNDER",
+      "roleOrder": 3,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 29,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 111.54,
+        "wickets": 8,
+        "economy": 8.06,
+        "innings": 0,
+        "highestScore": "18",
+        "average": 0,
+        "bestBowling": "2/34",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "JK vs MP",
+              "stime": 1765191600000,
+              "points": 115,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "BIHAR vs JK",
+              "stime": 1764500400000,
+              "points": 99,
+              "isBestXI": true,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "CHE vs RAJ",
+              "stime": 1747749620000,
+              "points": 103,
+              "isBestXI": true,
+              "selectPerc": 8
+            },
+            {
+              "mid": 0,
+              "dname": "KOL vs RAJ",
+              "stime": 1746352820000,
+              "points": 42,
+              "isBestXI": false,
+              "selectPerc": 4
+            },
+            {
+              "mid": 0,
+              "dname": "RAJ vs GUJ",
+              "stime": 1745848840000,
+              "points": 4,
+              "isBestXI": false,
+              "selectPerc": 5
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 7425,
+      "name": "Zeeshan Ansari",
+      "dName": "Zeeshan Ansari",
+      "sName": "Z Ansari",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/7425/REYVZGOG64_zeeshan_ansari.png",
+      "role": 2,
+      "roleSubType": 2,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 8,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 0,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 0,
+        "wickets": 2,
+        "economy": 10.02,
+        "innings": 0,
+        "highestScore": "0",
+        "average": 0,
+        "bestBowling": "1/42",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "LKN vs HYD",
+              "stime": 1747663240000,
+              "points": 0,
+              "isBestXI": false,
+              "selectPerc": 14
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs DEL",
+              "stime": 1746453630000,
+              "points": 0,
+              "isBestXI": false,
+              "selectPerc": 11
+            },
+            {
+              "mid": 0,
+              "dname": "GUJ vs HYD",
+              "stime": 1746194485000,
+              "points": 36,
+              "isBestXI": false,
+              "selectPerc": 5
+            },
+            {
+              "mid": 0,
+              "dname": "CHE vs HYD",
+              "stime": 1745589610000,
+              "points": 9,
+              "isBestXI": false,
+              "selectPerc": 14
+            },
+            {
+              "mid": 0,
+              "dname": "HYD vs MUM",
+              "stime": 1745416890000,
+              "points": 40,
+              "isBestXI": true,
+              "selectPerc": 6
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 4195,
+      "name": "Brydon Carse",
+      "dName": "Brydon Carse",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/4195/1IO7PK4SZJ_ba_carse.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 7,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 55,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 161.76,
+        "wickets": 2,
+        "economy": 8.5,
+        "innings": 0,
+        "highestScore": "39",
+        "average": 0,
+        "bestBowling": "2/34",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "SUR vs DHM",
+              "stime": 1725382800000,
+              "points": 72,
+              "isBestXI": true,
+              "selectPerc": 13
+            },
+            {
+              "mid": 0,
+              "dname": "WOR vs DHM",
+              "stime": 1688142645000,
+              "points": 62,
+              "isBestXI": true,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "DHM vs YKS",
+              "stime": 1687541400000,
+              "points": 0,
+              "isBestXI": false,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "DEL-PC vs HYD-EC",
+              "stime": 1676201400000,
+              "points": 7,
+              "isBestXI": false,
+              "selectPerc": 9
+            },
+            {
+              "mid": 0,
+              "dname": "CHE-JO vs HYD-EC",
+              "stime": 1675956720000,
+              "points": 14,
+              "isBestXI": false,
+              "selectPerc": 12
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    },
+    {
+      "id": 101009,
+      "name": "Sakib Hussain",
+      "dName": "Sakib Hussain",
+      "teamId": 638,
+      "teamName": "HYD",
+      "imgURL": "https://images.my11circle.com/fantasy/prod/players/101009/5AMOFK3H7B_sakib_hussain.png",
+      "role": 2,
+      "roleSubType": 1,
+      "roleName": "BOWLER",
+      "roleOrder": 4,
+      "points": 0,
+      "credits": 7,
+      "sportsType": 1,
+      "lastNMatchStatistics": {
+        "gameType": 1,
+        "sportsType": 1,
+        "runs": 11,
+        "num100s": 0,
+        "num50s": 0,
+        "strikeRate": 110,
+        "wickets": 5,
+        "economy": 9.76,
+        "innings": 0,
+        "highestScore": "11",
+        "average": 0,
+        "bestBowling": "2/30",
+        "balls": 0,
+        "lastMatchesPerf": {
+          "bestXICount": 0,
+          "matchStats": [
+            {
+              "mid": 0,
+              "dname": "BIHAR vs MAH",
+              "stime": 1764653400000,
+              "points": 41,
+              "isBestXI": false,
+              "selectPerc": 0
+            },
+            {
+              "mid": 0,
+              "dname": "BIHAR vs HYD",
+              "stime": 1732851000000,
+              "points": 1,
+              "isBestXI": false,
+              "selectPerc": 26
+            }
+          ]
+        }
+      },
+      "selectionStatus": 0,
+      "selectedBy": 1,
+      "isTopPlayer": false,
+      "selCapPerc": 0,
+      "selVcPerc": 0,
+      "isLastMatchPlayed": false,
+      "sectionId": 100,
+      "pickPlrTeam": false,
+      "isWicketKeeper": false,
+      "isCaptain": false,
+      "playerIn": false,
+      "playerOut": false
+    }
+  ],
+  "teamRule": {
+    "sportsType": 1,
+    "gameType": 1,
+    "teamRuleId": 4,
+    "teamRuleType": 1,
+    "maxPlayerAllowed": 11,
+    "maxPlayersPerTeam": 10,
+    "captainCount": 1,
+    "viceCaptainCount": 1,
+    "playerRoleRule": [
+      {
+        "role": 1,
+        "roleOrder": 2,
+        "minPlayersPerRole": 1,
+        "maxPlayersPerRole": 8
+      },
+      {
+        "role": 2,
+        "roleOrder": 4,
+        "minPlayersPerRole": 1,
+        "maxPlayersPerRole": 8
+      },
+      {
+        "role": 3,
+        "roleOrder": 1,
+        "minPlayersPerRole": 1,
+        "maxPlayersPerRole": 8
+      },
+      {
+        "role": 4,
+        "roleOrder": 3,
+        "minPlayersPerRole": 1,
+        "maxPlayersPerRole": 8
+      }
+    ]
+  },
+  "pointRule": {
+    "name": "T20_default_FPS_new",
+    "ruleType": 1,
+    "gameType": 1,
+    "rule": [
+      {
+        "action": "run",
+        "actionType": 1
+      },
+      {
+        "action": "bonus4",
+        "actionType": 1
+      },
+      {
+        "action": "bonus6",
+        "actionType": 1
+      },
+      {
+        "action": "bonus25Runs",
+        "actionType": 1
+      },
+      {
+        "action": "bonus50Runs",
+        "actionType": 1
+      },
+      {
+        "action": "bonus75Runs",
+        "actionType": 1
+      },
+      {
+        "action": "bonus100Runs",
+        "actionType": 1
+      },
+      {
+        "action": "dismissalForDuck",
+        "actionType": 1
+      },
+      {
+        "action": "bonusHattrick4",
+        "actionType": 1
+      },
+      {
+        "action": "bonusHattrick6",
+        "actionType": 1
+      },
+      {
+        "action": "wicket",
+        "actionType": 2
+      },
+      {
+        "action": "maidenOverBonus",
+        "actionType": 2
+      },
+      {
+        "action": "bonus2WicketHaul",
+        "actionType": 2
+      },
+      {
+        "action": "bonus3WicketHaul",
+        "actionType": 2
+      },
+      {
+        "action": "bonus4WicketHaul",
+        "actionType": 2
+      },
+      {
+        "action": "bonus5WicketHaul",
+        "actionType": 2
+      },
+      {
+        "action": "hattrickBonus",
+        "actionType": 2
+      },
+      {
+        "action": "lbwBonus",
+        "actionType": 2
+      },
+      {
+        "action": "bowledBonus",
+        "actionType": 2
+      },
+      {
+        "action": "dotballBonus",
+        "actionType": 2
+      },
+      {
+        "action": "bonus3dotball",
+        "actionType": 2
+      },
+      {
+        "action": "catchBonus",
+        "actionType": 3
+      },
+      {
+        "action": "stumping",
+        "actionType": 3
+      },
+      {
+        "action": "runOutDirect",
+        "actionType": 3
+      },
+      {
+        "action": "runOutThrower",
+        "actionType": 3
+      },
+      {
+        "action": "runOutCatcher",
+        "actionType": 3
+      },
+      {
+        "action": "bonus3Catch",
+        "actionType": 3
+      },
+      {
+        "action": "bonus4Catch",
+        "actionType": 3
+      },
+      {
+        "action": "bonus5Catch",
+        "actionType": 3
+      },
+      {
+        "action": "srLessThan50",
+        "actionType": 4
+      },
+      {
+        "action": "sr50To59P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr60To69P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr70To74P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr75To99P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr100To129P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr130To149P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr150To169P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr170To199P99",
+        "actionType": 4
+      },
+      {
+        "action": "sr200Plus",
+        "actionType": 4
+      },
+      {
+        "action": "erLessThan3",
+        "actionType": 5
+      },
+      {
+        "action": "er3To4P49",
+        "actionType": 5
+      },
+      {
+        "action": "er4P5To4P99",
+        "actionType": 5
+      },
+      {
+        "action": "er5To5P99",
+        "actionType": 5
+      },
+      {
+        "action": "er6To6P99",
+        "actionType": 5
+      },
+      {
+        "action": "er7To7P49",
+        "actionType": 5
+      },
+      {
+        "action": "er7P5To8P99",
+        "actionType": 5
+      },
+      {
+        "action": "er9To9P99",
+        "actionType": 5
+      },
+      {
+        "action": "er10To10P99",
+        "actionType": 5
+      },
+      {
+        "action": "er11To11P99",
+        "actionType": 5
+      },
+      {
+        "action": "er12Plus",
+        "actionType": 5
+      }
+    ],
+    "captainMultiplier": 2,
+    "viceCaptainMultiplier": 1.5,
+    "isActive": 1
+  },
+  "roleMapping": [
+    {
+      "id": 1,
+      "name": "batsman",
+      "order": 2
+    },
+    {
+      "id": 2,
+      "name": "bowler",
+      "order": 4
+    },
+    {
+      "id": 3,
+      "name": "wicket_keeper",
+      "order": 1
+    },
+    {
+      "id": 4,
+      "name": "all_rounder",
+      "order": 3
+    },
+    {
+      "id": 5,
+      "name": "raider_kabaddi"
+    },
+    {
+      "id": 6,
+      "name": "all_rounder_kabaddi"
+    },
+    {
+      "id": 7,
+      "name": "defender_kabaddi"
+    },
+    {
+      "id": 8,
+      "name": "forward_football"
+    },
+    {
+      "id": 9,
+      "name": "mid_fielder_football"
+    },
+    {
+      "id": 10,
+      "name": "defender_football"
+    },
+    {
+      "id": 11,
+      "name": "goal_keeper_football"
+    },
+    {
+      "id": 12,
+      "name": "point_guard"
+    },
+    {
+      "id": 13,
+      "name": "shooting_guard"
+    },
+    {
+      "id": 14,
+      "name": "small_forward"
+    },
+    {
+      "id": 15,
+      "name": "power_forward"
+    },
+    {
+      "id": 16,
+      "name": "center"
+    }
+  ],
+  "isFirstTeam": false,
+  "venueInfo": {
+    "pitchType": 1,
+    "avgFstInnSkr": "177",
+    "ballSupport": 1,
+    "venue": "Rajiv Gandhi International Stadium, Hyderabad",
+    "avgScndInnSkr": "180",
+    "batFirstWin": 0,
+    "batSecondWin": 100,
+    "h2H": [
+      {
+        "teamId": 1379,
+        "win": 3,
+        "tie": 0,
+        "totalMatches": 3,
+        "teamName": "Sunrisers Hyderabad"
+      },
+      {
+        "teamId": 1110,
+        "win": 0,
+        "tie": 0,
+        "totalMatches": 3,
+        "teamName": "Rajasthan Royals"
+      }
+    ]
+  },
+  "orderToggle": true,
+  "bOState": 1,
+  "bOSection": {
+    "100": "Playing",
+    "200": "Impact Players",
+    "300": "Other Players"
+  },
+  "firstTeam": false,
+  "exprtTmAvlbl": true
+}

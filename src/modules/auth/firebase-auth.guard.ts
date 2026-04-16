@@ -12,6 +12,12 @@ export class FirebaseAuthGuard implements CanActivate {
   constructor(private readonly firebaseAdminService: FirebaseAdminService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (process.env.DISABLE_AUTH === "true") {
+      const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+      request.authUser = { uid: "dev", email: "dev@local", name: "Dev", picture: null };
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const rawAuthHeader = request.headers.authorization;
 

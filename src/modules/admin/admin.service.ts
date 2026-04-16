@@ -479,7 +479,7 @@ export class AdminService {
 
     const seasonUsers = await this.prisma.client.seasonUser.findMany({
       where: {
-        seasonId: match.seasonId,
+        ...(match.seasonId !== null ? { seasonId: match.seasonId } : {}),
         id: { in: uniqueSeasonUserIds },
       },
       select: { id: true },
@@ -491,7 +491,7 @@ export class AdminService {
 
     const activeAssignments = await this.chipService.resolveActiveChipAssignmentsForMatchTx(
       this.prisma.client,
-      match.seasonId,
+      match.seasonId!,
       matchId,
       uniqueSeasonUserIds,
     );

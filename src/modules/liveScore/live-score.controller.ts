@@ -1,0 +1,26 @@
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from "@nestjs/common";
+import { LiveScoreService } from "./live-score.service.js";
+import { FirebaseAuthGuard } from "../auth/firebase-auth.guard.js";
+import { AppUserGuard } from "../auth/app-user.guard.js";
+
+@UseGuards(FirebaseAuthGuard, AppUserGuard)
+@Controller("live-score")
+export class LiveScoreController {
+  constructor(private readonly liveScoreService: LiveScoreService) {}
+
+  @Get("matches/:matchId/scorecard")
+  getWisdenScorecard(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.liveScoreService.getWisdenScorecard(matchId);
+  }
+
+  @Get("matches/:matchId/commentary")
+  getWisdenCommentary(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.liveScoreService.getWisdenCommentary(matchId);
+  }
+}

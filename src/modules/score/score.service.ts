@@ -197,7 +197,7 @@ export class ScoreService {
       }),
       this.chipService.resolveActiveChipAssignmentsForMatchTx(
         this.prisma.client,
-        match.seasonId,
+        match.seasonId!,
         matchId,
       ),
     ]);
@@ -284,7 +284,7 @@ export class ScoreService {
         id: {
           in: uniqueSeasonUserIds,
         },
-        seasonId: match.seasonId,
+        ...(match.seasonId !== null ? { seasonId: match.seasonId } : {}),
       },
       select: {
         id: true,
@@ -300,7 +300,7 @@ export class ScoreService {
     const activeAssignments =
       await this.chipService.resolveActiveChipAssignmentsForMatchTx(
         this.prisma.client,
-        match.seasonId,
+        match.seasonId!,
         matchId,
         uniqueSeasonUserIds,
       );
@@ -338,7 +338,7 @@ export class ScoreService {
     const teamFormBonusBySeasonUserId =
       await this.getTeamFormBonusBySeasonUserId(
         this.prisma.client,
-        match.seasonId,
+        match.seasonId!,
         matchId,
         matchResult,
       );

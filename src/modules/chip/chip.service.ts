@@ -1057,7 +1057,7 @@ const deselectPowerup = async (
     if (chipPlay.status === ChipPlayStatus.CANCELLED) {
       const orderedMatches = await getOrderedSeasonMatches(
         tx,
-        chipPlay.startMatch.seasonId,
+        chipPlay.startMatch.seasonId!,
       );
 
       return serializeChipPlay(chipPlay, orderedMatches, now);
@@ -1085,7 +1085,7 @@ const deselectPowerup = async (
 
     const orderedMatches = await getOrderedSeasonMatches(
       tx,
-      chipPlay.startMatch.seasonId,
+      chipPlay.startMatch.seasonId!,
     );
 
     return serializeChipPlay(

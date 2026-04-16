@@ -31,7 +31,6 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/generated ./generated
 COPY --from=build /app/scripts ./scripts
-# COPY --from=build /app/src/modules/cricapi ./src/modules/cricapi
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma.config.* ./
 COPY --from=build /app/tsconfig.json ./
