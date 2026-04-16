@@ -49,6 +49,14 @@ steps:
           EXTRA_ARGS+=(--set-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
         fi
 
+        EXTRA_SECRET_ARGS=()
+        if [[ -n "${_WISDEN_COOKIE_SECRET}" ]]; then
+          EXTRA_SECRET_ARGS+=(--set-secrets "WISDEN_COOKIE=${_WISDEN_COOKIE_SECRET}:latest")
+        fi
+        if [[ -n "${_WISDEN_EDAK_SECRET}" ]]; then
+          EXTRA_SECRET_ARGS+=(--set-secrets "WISDEN_EDAK=${_WISDEN_EDAK_SECRET}:latest")
+        fi
+
         gcloud run deploy "${_SERVICE_NAME}" \
           --project "${PROJECT_ID}" \
           --region "${_REGION}" \
@@ -62,6 +70,7 @@ steps:
           --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
           --set-secrets "FIREBASE_PRIVATE_KEY=FIREBASE_PRIVATE_KEY:latest" \
           --set-secrets "CRICAPI_API_KEY=CRICAPI_API_KEY:latest" \
+          "${EXTRA_SECRET_ARGS[@]}" \
           "${EXTRA_ARGS[@]}"
 
 images:
@@ -76,6 +85,8 @@ substitutions:
   _AR_REPO: d11-dashboard-api-container-repo
   _RUNTIME_SERVICE_ACCOUNT: ""
   _CLOUD_SQL_INSTANCE: ""
+  _WISDEN_COOKIE_SECRET: ""
+  _WISDEN_EDAK_SECRET: ""
   _CORS_ORIGIN: ""
   _BEST_N_DROP_COUNT: "5"
 

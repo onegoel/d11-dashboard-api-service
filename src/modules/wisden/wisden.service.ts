@@ -154,6 +154,12 @@ export class WisdenService {
         const message = this.extractErrorMessage(error, axiosError);
         this.logger.error(`Wisden request failed for ${label}: ${message}`);
 
+        if (this.isCurlBinaryMissing(error)) {
+          throw new ServiceUnavailableException(
+            "Wisden client misconfigured in runtime: curl binary not found.",
+          );
+        }
+
         if (status === 429) {
           const retryAfterMs =
             this.getRetryAfterMs(axiosError, error) ?? 30_000;
@@ -363,6 +369,19 @@ export class WisdenService {
     }
 
     return this.truncateError(String(error));
+  }
+
+  private isCurlBinaryMissing(error: unknown): boolean {
+    if (typeof error !== "object" || error === null) {
+      return false;
+    }
+
+    const err = error as { code?: unknown; syscall?: unknown; path?: unknown };
+    return (
+      err.code === "ENOENT" &&
+      typeof err.path === "string" &&
+      err.path === "curl"
+    );
   }
 
   private truncateError(message: string): string {
