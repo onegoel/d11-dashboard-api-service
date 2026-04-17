@@ -250,6 +250,169 @@ export class FantasyMatchesService {
     });
   }
 
+  // ── Player selections (contest-wide) ─────────────────────────────────────
+
+  async getPlayerSelections(matchId: string) {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: { id: true, matchDate: true },
+    });
+    if (!match) throw new NotFoundException(`Match ${matchId} not found`);
+
+    const contest = await this.prisma.client.fantasyContest.findUnique({
+      where: { matchId },
+      select: { id: true, status: true },
+    });
+
+    const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
+    const isLocked =
+      FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY ||
+      lockTimeReached ||
+      (contest != null && contest.status !== FantasyContestStatus.OPEN);
+
+    if (!contest || !isLocked) {
+      throw new ForbiddenException(
+        "Player selections are visible only after contest lock",
+      );
+    }
+
+    const [entries, matchPlayers, playerScores] = await Promise.all([
+      this.prisma.client.fantasyContestEntry.findMany({
+        where: { contestId: contest.id },
+        select: {
+          id: true,
+          teamNo: true,
+          user: {
+            select: {
+              id: true,
+              display_name: true,
+              user_name: true,
+              photo_url: true,
+            },
+          },
+          players: {
+            where: { isBench: false },
+            select: {
+              fantasyPlayerId: true,
+              isCaptain: true,
+              isViceCaptain: true,
+            },
+          },
+        },
+      }),
+      this.prisma.client.fantasyMatchPlayer.findMany({
+        where: { matchId },
+        select: {
+          fantasyPlayerId: true,
+          fantasyPlayer: {
+            select: {
+              id: true,
+              displayName: true,
+              role: true,
+              photoUrl: true,
+              team: { select: { shortCode: true } },
+            },
+          },
+        },
+      }),
+      this.prisma.client.fantasyPlayerScore.findMany({
+        where: { matchId },
+        select: {
+          fantasyPlayerId: true,
+          points: true,
+          isFinalized: true,
+        },
+      }),
+    ]);
+
+    const totalEntries = entries.length;
+
+    const scoreByPlayerId = new Map(
+      playerScores.map((score) => [score.fantasyPlayerId, score]),
+    );
+
+    type PickedByEntry = {
+      entryId: string;
+      userId: number;
+      displayName: string;
+      userName: string;
+      photoUrl: string | null;
+      teamNo: number;
+      isCaptain: boolean;
+      isViceCaptain: boolean;
+    };
+
+    const pickedByByPlayerId = new Map<string, PickedByEntry[]>();
+    const captainCountByPlayerId = new Map<string, number>();
+    const viceCaptainCountByPlayerId = new Map<string, number>();
+
+    for (const entry of entries) {
+      for (const player of entry.players) {
+        const pickedBy = pickedByByPlayerId.get(player.fantasyPlayerId) ?? [];
+        pickedBy.push({
+          entryId: entry.id,
+          userId: entry.user.id,
+          displayName: entry.user.display_name,
+          userName: entry.user.user_name,
+          photoUrl: entry.user.photo_url,
+          teamNo: entry.teamNo,
+          isCaptain: player.isCaptain,
+          isViceCaptain: player.isViceCaptain,
+        });
+        pickedByByPlayerId.set(player.fantasyPlayerId, pickedBy);
+
+        if (player.isCaptain) {
+          captainCountByPlayerId.set(
+            player.fantasyPlayerId,
+            (captainCountByPlayerId.get(player.fantasyPlayerId) ?? 0) + 1,
+          );
+        }
+        if (player.isViceCaptain) {
+          viceCaptainCountByPlayerId.set(
+            player.fantasyPlayerId,
+            (viceCaptainCountByPlayerId.get(player.fantasyPlayerId) ?? 0) + 1,
+          );
+        }
+      }
+    }
+
+    const players = matchPlayers
+      .map((matchPlayer) => {
+        const pickedBy =
+          pickedByByPlayerId.get(matchPlayer.fantasyPlayerId) ?? [];
+        const score = scoreByPlayerId.get(matchPlayer.fantasyPlayerId);
+        const pickedCount = pickedBy.length;
+        const selectionPct =
+          totalEntries > 0
+            ? Number(((pickedCount / totalEntries) * 100).toFixed(1))
+            : 0;
+
+        return {
+          fantasyPlayerId: matchPlayer.fantasyPlayer.id,
+          displayName: matchPlayer.fantasyPlayer.displayName,
+          role: matchPlayer.fantasyPlayer.role,
+          teamShortCode: matchPlayer.fantasyPlayer.team?.shortCode ?? null,
+          photoUrl: matchPlayer.fantasyPlayer.photoUrl ?? null,
+          pickedCount,
+          captainCount:
+            captainCountByPlayerId.get(matchPlayer.fantasyPlayerId) ?? 0,
+          viceCaptainCount:
+            viceCaptainCountByPlayerId.get(matchPlayer.fantasyPlayerId) ?? 0,
+          selectionPct,
+          points: score?.points ?? null,
+          isScoreFinalized: score?.isFinalized ?? false,
+          pickedBy,
+        };
+      })
+      .sort((a, b) => b.selectionPct - a.selectionPct);
+
+    return {
+      totalEntries,
+      contestStatus: contest.status,
+      players,
+    };
+  }
+
   // ── My entries ───────────────────────────────────────────────────────────
 
   async getMyEntries(matchId: string, userId: number) {

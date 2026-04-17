@@ -116,6 +116,17 @@ export class FantasyMatchesController {
     return this.scoring.scoreMatch(matchId);
   }
 
+  @Get(":matchId/player-selections")
+  @ApiOperation({
+    summary:
+      "Get per-player contest selection breakdown (locked contests only)",
+  })
+  @ApiParam({ name: "matchId", format: "uuid" })
+  @ApiResponse({ status: 200, description: "Player selections aggregated across the contest" })
+  getPlayerSelections(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.service.getPlayerSelections(matchId);
+  }
+
   @Get(":matchId/leaderboard")
   @ApiOperation({ summary: "Get contest leaderboard for a match" })
   @ApiParam({ name: "matchId", format: "uuid" })
