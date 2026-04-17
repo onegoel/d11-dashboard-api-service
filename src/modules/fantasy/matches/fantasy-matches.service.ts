@@ -14,6 +14,7 @@ import type { SubmitEntryDto } from "../dto/fantasy.dto.js";
 export class FantasyMatchesService {
   private readonly logger = new Logger(FantasyMatchesService.name);
   private static readonly BUDGET_CAP = 100;
+  private static readonly DEV_UNLOCK_TEAM_VISIBILITY = false;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -102,7 +103,9 @@ export class FantasyMatchesService {
 
     const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
     const shouldRevealSelectionData =
-      lockTimeReached || contest?.status !== FantasyContestStatus.OPEN;
+      FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY ||
+      lockTimeReached ||
+      contest?.status !== FantasyContestStatus.OPEN;
 
     const scoreByPlayerId = new Map(
       playerScores.map((score) => [score.fantasyPlayerId, score]),
@@ -632,7 +635,12 @@ export class FantasyMatchesService {
     const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
     const isLockedOrBeyond = contest.status !== FantasyContestStatus.OPEN;
 
-    if (!isOwner && !lockTimeReached && !isLockedOrBeyond) {
+    if (
+      !FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY &&
+      !isOwner &&
+      !lockTimeReached &&
+      !isLockedOrBeyond
+    ) {
       throw new ForbiddenException(
         "Other user teams are visible only after contest lock",
       );
