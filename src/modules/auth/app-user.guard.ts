@@ -15,7 +15,12 @@ export class AppUserGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     if (process.env.DISABLE_AUTH === "true") {
-      request.appUser = { id: 0, role: "ADMIN" as any, displayName: "Dev", authSubject: "dev" };
+      request.appUser = {
+        id: 0,
+        role: "ADMIN" as any,
+        displayName: "Dev",
+        authSubject: "dev",
+      };
       return true;
     }
 

@@ -126,6 +126,7 @@ model Match {
   matchDate DateTime
   status    MatchStatus @default(SCHEDULED)
   matchResult MatchResult @default(PENDING)
+  matchResultText String?
 
   homeTeamId String
   awayTeamId String

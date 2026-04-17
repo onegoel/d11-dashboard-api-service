@@ -21,13 +21,13 @@ export class AuthService {
 
     const seasonUser = activeSeason
       ? await this.prisma.client.seasonUser.findUnique({
-        where: {
-          seasonId_userId: {
-            seasonId: activeSeason.id,
-            userId: user.id,
+          where: {
+            seasonId_userId: {
+              seasonId: activeSeason.id,
+              userId: user.id,
+            },
           },
-        },
-      })
+        })
       : null;
 
     return {
@@ -38,17 +38,23 @@ export class AuthService {
     };
   }
 
-  async completeOnboarding(authUser: AuthenticatedUser, dto: CompleteOnboardingDto) {
+  async completeOnboarding(
+    authUser: AuthenticatedUser,
+    dto: CompleteOnboardingDto,
+  ) {
     const user = await this.syncUserFromAuthProvider(authUser);
     const activeSeason = await this.getActiveSeason();
 
     if (!activeSeason) {
-      throw new NotFoundException("No active season found. Ask an admin to create or activate a season first.");
+      throw new NotFoundException(
+        "No active season found. Ask an admin to create or activate a season first.",
+      );
     }
 
     const displayName = dto.displayName.trim();
     const teamName = dto.teamName.trim();
-    const photoUrl = dto.photoUrl?.trim() || user.photo_url || authUser.picture || null;
+    const photoUrl =
+      dto.photoUrl?.trim() || user.photo_url || authUser.picture || null;
 
     const updatedUser = await this.prisma.client.user.update({
       where: { id: user.id },
@@ -136,10 +142,10 @@ export class AuthService {
 
     const existingByEmail = authUser.email
       ? await this.prisma.client.user.findFirst({
-        where: {
-          email: authUser.email,
-        },
-      })
+          where: {
+            email: authUser.email,
+          },
+        })
       : null;
 
     if (existingByEmail) {
@@ -158,7 +164,10 @@ export class AuthService {
       });
     }
 
-    const username = await this.generateUniqueUserName(authUser.email, nameParts.fullName);
+    const username = await this.generateUniqueUserName(
+      authUser.email,
+      nameParts.fullName,
+    );
 
     return this.prisma.client.user.create({
       data: {
@@ -176,9 +185,15 @@ export class AuthService {
     });
   }
 
-  private extractNameParts(fullName: string | null, email: string | null): NameParts {
+  private extractNameParts(
+    fullName: string | null,
+    email: string | null,
+  ): NameParts {
     const fallbackName = email?.split("@")[0] ?? "Player";
-    const normalizedFullName = (fullName?.trim() || fallbackName).replace(/\s+/g, " ");
+    const normalizedFullName = (fullName?.trim() || fallbackName).replace(
+      /\s+/g,
+      " ",
+    );
     const parts = normalizedFullName.split(" ").filter(Boolean);
 
     if (parts.length <= 1) {
@@ -208,7 +223,10 @@ export class AuthService {
     return normalized || "player";
   }
 
-  private async generateUniqueUserName(email: string | null, fullName: string | null) {
+  private async generateUniqueUserName(
+    email: string | null,
+    fullName: string | null,
+  ) {
     const seed = email?.split("@")[0] ?? fullName ?? "player";
     const base = this.sanitizeUserNameSeed(seed);
 

@@ -85,7 +85,11 @@ export class AdminController {
   @ApiOperation({ summary: "Get admin audit log" })
   @ApiQuery({ name: "limit", required: false, example: 50 })
   @ApiQuery({ name: "entityType", required: false, example: "match" })
-  @ApiQuery({ name: "entityId", required: false, example: "550e8400-e29b-41d4-a716-446655440000" })
+  @ApiQuery({
+    name: "entityId",
+    required: false,
+    example: "550e8400-e29b-41d4-a716-446655440000",
+  })
   getAuditLogs(@Query() query: AuditLogQueryDto) {
     return this.adminService.getAuditLogs(query);
   }
@@ -149,7 +153,9 @@ export class AdminController {
   }
 
   @Patch("scores/:scoreId")
-  @ApiOperation({ summary: "Change a single score's rank and re-sequence the match" })
+  @ApiOperation({
+    summary: "Change a single score's rank and re-sequence the match",
+  })
   @ApiParam({ name: "scoreId", format: "uuid" })
   @ApiBody({ type: UpdateScoreRankDto })
   updateScoreRank(
@@ -160,7 +166,9 @@ export class AdminController {
   }
 
   @Delete("scores/:scoreId")
-  @ApiOperation({ summary: "Delete a score and mark that player as DNP for the match" })
+  @ApiOperation({
+    summary: "Delete a score and mark that player as DNP for the match",
+  })
   @ApiParam({ name: "scoreId", format: "uuid" })
   @ApiBody({ type: ReverseChipPlayDto, required: false })
   deleteScore(
@@ -182,7 +190,9 @@ export class AdminController {
   }
 
   @Post("chips/:chipPlayId/reassign")
-  @ApiOperation({ summary: "Reassign a chip play to a different chip/player/start match" })
+  @ApiOperation({
+    summary: "Reassign a chip play to a different chip/player/start match",
+  })
   @ApiParam({ name: "chipPlayId", format: "uuid" })
   @ApiBody({ type: ReassignChipPlayDto })
   reassignChipPlay(

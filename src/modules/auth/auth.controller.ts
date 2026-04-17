@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { AuthService } from "./auth.service.js";
 import { FirebaseAuthGuard } from "./firebase-auth.guard.js";
 import { CurrentAuthUser } from "./current-auth-user.decorator.js";

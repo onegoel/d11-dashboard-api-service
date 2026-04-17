@@ -14,7 +14,12 @@ export class FirebaseAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     if (process.env.DISABLE_AUTH === "true") {
       const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
-      request.authUser = { uid: "dev", email: "dev@local", name: "Dev", picture: null };
+      request.authUser = {
+        uid: "dev",
+        email: "dev@local",
+        name: "Dev",
+        picture: null,
+      };
       return true;
     }
 
@@ -39,7 +44,8 @@ export class FirebaseAuthGuard implements CanActivate {
         email: decoded.email ?? null,
         name: decoded.name ?? null,
         picture: decoded.picture ?? null,
-        claimedRole: typeof decoded["role"] === "string" ? decoded["role"] : null,
+        claimedRole:
+          typeof decoded["role"] === "string" ? decoded["role"] : null,
       };
 
       return true;

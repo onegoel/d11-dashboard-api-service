@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, MaxLength, MinLength, IsOptional, Matches } from "class-validator";
+import {
+  IsString,
+  MaxLength,
+  MinLength,
+  IsOptional,
+  Matches,
+} from "class-validator";
 
 export class CompleteOnboardingDto {
   @ApiProperty({ example: "Aronya" })
@@ -16,7 +22,8 @@ export class CompleteOnboardingDto {
 
   @ApiPropertyOptional({
     example: "https://lh3.googleusercontent.com/a/default-user=s96-c",
-    description: "Optional profile photo URL override (must be a hosted https URL)",
+    description:
+      "Optional profile photo URL override (must be a hosted https URL)",
   })
   @IsOptional()
   @IsString()

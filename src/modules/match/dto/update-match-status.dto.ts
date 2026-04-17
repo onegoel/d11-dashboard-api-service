@@ -7,7 +7,8 @@ export class UpdateMatchStatusDto {
   @ApiProperty({
     enum: MatchStatus,
     example: "COMPLETED",
-    description: "Match status to update to (NOT_STARTED, IN_PROGRESS, COMPLETED)",
+    description:
+      "Match status to update to (NOT_STARTED, IN_PROGRESS, COMPLETED)",
   })
   @Transform(({ value }) =>
     typeof value === "string" ? value.toUpperCase() : value,

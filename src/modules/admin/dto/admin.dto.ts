@@ -56,13 +56,17 @@ export class CreateAdminMatchDto extends AdminReasonDto {
 
   @ApiPropertyOptional({ enum: MatchStatus, example: MatchStatus.SCHEDULED })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchStatus)
   status?: MatchStatus;
 
   @ApiPropertyOptional({ enum: MatchResult, example: MatchResult.PENDING })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
 }
@@ -100,13 +104,17 @@ export class UpdateAdminMatchDto extends AdminReasonDto {
 
   @ApiPropertyOptional({ enum: MatchStatus })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchStatus)
   status?: MatchStatus;
 
   @ApiPropertyOptional({ enum: MatchResult })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
 }
@@ -119,15 +127,25 @@ export class DeleteAdminMatchDto extends AdminReasonDto {
 }
 
 export class ReopenMatchDto extends AdminReasonDto {
-  @ApiPropertyOptional({ enum: [MatchStatus.SCHEDULED, MatchStatus.LIVE], example: MatchStatus.LIVE })
+  @ApiPropertyOptional({
+    enum: [MatchStatus.SCHEDULED, MatchStatus.LIVE],
+    example: MatchStatus.LIVE,
+  })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchStatus)
   status?: MatchStatus;
 
-  @ApiPropertyOptional({ enum: [MatchResult.PENDING], example: MatchResult.PENDING })
+  @ApiPropertyOptional({
+    enum: [MatchResult.PENDING],
+    example: MatchResult.PENDING,
+  })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
 }
@@ -169,7 +187,9 @@ export class ReassignChipPlayDto extends AdminReasonDto {
 
   @ApiPropertyOptional({ enum: ChipCode, example: ChipCode.DOUBLE_TEAM })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(ChipCode)
   chipCode?: ChipCode;
 
@@ -289,7 +309,9 @@ export class AuditLogQueryDto {
 
 export class UpdateUserRoleDto extends AdminReasonDto {
   @ApiProperty({ enum: UserRole, example: UserRole.ADMIN })
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(UserRole)
   role!: UserRole;
 }

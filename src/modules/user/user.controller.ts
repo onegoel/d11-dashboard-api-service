@@ -36,7 +36,8 @@ export class UserController {
   @Get("season/:seasonId")
   @ApiOperation({
     summary: "Get all season users",
-    description: "Retrieve all users for a specific season with their display names",
+    description:
+      "Retrieve all users for a specific season with their display names",
   })
   @ApiParam({
     name: "seasonId",
@@ -55,7 +56,8 @@ export class UserController {
   @Post(":userId/profile-photo-upload-url")
   @ApiOperation({
     summary: "Create signed upload URL for a profile photo",
-    description: "Returns a short-lived signed URL for direct image upload to Cloud Storage",
+    description:
+      "Returns a short-lived signed URL for direct image upload to Cloud Storage",
   })
   @ApiParam({
     name: "userId",

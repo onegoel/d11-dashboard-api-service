@@ -14,6 +14,7 @@ type WisdenSquadsResponse = {
       is_keeper: number;
       player_id: number;
       player_image: string | null;
+      photo_url: string | null;
       player_known_as: string;
       player_name: string;
       player_role: string;
@@ -191,7 +192,7 @@ export class FantasySquadsService {
             teamWisdenId: String(wisdenTeam.team_id),
             battingHand: player.batting_hand,
             bowlingHand: player.bowling_hand,
-            photoUrl: player.player_image,
+            photoUrl: player.photo_url ?? player.player_image,
             isActive: true,
           },
           create: {
@@ -205,7 +206,7 @@ export class FantasySquadsService {
             teamWisdenId: String(wisdenTeam.team_id),
             battingHand: player.batting_hand,
             bowlingHand: player.bowling_hand,
-            photoUrl: player.player_image,
+            photoUrl: player.photo_url ?? player.player_image,
             isActive: true,
           },
         });

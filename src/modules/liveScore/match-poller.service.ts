@@ -3,7 +3,8 @@ import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { LiveScoreService } from "./live-score.service.js";
 import { FantasyScoringService } from "../fantasy/scoring/fantasy-scoring.service.js";
-import { MatchStatus } from "../../../generated/prisma/client.js";
+import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
+import { withDerivedMatchResult } from "./wisden-match-result.util.js";
 import type {
   WisdenCommentaryResponse,
   WisdenScorecardInnings,
@@ -12,6 +13,7 @@ import type {
 
 const POLL_INTERVAL_MS = 30_000;
 const PRE_START_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
+const HISTORICAL_ONE_SHOT_AGE_MS = 6 * 60 * 60 * 1000; // 6 hours past start
 
 function isWisdenMatchComplete(
   scorecard: WisdenScorecardResponse | null,
@@ -108,6 +110,15 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
 
     if (msUntilPollStart <= 0) {
       // Already within or past the 30-min pre-start window
+      const ageMs = Date.now() - matchDate.getTime();
+      if (ageMs > HISTORICAL_ONE_SHOT_AGE_MS) {
+        this.logger.log(
+          `[${matchId}] Match start is stale (${Math.round(ageMs / 60_000)}m old); running one-shot historical sync instead of interval polling`,
+        );
+        void this.runHistoricalOneShotSync(matchId);
+        return;
+      }
+
       this.logger.log(
         `[${matchId}] Starting immediately (already within pre-start window)`,
       );
@@ -250,6 +261,53 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
+  private async runHistoricalOneShotSync(matchId: string): Promise<void> {
+    try {
+      const match = await this.prisma.client.match.findUnique({
+        where: { id: matchId },
+        select: { id: true, wisdenMatchGid: true },
+      });
+
+      if (!match?.wisdenMatchGid) {
+        this.logger.warn(
+          `[${matchId}] One-shot sync skipped: missing wisdenMatchGid`,
+        );
+        return;
+      }
+
+      const data = await this.liveScoreService.pollAndCacheWisdenMatch(
+        match.wisdenMatchGid,
+      );
+      this.logger.log(
+        `[${matchId}] One-shot sync score: ${scoreSnapshot(data.scorecard)}`,
+      );
+
+      if (!data.scorecard) {
+        this.logger.warn(`[${matchId}] One-shot sync missing scorecard`);
+        return;
+      }
+
+      if (isWisdenMatchComplete(data.scorecard)) {
+        await this.persistFinalScorecard(
+          matchId,
+          data.scorecard,
+          data.commentary,
+        );
+        this.liveScoreService.evictWisdenMatch(match.wisdenMatchGid);
+        this.logger.log(
+          `[${matchId}] One-shot sync persisted completed historical match`,
+        );
+        return;
+      }
+
+      this.logger.log(
+        `[${matchId}] One-shot sync found non-complete status; skipping interval polling`,
+      );
+    } catch (err) {
+      this.logger.warn(`[${matchId}] One-shot sync error: ${String(err)}`);
+    }
+  }
+
   private async persistFinalScorecard(
     matchId: string,
     scorecardData: WisdenScorecardResponse,
@@ -258,7 +316,12 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
     try {
       const match = await this.prisma.client.match.findUnique({
         where: { id: matchId },
-        select: { id: true, wisdenMatchGid: true },
+        select: {
+          id: true,
+          wisdenMatchGid: true,
+          matchResult: true,
+          matchResultText: true,
+        },
       });
 
       if (!match) {
@@ -269,12 +332,21 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
       }
 
       const status = scorecardData.match_status ?? "complete";
+      const derived = withDerivedMatchResult(scorecardData);
+      const persistedScorecard = derived.scorecard;
 
       await this.prisma.client.match.update({
         where: { id: match.id },
         data: {
           status: MatchStatus.COMPLETED,
-          wisdenScore: scorecardData as any,
+          ...(persistedScorecard.match_result
+            ? { matchResultText: persistedScorecard.match_result }
+            : {}),
+          ...(derived.outcome !== MatchResult.PENDING &&
+          match.matchResult === MatchResult.PENDING
+            ? { matchResult: derived.outcome }
+            : {}),
+          wisdenScore: persistedScorecard as any,
           wisdenCommentary: commentaryData as any,
           wisdenStatus: status,
           wisdenLastSyncedAt: new Date(),

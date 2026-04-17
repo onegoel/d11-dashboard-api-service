@@ -77,6 +77,10 @@ export type WisdenScorecardInnings = {
   overs?: string | number;
   runs?: number;
   wickets?: number;
+  score?: {
+    runs?: number;
+    wickets?: number;
+  };
   total_ball_count?: number;
   batting?: WisdenScorecardBattingEntry[];
   bowling?: WisdenScorecardBowlingEntry[];
@@ -84,6 +88,7 @@ export type WisdenScorecardInnings = {
 
 export type WisdenScorecardResponse = {
   match_status?: string;
+  match_result?: string;
   live_status_id?: number;
   start_datetime_utc?: string;
   scheduled_overs?: number;

@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { MatchStatus } from "../../../generated/prisma/client.js";
+import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
+import type { WisdenScorecardResponse } from "../../common/types/wisden.types.js";
+import { withDerivedMatchResult } from "../liveScore/wisden-match-result.util.js";
 
 type GetSeasonMatchesOptions = {
   status?: MatchStatus;
@@ -19,6 +21,39 @@ export class MatchService {
 
     if (!match) {
       throw new NotFoundException(`No match found for id ${matchId}`);
+    }
+
+    if (match.status === MatchStatus.COMPLETED && match.wisdenScore) {
+      const derived = withDerivedMatchResult(
+        match.wisdenScore as WisdenScorecardResponse,
+      );
+      const resultText = derived.scorecard.match_result ?? null;
+      const shouldUpdateResultText =
+        resultText !== null && resultText !== match.matchResultText;
+      const shouldUpdateOutcome =
+        match.matchResult === MatchResult.PENDING &&
+        derived.outcome !== MatchResult.PENDING;
+      const shouldUpdateStatus = match.wisdenStatus === null;
+
+      if (shouldUpdateResultText || shouldUpdateOutcome || shouldUpdateStatus) {
+        return this.prisma.client.match.update({
+          where: { id: matchId },
+          data: {
+            ...(shouldUpdateResultText ? { matchResultText: resultText } : {}),
+            ...(shouldUpdateStatus
+              ? {
+                  wisdenStatus:
+                    match.wisdenStatus ??
+                    derived.scorecard.match_status ??
+                    "complete",
+                  wisdenLastSyncedAt: new Date(),
+                }
+              : {}),
+            ...(shouldUpdateOutcome ? { matchResult: derived.outcome } : {}),
+          },
+          include: { homeTeam: true, awayTeam: true },
+        });
+      }
     }
 
     return match;

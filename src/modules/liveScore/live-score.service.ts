@@ -6,6 +6,10 @@ import type {
 } from "../../common/types/wisden.types.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { WisdenService } from "../wisden/wisden.service.js";
+import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
+import { FantasyScoringService } from "../fantasy/scoring/fantasy-scoring.service.js";
+import { FantasySquadsService } from "../fantasy/squads/fantasy-squads.service.js";
+import { withDerivedMatchResult } from "./wisden-match-result.util.js";
 
 interface CacheEntry {
   data: unknown;
@@ -25,6 +29,8 @@ export class LiveScoreService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly wisden: WisdenService,
+    private readonly scoringService: FantasyScoringService,
+    private readonly squadsService: FantasySquadsService,
   ) {}
 
   // ── Public read APIs ──────────────────────────────────────────────────────
@@ -32,7 +38,15 @@ export class LiveScoreService {
   async getWisdenScorecard(matchId: string): Promise<unknown> {
     const match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
-      select: { wisdenMatchGid: true, wisdenScore: true },
+      select: {
+        id: true,
+        wisdenMatchGid: true,
+        wisdenScore: true,
+        status: true,
+        wisdenStatus: true,
+        matchResult: true,
+        matchResultText: true,
+      },
     });
 
     if (!match) return null;
@@ -40,13 +54,60 @@ export class LiveScoreService {
     const storedScorecard = match.wisdenScore ?? null;
     const wisdenMatchGid = match.wisdenMatchGid;
 
+    const scorecardWithPersistedResult =
+      storedScorecard !== null
+        ? ({
+            ...(storedScorecard as WisdenScorecardResponse),
+            ...(match.matchResultText
+              ? { match_result: match.matchResultText }
+              : {}),
+          } as WisdenScorecardResponse)
+        : null;
+
+    if (match.status === MatchStatus.COMPLETED && storedScorecard !== null) {
+      const derived = withDerivedMatchResult(
+        storedScorecard as WisdenScorecardResponse,
+      );
+      const resultText = derived.scorecard.match_result ?? null;
+      const shouldUpdateResultText =
+        resultText !== null && resultText !== match.matchResultText;
+      const shouldUpdateOutcome =
+        match.matchResult === MatchResult.PENDING &&
+        derived.outcome !== MatchResult.PENDING;
+      const shouldUpdateStatus = match.wisdenStatus === null;
+
+      if (shouldUpdateResultText || shouldUpdateOutcome || shouldUpdateStatus) {
+        await this.prisma.client.match.update({
+          where: { id: match.id },
+          data: {
+            ...(shouldUpdateResultText ? { matchResultText: resultText } : {}),
+            ...(shouldUpdateStatus
+              ? {
+                  wisdenStatus:
+                    match.wisdenStatus ??
+                    derived.scorecard.match_status ??
+                    "complete",
+                  wisdenLastSyncedAt: new Date(),
+                }
+              : {}),
+            ...(shouldUpdateOutcome ? { matchResult: derived.outcome } : {}),
+          },
+        });
+      }
+
+      return {
+        ...(storedScorecard as WisdenScorecardResponse),
+        ...(resultText ? { match_result: resultText } : {}),
+      };
+    }
+
     // Match GID is now managed via fixture-seed ingestion; no runtime lookup needed.
     if (!wisdenMatchGid) {
-      if (storedScorecard !== null) {
+      if (scorecardWithPersistedResult !== null) {
         this.logger.warn(
           `Serving stored scorecard snapshot for matchId=${matchId} because wisdenMatchGid is missing`,
         );
-        return storedScorecard;
+        return scorecardWithPersistedResult;
       }
       return null;
     }
@@ -74,10 +135,19 @@ export class LiveScoreService {
   async getWisdenCommentary(matchId: string): Promise<unknown> {
     const match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
-      select: { wisdenMatchGid: true },
+      select: { wisdenMatchGid: true, wisdenCommentary: true, status: true },
     });
 
-    const wisdenMatchGid = match?.wisdenMatchGid ?? null;
+    if (!match) return null;
+
+    if (
+      match.status === MatchStatus.COMPLETED &&
+      match.wisdenCommentary !== null
+    ) {
+      return match.wisdenCommentary;
+    }
+
+    const wisdenMatchGid = match.wisdenMatchGid ?? null;
     if (!wisdenMatchGid) return null;
 
     const key = `wisden:commentary:${wisdenMatchGid}`;
@@ -98,6 +168,106 @@ export class LiveScoreService {
       }
       throw error;
     }
+  }
+
+  async backfillHistoricalMatches(): Promise<{
+    processed: number;
+    skipped: number;
+    errors: number;
+  }> {
+    const matches = await this.prisma.client.match.findMany({
+      where: {
+        status: MatchStatus.COMPLETED,
+        wisdenMatchGid: { not: null },
+      },
+      orderBy: { matchDate: "asc" },
+      select: {
+        id: true,
+        wisdenMatchGid: true,
+        wisdenScore: true,
+        wisdenCommentary: true,
+      },
+    });
+
+    let processed = 0;
+    let skipped = 0;
+    let errors = 0;
+
+    for (const match of matches) {
+      const gid = match.wisdenMatchGid!;
+      try {
+        let scorecard = (match.wisdenScore ??
+          null) as WisdenScorecardResponse | null;
+        let commentary = (match.wisdenCommentary ??
+          null) as WisdenCommentaryResponse | null;
+
+        if (match.wisdenScore === null || match.wisdenCommentary === null) {
+          const fetched = await Promise.all([
+            this.wisden.getScorecard(gid),
+            this.wisden.getCommentaryBasic(gid),
+          ]);
+          scorecard = fetched[0];
+          commentary = fetched[1];
+          await this.prisma.client.match.update({
+            where: { id: match.id },
+            data: {
+              wisdenScore: scorecard as any,
+              wisdenCommentary: commentary as any,
+            },
+          });
+        }
+
+        if (!scorecard || !commentary) {
+          skipped++;
+          this.logger.warn(
+            `Backfill skipped scoring for matchId=${match.id} gid=${gid}: missing scorecard/commentary snapshot`,
+          );
+          continue;
+        }
+
+        const mappedPlayers = await this.prisma.client.fantasyMatchPlayer.count(
+          {
+            where: {
+              matchId: match.id,
+              wisdenPlayerId: { not: null },
+            },
+          },
+        );
+
+        if (mappedPlayers === 0) {
+          await this.squadsService.getMatchSquad(match.id);
+        }
+
+        try {
+          await this.scoringService.scoreWisdenMatch(
+            match.id,
+            commentary,
+            scorecard,
+          );
+        } catch (scoreErr) {
+          const scoreMsg =
+            scoreErr instanceof Error ? scoreErr.message : String(scoreErr);
+          this.logger.warn(
+            `Backfill scoring failed for matchId=${match.id} gid=${gid}: ${scoreMsg}`,
+          );
+        }
+
+        processed++;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `Backfill failed for matchId=${match.id} gid=${gid}: ${msg}`,
+        );
+        errors++;
+      }
+      // Brief pause to avoid Wisden rate limits
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
+    this.logger.log(
+      `Backfill complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
+    );
+    return { processed, skipped, errors };
   }
 
   async pollAndCacheWisdenMatch(matchGid: string): Promise<{

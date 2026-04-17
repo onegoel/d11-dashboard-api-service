@@ -15,6 +15,6 @@ import { FantasySquadsService } from "./squads/fantasy-squads.service.js";
     FantasyMatchesService,
     FantasyScoringService,
   ],
-  exports: [FantasyScoringService],
+  exports: [FantasyScoringService, FantasySquadsService],
 })
 export class FantasyModule {}

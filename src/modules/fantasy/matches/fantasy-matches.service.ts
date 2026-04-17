@@ -45,6 +45,7 @@ export class FantasyMatchesService {
         where: { id: matchId },
         select: {
           status: true,
+          matchDate: true,
           wisdenMatchGid: true,
           homeTeam: { select: { wisdenTeamId: true } },
           awayTeam: { select: { wisdenTeamId: true } },
@@ -99,9 +100,9 @@ export class FantasyMatchesService {
 
     const announcedSquadKnown = Boolean(announcedSquadIds?.size);
 
-    const shouldRevealSelectionPct =
-      match.status === "COMPLETED" ||
-      contest?.status === FantasyContestStatus.COMPLETED;
+    const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
+    const shouldRevealSelectionData =
+      lockTimeReached || contest?.status !== FantasyContestStatus.OPEN;
 
     const scoreByPlayerId = new Map(
       playerScores.map((score) => [score.fantasyPlayerId, score]),
@@ -186,14 +187,18 @@ export class FantasyMatchesService {
                 announcedSquadIds?.has(matchPlayer.wisdenPlayerId),
               )
             : null,
-          selectedEntryCount,
-          selectedByUsers: Array.from(
-            selectedByUsersByPlayerId
-              .get(matchPlayer.fantasyPlayerId)
-              ?.values() ?? [],
-          ),
+          selectedEntryCount: shouldRevealSelectionData
+            ? selectedEntryCount
+            : 0,
+          selectedByUsers: shouldRevealSelectionData
+            ? Array.from(
+                selectedByUsersByPlayerId
+                  .get(matchPlayer.fantasyPlayerId)
+                  ?.values() ?? [],
+              )
+            : [],
           selectionPct:
-            shouldRevealSelectionPct && totalEntries > 0
+            shouldRevealSelectionData && totalEntries > 0
               ? Number(((selectedEntryCount / totalEntries) * 100).toFixed(1))
               : null,
           points: playerScore?.points ?? null,
@@ -336,30 +341,58 @@ export class FantasyMatchesService {
       throw new BadRequestException("One or more selected players are invalid");
     }
 
-    const matchPlayers = await this.prisma.client.fantasyMatchPlayer.findMany({
-      where: {
-        matchId,
-        fantasyPlayerId: { in: fantasyPlayerIds },
-      },
-      select: {
-        fantasyPlayerId: true,
-        creditValue: true,
-      },
-    });
+    // Verify all players exist in match + validate XI budget (only starters count toward 100 cap)
+    const starterPlayerIds = starters.map((starter) => starter.fantasyPlayerId);
+    const starterMatchPlayers =
+      await this.prisma.client.fantasyMatchPlayer.findMany({
+        where: {
+          matchId,
+          fantasyPlayerId: { in: starterPlayerIds },
+        },
+        select: {
+          fantasyPlayerId: true,
+          creditValue: true,
+          teamWisdenId: true,
+          fantasyPlayer: {
+            select: {
+              teamId: true,
+            },
+          },
+        },
+      });
 
-    if (matchPlayers.length !== uniqueFantasyPlayerIds.size) {
+    if (starterMatchPlayers.length !== starterPlayerIds.length) {
       throw new BadRequestException(
-        "One or more selected players are not in this match pool",
+        "One or more selected starter players are not in this match pool",
       );
     }
 
-    const totalCredits = matchPlayers.reduce(
+    // Verify bench players exist in match (no budget check for bench)
+    const benchPlayerIds = bench.map((b) => b.fantasyPlayerId);
+    if (benchPlayerIds.length > 0) {
+      const benchMatchPlayers =
+        await this.prisma.client.fantasyMatchPlayer.findMany({
+          where: {
+            matchId,
+            fantasyPlayerId: { in: benchPlayerIds },
+          },
+          select: { fantasyPlayerId: true },
+        });
+      if (benchMatchPlayers.length !== benchPlayerIds.length) {
+        throw new BadRequestException(
+          "One or more selected bench players are not in this match pool",
+        );
+      }
+    }
+
+    // Check XI (starters only) budget
+    const xiTotalCredits = starterMatchPlayers.reduce(
       (sum, player) => sum + player.creditValue,
       0,
     );
-    if (totalCredits > FantasyMatchesService.BUDGET_CAP + 0.001) {
+    if (xiTotalCredits > FantasyMatchesService.BUDGET_CAP + 0.001) {
       throw new BadRequestException(
-        `Credit cap exceeded: ${totalCredits.toFixed(1)}/${FantasyMatchesService.BUDGET_CAP}`,
+        `XI credit cap exceeded: ${xiTotalCredits.toFixed(1)}/${FantasyMatchesService.BUDGET_CAP}`,
       );
     }
 
@@ -371,23 +404,6 @@ export class FantasyMatchesService {
       ALL_ROUNDER: 0,
       BOWLER: 0,
     };
-    const starterPlayerIds = starters.map((starter) => starter.fantasyPlayerId);
-    const starterMatchPlayers =
-      await this.prisma.client.fantasyMatchPlayer.findMany({
-        where: {
-          matchId,
-          fantasyPlayerId: { in: starterPlayerIds },
-        },
-        select: {
-          fantasyPlayerId: true,
-          teamWisdenId: true,
-          fantasyPlayer: {
-            select: {
-              teamId: true,
-            },
-          },
-        },
-      });
 
     const starterTeamKeyByPlayerId = new Map(
       starterMatchPlayers.map((item) => [
@@ -544,7 +560,7 @@ export class FantasyMatchesService {
       where: { matchId },
     });
 
-    if (!contest) return { entries: [], status: "NO_CONTEST" };
+    if (!contest) return { entries: [], status: "No entries" };
 
     const entries = await this.prisma.client.fantasyContestEntry.findMany({
       where: { contestId: contest.id },
