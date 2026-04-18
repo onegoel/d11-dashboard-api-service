@@ -155,21 +155,6 @@ function getOrCreateWisdenStats(
   return acc.get(wisdenPlayerId)!;
 }
 
-function parseWisdenBallParticipants(summary: string | undefined): {
-  bowlerName: string | null;
-  batterName: string | null;
-} {
-  if (!summary) {
-    return { bowlerName: null, batterName: null };
-  }
-
-  const [bowlerName, batterName] = summary.split(" to ");
-  return {
-    bowlerName: bowlerName?.trim() || null,
-    batterName: batterName?.trim() || null,
-  };
-}
-
 function parseNamedFielders(raw: string): string[] {
   return raw
     .split(/\s*\/\s*|\s*&\s*|\s*,\s*/)
@@ -177,18 +162,58 @@ function parseNamedFielders(raw: string): string[] {
     .filter(Boolean);
 }
 
-function parseWisdenRunOutFielders(message: string): string[] {
-  const runOutBy = message.match(/run out(?: by)? ([^.]+?)(?:\.|,|$)/i);
-  if (runOutBy?.[1]) {
-    return parseNamedFielders(runOutBy[1]);
-  }
+function hasScoringToken(
+  scoring: string | undefined,
+  token: "wd" | "nb" | "lb" | "b",
+): boolean {
+  if (!scoring) return false;
 
-  const caughtBy = message.match(/caught by ([^.]+?)(?:\.|,|$)/i);
-  if (caughtBy?.[1] && /run out/i.test(message)) {
-    return parseNamedFielders(caughtBy[1]);
-  }
+  const normalized = scoring
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 
-  return [];
+  if (token === "wd") return normalized.includes("wd");
+  if (token === "nb") return normalized.includes("nb");
+  if (token === "lb") return normalized.includes("lb");
+  return /(^|[^a-z])b([^a-z]|$)/.test(normalized);
+}
+
+function isDotBallDelivery(params: {
+  legalDelivery: boolean;
+  isBye: boolean;
+  isLegBye: boolean;
+  recordedRuns: number;
+}): boolean {
+  if (!params.legalDelivery) return false;
+  if (params.isBye || params.isLegBye) return true;
+  return params.recordedRuns === 0;
+}
+
+function parseOversToBalls(overs: string | number | undefined): number {
+  if (overs == null) return 0;
+
+  const raw = String(overs).trim();
+  if (!raw) return 0;
+
+  const [completedOvers, ballsInCurrentOver] = raw.split(".");
+  const fullOvers = Number.parseInt(completedOvers ?? "0", 10);
+  const balls = Number.parseInt(ballsInCurrentOver ?? "0", 10);
+
+  const safeFullOvers = Number.isFinite(fullOvers) ? fullOvers : 0;
+  const safeBalls = Number.isFinite(balls)
+    ? Math.max(0, Math.min(5, balls))
+    : 0;
+
+  return safeFullOvers * 6 + safeBalls;
+}
+
+function cleanDismissalName(raw: string): string {
+  return raw.replace(/†/g, "").trim();
+}
+
+function isNotOutDismissal(raw: string): boolean {
+  return /^not out$/i.test(raw.trim());
 }
 
 function accumulateWisdenCommentary(
@@ -205,165 +230,196 @@ function accumulateWisdenCommentary(
     getOrCreateWisdenStats(statsMap, player.wisdenPlayerId).played = true;
   }
 
+  for (const innings of scorecard.innings ?? []) {
+    const battingTeamId = String(innings.batting_team_id);
+    const bowlingTeamId =
+      battingTeamId === team1WisdenId ? team2WisdenId : team1WisdenId;
+
+    for (const batter of innings.batting ?? []) {
+      const batterRef = playerIndex.byId.get(String(batter.player_id));
+      if (!batterRef) continue;
+
+      const stats = getOrCreateWisdenStats(statsMap, batterRef.wisdenPlayerId);
+      const runs = Number(batter.runs ?? 0);
+      const ballsFaced = Number(
+        (batter as { balls_faced?: number }).balls_faced ?? 0,
+      );
+      const fours = Number(batter.fours ?? 0);
+      const sixes = Number(batter.sixes ?? 0);
+      const dismissalStr = (batter.dismissal_str ?? "").trim();
+      const isOut =
+        typeof (batter as { is_out?: number }).is_out === "number"
+          ? (batter as { is_out?: number }).is_out === 1
+          : Boolean(dismissalStr) && !isNotOutDismissal(dismissalStr);
+
+      stats.played = true;
+      stats.batted = ballsFaced > 0;
+      stats.runs += runs;
+      stats.ballsFaced += ballsFaced;
+      stats.fours += fours;
+      stats.sixes += sixes;
+      stats.gotOut = stats.gotOut || isOut;
+
+      if (!dismissalStr || isNotOutDismissal(dismissalStr)) {
+        continue;
+      }
+
+      const caught = dismissalStr.match(/^c\s+(.+?)\s+b\s+(.+)$/i);
+      const stumped = dismissalStr.match(/^st\s+(.+?)\s+b\s+(.+)$/i);
+      const runOut = dismissalStr.match(/^run out\s*\(([^)]+)\)$/i);
+      const lbw = dismissalStr.match(/^lbw\s+b\s+(.+)$/i);
+      const bowled = dismissalStr.match(/^b\s+(.+)$/i);
+
+      if (caught?.[1] && caught?.[2]) {
+        const catcher = resolveWisdenPlayer(
+          playerIndex,
+          cleanDismissalName(caught[1]),
+          bowlingTeamId,
+        );
+        if (catcher) {
+          getOrCreateWisdenStats(statsMap, catcher.wisdenPlayerId).catches += 1;
+        }
+      }
+
+      if (stumped?.[1] && stumped?.[2]) {
+        const wicketKeeper = resolveWisdenPlayer(
+          playerIndex,
+          cleanDismissalName(stumped[1]),
+          bowlingTeamId,
+        );
+        if (wicketKeeper) {
+          getOrCreateWisdenStats(
+            statsMap,
+            wicketKeeper.wisdenPlayerId,
+          ).stumpings += 1;
+        }
+      }
+
+      if (runOut?.[1]) {
+        const fielders = parseNamedFielders(runOut[1]).map(cleanDismissalName);
+        if (fielders.length === 1) {
+          const fielder = resolveWisdenPlayer(
+            playerIndex,
+            fielders[0] ?? null,
+            bowlingTeamId,
+          );
+          if (fielder) {
+            getOrCreateWisdenStats(
+              statsMap,
+              fielder.wisdenPlayerId,
+            ).runOutDirect += 1;
+          }
+        }
+
+        if (fielders.length >= 2) {
+          const thrower = resolveWisdenPlayer(
+            playerIndex,
+            fielders[0] ?? null,
+            bowlingTeamId,
+          );
+          const catcher = resolveWisdenPlayer(
+            playerIndex,
+            fielders[1] ?? null,
+            bowlingTeamId,
+          );
+
+          if (thrower) {
+            getOrCreateWisdenStats(
+              statsMap,
+              thrower.wisdenPlayerId,
+            ).runOutThrower += 1;
+          }
+          if (catcher) {
+            getOrCreateWisdenStats(
+              statsMap,
+              catcher.wisdenPlayerId,
+            ).runOutCatcher += 1;
+          }
+        }
+      }
+
+      if (lbw?.[1]) {
+        const bowler = resolveWisdenPlayer(
+          playerIndex,
+          cleanDismissalName(lbw[1]),
+          bowlingTeamId,
+        );
+        if (bowler) {
+          getOrCreateWisdenStats(statsMap, bowler.wisdenPlayerId).lbwWickets +=
+            1;
+        }
+      } else if (bowled?.[1]) {
+        const bowler = resolveWisdenPlayer(
+          playerIndex,
+          cleanDismissalName(bowled[1]),
+          bowlingTeamId,
+        );
+        if (bowler) {
+          getOrCreateWisdenStats(
+            statsMap,
+            bowler.wisdenPlayerId,
+          ).bowledWickets += 1;
+        }
+      }
+    }
+
+    for (const bowler of innings.bowling ?? []) {
+      const bowlerRef = playerIndex.byId.get(String(bowler.player_id));
+      if (!bowlerRef) continue;
+
+      const stats = getOrCreateWisdenStats(statsMap, bowlerRef.wisdenPlayerId);
+      const wickets = Number(bowler.wickets ?? 0);
+      const maidens = Number(bowler.maidens ?? 0);
+      const runsConceded = Number(
+        (bowler as { runs_conceded?: number; runs?: number }).runs_conceded ??
+          (bowler as { runs_conceded?: number; runs?: number }).runs ??
+          0,
+      );
+
+      stats.played = true;
+      stats.wickets += wickets;
+      stats.maidens += maidens;
+      stats.runsConceded += runsConceded;
+      stats.ballsBowled += parseOversToBalls(bowler.overs);
+    }
+  }
+
   for (const innings of commentary.innings ?? []) {
     const battingTeamId = String(innings.batting_team_id);
     const bowlingTeamId =
       battingTeamId === team1WisdenId ? team2WisdenId : team1WisdenId;
 
     for (const over of innings.bbb ?? []) {
-      let overBowlerId: string | null = null;
-      let overLegalBalls = 0;
-      let overRunsConceded = 0;
+      const bowler = resolveWisdenPlayer(
+        playerIndex,
+        over.bowling_player_name,
+        bowlingTeamId,
+      );
+      if (!bowler) continue;
+
+      const bowlerStats = getOrCreateWisdenStats(
+        statsMap,
+        bowler.wisdenPlayerId,
+      );
+      bowlerStats.played = true;
 
       for (const ball of over.balls ?? []) {
-        const message = ball.commentary?.message ?? "";
-        const lowerMessage = message.toLowerCase();
-        const participants = parseWisdenBallParticipants(
-          ball.commentary?.ball_summary_text,
-        );
-        const batter = resolveWisdenPlayer(
-          playerIndex,
-          participants.batterName,
-          battingTeamId,
-        );
-        const bowler = resolveWisdenPlayer(
-          playerIndex,
-          participants.bowlerName,
-          bowlingTeamId,
-        );
         const recordedRuns = Number(ball.runs ?? 0);
-        const isWide = /\bwides?\b/.test(lowerMessage);
-        const isNoBall = /\bno[- ]balls?\b/.test(lowerMessage);
-        const isLegBye = /\bleg byes?\b/.test(lowerMessage);
-        const isBye = !isLegBye && /\bbyes?\b/.test(lowerMessage);
-        const isWicket = ball.scoring === "W" || lowerMessage.includes("out!");
+        const isWide = hasScoringToken(ball.scoring, "wd");
+        const isNoBall = hasScoringToken(ball.scoring, "nb");
+        const isLegBye = hasScoringToken(ball.scoring, "lb");
+        const isBye = !isLegBye && hasScoringToken(ball.scoring, "b");
         const legalDelivery = !isWide && !isNoBall;
-
-        let batterRuns = recordedRuns;
-        let bowlerRunsConceded = recordedRuns;
-
-        if (isWide) {
-          batterRuns = 0;
-        } else if (isLegBye || isBye) {
-          batterRuns = 0;
-          bowlerRunsConceded = 0;
-        } else if (isNoBall) {
-          batterRuns = Math.max(recordedRuns - 1, 0);
+        if (
+          isDotBallDelivery({
+            legalDelivery,
+            isBye,
+            isLegBye,
+            recordedRuns,
+          })
+        ) {
+          bowlerStats.dotBalls += 1;
         }
-
-        if (batter) {
-          const batterStats = getOrCreateWisdenStats(
-            statsMap,
-            batter.wisdenPlayerId,
-          );
-          batterStats.played = true;
-          batterStats.batted = true;
-          if (!isWide) batterStats.ballsFaced += 1;
-          batterStats.runs += batterRuns;
-          if (batterRuns === 4) batterStats.fours += 1;
-          if (batterRuns === 6) batterStats.sixes += 1;
-          if (isWicket) batterStats.gotOut = true;
-        }
-
-        if (bowler) {
-          overBowlerId = bowler.wisdenPlayerId;
-          const bowlerStats = getOrCreateWisdenStats(
-            statsMap,
-            bowler.wisdenPlayerId,
-          );
-          bowlerStats.played = true;
-          bowlerStats.runsConceded += bowlerRunsConceded;
-          overRunsConceded += bowlerRunsConceded;
-          if (legalDelivery) {
-            bowlerStats.ballsBowled += 1;
-            overLegalBalls += 1;
-            if (bowlerRunsConceded === 0 && !isBye && !isLegBye) {
-              bowlerStats.dotBalls += 1;
-            }
-          }
-
-          if (isWicket && !/run out/i.test(lowerMessage)) {
-            bowlerStats.wickets += 1;
-            if (/\blbw\b/i.test(message)) bowlerStats.lbwWickets += 1;
-            if (/\bbowled\b/i.test(message)) bowlerStats.bowledWickets += 1;
-          }
-        }
-
-        if (isWicket) {
-          const caughtBy = message.match(/caught by ([^.]+?)(?:\.|,|$)/i);
-          const stumpedBy = message.match(/stumped by ([^.]+?)(?:\.|,|$)/i);
-
-          if (stumpedBy?.[1]) {
-            const wicketKeeper = resolveWisdenPlayer(
-              playerIndex,
-              stumpedBy[1],
-              bowlingTeamId,
-            );
-            if (wicketKeeper) {
-              getOrCreateWisdenStats(
-                statsMap,
-                wicketKeeper.wisdenPlayerId,
-              ).stumpings += 1;
-            }
-          } else if (caughtBy?.[1]) {
-            const catcher = resolveWisdenPlayer(
-              playerIndex,
-              caughtBy[1],
-              bowlingTeamId,
-            );
-            if (catcher) {
-              getOrCreateWisdenStats(
-                statsMap,
-                catcher.wisdenPlayerId,
-              ).catches += 1;
-            }
-          } else if (/run out/i.test(lowerMessage)) {
-            const fielders = parseWisdenRunOutFielders(message);
-            if (fielders.length === 1) {
-              const fielder = resolveWisdenPlayer(
-                playerIndex,
-                fielders[0] ?? null,
-                bowlingTeamId,
-              );
-              if (fielder) {
-                getOrCreateWisdenStats(
-                  statsMap,
-                  fielder.wisdenPlayerId,
-                ).runOutDirect += 1;
-              }
-            }
-
-            if (fielders.length >= 2) {
-              const thrower = resolveWisdenPlayer(
-                playerIndex,
-                fielders[0] ?? null,
-                bowlingTeamId,
-              );
-              const catcher = resolveWisdenPlayer(
-                playerIndex,
-                fielders[1] ?? null,
-                bowlingTeamId,
-              );
-
-              if (thrower) {
-                getOrCreateWisdenStats(
-                  statsMap,
-                  thrower.wisdenPlayerId,
-                ).runOutThrower += 1;
-              }
-              if (catcher) {
-                getOrCreateWisdenStats(
-                  statsMap,
-                  catcher.wisdenPlayerId,
-                ).runOutCatcher += 1;
-              }
-            }
-          }
-        }
-      }
-
-      if (overBowlerId && overLegalBalls >= 6 && overRunsConceded === 0) {
-        getOrCreateWisdenStats(statsMap, overBowlerId).maidens += 1;
       }
     }
   }

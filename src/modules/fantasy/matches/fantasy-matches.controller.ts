@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -21,7 +22,10 @@ import { FirebaseAuthGuard } from "../../auth/firebase-auth.guard.js";
 import { Roles } from "../../auth/roles.decorator.js";
 import { RolesGuard } from "../../auth/roles.guard.js";
 import { UserRole } from "../../../../generated/prisma/client.js";
-import { SubmitEntryDto } from "../dto/fantasy.dto.js";
+import {
+  ExtendContestDeadlineDto,
+  SubmitEntryDto,
+} from "../dto/fantasy.dto.js";
 import { FantasyMatchesService } from "./fantasy-matches.service.js";
 import { FantasyScoringService } from "../scoring/fantasy-scoring.service.js";
 
@@ -122,9 +126,28 @@ export class FantasyMatchesController {
       "Get per-player contest selection breakdown (locked contests only)",
   })
   @ApiParam({ name: "matchId", format: "uuid" })
-  @ApiResponse({ status: 200, description: "Player selections aggregated across the contest" })
+  @ApiResponse({
+    status: 200,
+    description: "Player selections aggregated across the contest",
+  })
   getPlayerSelections(@Param("matchId", ParseUUIDPipe) matchId: string) {
     return this.service.getPlayerSelections(matchId);
+  }
+
+  @Post(":matchId/extend-deadline")
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: "Extend contest deadline for a match (admin only)",
+  })
+  @ApiParam({ name: "matchId", format: "uuid" })
+  @ApiBody({ type: ExtendContestDeadlineDto })
+  @ApiResponse({ status: 200, description: "Deadline extended" })
+  extendDeadline(
+    @Param("matchId", ParseUUIDPipe) matchId: string,
+    @Body() dto: ExtendContestDeadlineDto,
+  ) {
+    return this.service.extendContestDeadline(matchId, dto.extendByMinutes);
   }
 
   @Get(":matchId/leaderboard")

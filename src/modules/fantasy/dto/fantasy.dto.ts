@@ -70,3 +70,16 @@ export class SubmitEntryDto {
   @Type(() => EntryPlayerDto)
   players!: EntryPlayerDto[];
 }
+
+export class ExtendContestDeadlineDto {
+  @ApiProperty({
+    description: "Minutes to extend current contest deadline by",
+    minimum: 1,
+    maximum: 360,
+    example: 15,
+  })
+  @IsInt()
+  @Min(1)
+  @Max(360)
+  extendByMinutes!: number;
+}

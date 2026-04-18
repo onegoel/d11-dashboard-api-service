@@ -5,7 +5,10 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
-import { FantasyContestStatus } from "../../../../generated/prisma/client.js";
+import {
+  FantasyContestStatus,
+  MatchStatus,
+} from "../../../../generated/prisma/client.js";
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { FantasySquadsService } from "../squads/fantasy-squads.service.js";
 import type { SubmitEntryDto } from "../dto/fantasy.dto.js";
@@ -715,6 +718,76 @@ export class FantasyMatchesService {
 
     this.logger.log(`Sync triggered for matchId=${matchId}`);
     return { success: true, matchId };
+  }
+
+  async extendContestDeadline(matchId: string, extendByMinutes: number) {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: { id: true, matchDate: true, status: true },
+    });
+
+    if (!match) {
+      throw new NotFoundException(`Match ${matchId} not found`);
+    }
+
+    if (match.status !== MatchStatus.SCHEDULED) {
+      throw new BadRequestException(
+        "Deadline can only be extended while match status is SCHEDULED",
+      );
+    }
+
+    const previousDeadline = new Date(match.matchDate);
+    const nextDeadline = new Date(
+      previousDeadline.getTime() + extendByMinutes * 60_000,
+    );
+
+    if (nextDeadline.getTime() <= Date.now()) {
+      throw new BadRequestException(
+        "Extended deadline is still in the past. Increase extension minutes.",
+      );
+    }
+
+    const contest = await this.prisma.client.fantasyContest.findUnique({
+      where: { matchId },
+      select: { id: true, status: true },
+    });
+
+    if (
+      contest &&
+      (contest.status === FantasyContestStatus.LIVE ||
+        contest.status === FantasyContestStatus.COMPLETED)
+    ) {
+      throw new BadRequestException(
+        `Contest is ${contest.status}; deadline cannot be extended`,
+      );
+    }
+
+    await this.prisma.client.match.update({
+      where: { id: matchId },
+      data: { matchDate: nextDeadline },
+    });
+
+    let reopenedContest = false;
+    if (contest?.status === FantasyContestStatus.LOCKED) {
+      await this.prisma.client.fantasyContest.update({
+        where: { id: contest.id },
+        data: { status: FantasyContestStatus.OPEN, lockedAt: null },
+      });
+      reopenedContest = true;
+    }
+
+    this.logger.log(
+      `Extended contest deadline for matchId=${matchId} by ${extendByMinutes}m (${previousDeadline.toISOString()} -> ${nextDeadline.toISOString()})`,
+    );
+
+    return {
+      success: true,
+      matchId,
+      extendByMinutes,
+      previousDeadline: previousDeadline.toISOString(),
+      newDeadline: nextDeadline.toISOString(),
+      reopenedContest,
+    };
   }
 
   // ── Leaderboard ──────────────────────────────────────────────────────────
