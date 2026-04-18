@@ -179,6 +179,8 @@ export class FantasySquadsService {
           player.player_role,
           player.is_keeper,
         );
+        const incomingPhotoUrl =
+          player.photo_url?.trim() || player.player_image?.trim() || null;
 
         await this.prisma.client.fantasyPlayer.upsert({
           where: { wisdenPlayerId: String(player.player_id) },
@@ -192,7 +194,7 @@ export class FantasySquadsService {
             teamWisdenId: String(wisdenTeam.team_id),
             battingHand: player.batting_hand,
             bowlingHand: player.bowling_hand,
-            photoUrl: player.photo_url ?? player.player_image,
+            ...(incomingPhotoUrl ? { photoUrl: incomingPhotoUrl } : {}),
             isActive: true,
           },
           create: {
@@ -206,7 +208,7 @@ export class FantasySquadsService {
             teamWisdenId: String(wisdenTeam.team_id),
             battingHand: player.batting_hand,
             bowlingHand: player.bowling_hand,
-            photoUrl: player.photo_url ?? player.player_image,
+            photoUrl: incomingPhotoUrl,
             isActive: true,
           },
         });
