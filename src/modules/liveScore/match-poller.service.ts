@@ -11,7 +11,7 @@ import type {
   WisdenScorecardResponse,
 } from "../../common/types/wisden.types.js";
 
-const POLL_INTERVAL_MS = 30_000;
+const POLL_INTERVAL_MS = 15_000;
 const PRE_START_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 const HISTORICAL_ONE_SHOT_AGE_MS = 6 * 60 * 60 * 1000; // 6 hours past start
 

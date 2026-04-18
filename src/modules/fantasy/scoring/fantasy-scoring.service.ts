@@ -364,7 +364,12 @@ function accumulateWisdenCommentary(
     }
 
     for (const bowler of innings.bowling ?? []) {
-      const bowlerRef = playerIndex.byId.get(String(bowler.player_id));
+      const bowlerId = String(
+        (bowler as { bowler_id?: number; player_id?: number }).bowler_id ??
+          (bowler as { bowler_id?: number; player_id?: number }).player_id ??
+          "",
+      );
+      const bowlerRef = playerIndex.byId.get(bowlerId);
       if (!bowlerRef) continue;
 
       const stats = getOrCreateWisdenStats(statsMap, bowlerRef.wisdenPlayerId);
