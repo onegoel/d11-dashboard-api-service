@@ -69,7 +69,8 @@ type SelectPowerupInput = {
   chipCode: ChipCode;
   startMatchId: string;
   selectedTeamId?: string;
-  anchorPlayerName?: string;
+  anchorFantasyPlayerId?: string;
+  anchorPlayerName?: string; // display only, stored alongside ID
   actorUserId: number;
   actorRole: UserRole;
 };
@@ -482,14 +483,18 @@ const serializeChipPlay = (
           chipPlay.chipType.effectWindowMatches,
         );
   const hasStarted = chipPlay.startMatch.matchDate <= now;
-  const anchorPlayerName =
+  const ei =
     chipPlay.extraInfo &&
     typeof chipPlay.extraInfo === "object" &&
-    !Array.isArray(chipPlay.extraInfo) &&
-    typeof (chipPlay.extraInfo as Record<string, unknown>).anchorPlayerName ===
-      "string"
-      ? ((chipPlay.extraInfo as Record<string, unknown>)
-          .anchorPlayerName as string)
+    !Array.isArray(chipPlay.extraInfo)
+      ? (chipPlay.extraInfo as Record<string, unknown>)
+      : null;
+
+  const anchorPlayerName =
+    typeof ei?.anchorPlayerName === "string" ? ei.anchorPlayerName : null;
+  const anchorFantasyPlayerId =
+    typeof ei?.anchorFantasyPlayerId === "string"
+      ? ei.anchorFantasyPlayerId
       : null;
 
   return {
@@ -501,6 +506,7 @@ const serializeChipPlay = (
     selectedTeamId: chipPlay.selectedTeamId,
     extraInfo: chipPlay.extraInfo ?? null,
     anchorPlayerName,
+    anchorFantasyPlayerId,
     selectedTeamShortCode: chipPlay.selectedTeam?.shortCode ?? null,
     selectedTeamName: chipPlay.selectedTeam?.name ?? null,
     status: chipPlay.status,
@@ -683,6 +689,7 @@ const selectPowerupForSeasonMatch = async (
     chipCode,
     startMatchId,
     selectedTeamId,
+    anchorFantasyPlayerId,
     anchorPlayerName,
     actorUserId,
     actorRole,
@@ -761,10 +768,21 @@ const selectPowerupForSeasonMatch = async (
   }
 
   if (chipType.code === ChipCode.ANCHOR_PLAYER) {
-    if (!anchorPlayerName || anchorPlayerName.trim().length === 0) {
+    if (!anchorFantasyPlayerId) {
       throw new ChipServiceError(
         400,
-        "Anchor Player requires entering the anchor player name",
+        "Anchor Player requires selecting an anchor player",
+      );
+    }
+    // Validate the player is actually in this match's pool
+    const inPool = await prismaClient.fantasyMatchPlayer.findFirst({
+      where: { matchId: startMatchId, fantasyPlayerId: anchorFantasyPlayerId },
+      select: { fantasyPlayerId: true },
+    });
+    if (!inPool) {
+      throw new ChipServiceError(
+        400,
+        "Selected anchor player is not in the player pool for this match",
       );
     }
   }
@@ -921,6 +939,7 @@ const selectPowerupForSeasonMatch = async (
           extraInfo:
             chipType.code === ChipCode.ANCHOR_PLAYER
               ? ({
+                  anchorFantasyPlayerId,
                   anchorPlayerName: anchorPlayerName?.trim(),
                 } as Prisma.InputJsonValue)
               : {},
@@ -959,6 +978,7 @@ const selectPowerupForSeasonMatch = async (
         extraInfo:
           chipType.code === ChipCode.ANCHOR_PLAYER
             ? ({
+                anchorFantasyPlayerId,
                 anchorPlayerName: anchorPlayerName?.trim(),
               } as Prisma.InputJsonValue)
             : {},

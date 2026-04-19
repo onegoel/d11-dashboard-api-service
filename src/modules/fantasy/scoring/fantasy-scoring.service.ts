@@ -819,28 +819,23 @@ export class FantasyScoringService {
         anchorActiveUserIds.add(play.seasonUser.userId);
       }
 
-      const allMatchPlayersForAnchor =
-        await this.prisma.client.fantasyMatchPlayer.findMany({
-          where: { matchId },
-          select: {
-            fantasyPlayerId: true,
-            fantasyPlayer: { select: { displayName: true } },
-          },
-        });
-      const fpIdByNorm = new Map(
-        allMatchPlayersForAnchor.map((mp) => [
-          normForLink(mp.fantasyPlayer.displayName),
-          mp.fantasyPlayerId,
-        ]),
-      );
-
       for (const play of anchorChipPlays) {
         const ei = play.extraInfo as Record<string, unknown> | null;
-        const anchorName =
-          typeof ei?.anchorPlayerName === "string" ? ei.anchorPlayerName : null;
-        if (!anchorName) continue;
-        const fpId = fpIdByNorm.get(normForLink(anchorName));
-        if (fpId && (scoreMap.get(fpId) ?? 0) >= 50) {
+        const anchorFpId =
+          typeof ei?.anchorFantasyPlayerId === "string"
+            ? ei.anchorFantasyPlayerId
+            : null;
+        if (!anchorFpId) {
+          this.logger.warn(
+            `[anchor] chipPlay has no anchorFantasyPlayerId in extraInfo — userId=${play.seasonUser.userId}`,
+          );
+          continue;
+        }
+        const pts = scoreMap.get(anchorFpId) ?? 0;
+        this.logger.log(
+          `[anchor] fantasyPlayerId=${anchorFpId} pts=${pts} userId=${play.seasonUser.userId}`,
+        );
+        if (pts >= 50) {
           anchorGrantedUserIds.add(play.seasonUser.userId);
         }
       }

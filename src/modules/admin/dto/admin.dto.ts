@@ -205,8 +205,17 @@ export class ReassignChipPlayDto extends AdminReasonDto {
   selectedTeamId?: string;
 
   @ApiPropertyOptional({
+    format: "uuid",
+    description: "For ANCHOR_PLAYER: UUID of the anchor FantasyPlayer",
+  })
+  @IsOptional()
+  @IsUUID()
+  anchorFantasyPlayerId?: string;
+
+  @ApiPropertyOptional({
     example: "Vaibhav Suryavanshi",
-    description: "For ANCHOR_PLAYER: the player to use as the anchor",
+    description:
+      "For ANCHOR_PLAYER: display name (stored alongside ID for readability)",
   })
   @IsOptional()
   @IsString()

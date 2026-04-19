@@ -84,6 +84,9 @@ export class ChipController {
       chipCode: body.chipCode,
       startMatchId: body.startMatchId,
       ...(body.selectedTeamId ? { selectedTeamId: body.selectedTeamId } : {}),
+      ...(body.anchorFantasyPlayerId
+        ? { anchorFantasyPlayerId: body.anchorFantasyPlayerId }
+        : {}),
       ...(body.anchorPlayerName
         ? { anchorPlayerName: body.anchorPlayerName }
         : {}),

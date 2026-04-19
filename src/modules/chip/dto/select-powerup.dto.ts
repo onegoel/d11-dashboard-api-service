@@ -52,15 +52,25 @@ export class SelectPowerupDto {
 
   @ApiProperty({
     required: false,
-    example: "Virat Kohli",
-    description: "Required for ANCHOR_PLAYER: selected anchor player name",
+    format: "uuid",
+    description: "Required for ANCHOR_PLAYER: UUID of the anchor FantasyPlayer",
   })
   @ValidateIf(
     (dto: SelectPowerupDto) => dto.chipCode === ChipCode.ANCHOR_PLAYER,
   )
+  @IsUUID()
+  @IsNotEmpty()
+  anchorFantasyPlayerId?: string;
+
+  @ApiProperty({
+    required: false,
+    example: "Virat Kohli",
+    description:
+      "Display name of the anchor player (stored alongside ID for readability)",
+  })
+  @IsOptional()
   @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   @IsString()
-  @IsNotEmpty()
   @MaxLength(80)
   anchorPlayerName?: string;
 }

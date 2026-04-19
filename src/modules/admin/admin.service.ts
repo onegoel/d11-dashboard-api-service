@@ -1014,16 +1014,25 @@ export class AdminService {
         },
       });
 
-      // Carry forward anchorPlayerName from dto or the original chip play's extraInfo
+      // Carry forward anchorFantasyPlayerId+anchorPlayerName from dto or original extraInfo
+      const existingExtraInfo =
+        (existing.extraInfo as Record<string, unknown> | null) ?? {};
+      const resolvedAnchorPlayerId =
+        dto.anchorFantasyPlayerId?.trim() ??
+        (targetChipCode === ChipCode.ANCHOR_PLAYER
+          ? (existingExtraInfo.anchorFantasyPlayerId as string | undefined)
+          : undefined);
       const resolvedAnchorPlayerName =
         dto.anchorPlayerName?.trim() ??
         (targetChipCode === ChipCode.ANCHOR_PLAYER
-          ? ((existing.extraInfo as Record<string, unknown>)
-              ?.anchorPlayerName as string | undefined)
+          ? (existingExtraInfo.anchorPlayerName as string | undefined)
           : undefined);
       const extraInfo =
-        targetChipCode === ChipCode.ANCHOR_PLAYER && resolvedAnchorPlayerName
-          ? ({ anchorPlayerName: resolvedAnchorPlayerName } as object)
+        targetChipCode === ChipCode.ANCHOR_PLAYER && resolvedAnchorPlayerId
+          ? ({
+              anchorFantasyPlayerId: resolvedAnchorPlayerId,
+              anchorPlayerName: resolvedAnchorPlayerName,
+            } as object)
           : {};
 
       const replacement = existingTargetPlay
