@@ -357,21 +357,19 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
         `[${matchId}] Final scorecard persisted to DB (status: ${status})`,
       );
 
-      if (commentaryData) {
-        try {
-          const result = await this.scoringService.scoreWisdenMatch(
-            match.id,
-            commentaryData,
-            scorecardData,
-          );
-          this.logger.log(
-            `[${matchId}] Fantasy scoring complete: scored=${result.scored} ranked=${result.ranked}`,
-          );
-        } catch (scoringErr) {
-          this.logger.warn(
-            `[${matchId}] Fantasy scoring failed (non-fatal): ${String(scoringErr)}`,
-          );
-        }
+      try {
+        const result = await this.scoringService.scoreWisdenMatch(
+          match.id,
+          commentaryData ?? {},
+          scorecardData,
+        );
+        this.logger.log(
+          `[${matchId}] Fantasy scoring complete: scored=${result.scored} ranked=${result.ranked}`,
+        );
+      } catch (scoringErr) {
+        this.logger.warn(
+          `[${matchId}] Fantasy scoring failed (non-fatal): ${String(scoringErr)}`,
+        );
       }
     } catch (err) {
       this.logger.error(

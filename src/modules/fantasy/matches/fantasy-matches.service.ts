@@ -822,6 +822,10 @@ export class FantasyMatchesService {
         id: e.id,
         teamNo: e.teamNo,
         totalPoints: e.totalPoints,
+        basePoints:
+          e.chipCode === "ANCHOR_PLAYER" && e.totalPoints != null
+            ? Math.round((e.totalPoints / 1.1) * 10) / 10
+            : null,
         rank: e.rank,
         userId: e.userId,
         displayName: e.user.display_name,

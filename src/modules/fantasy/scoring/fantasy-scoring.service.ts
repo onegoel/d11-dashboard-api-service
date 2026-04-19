@@ -989,12 +989,7 @@ export class FantasyScoringService {
       },
     });
 
-    if (
-      !match ||
-      match.status !== "COMPLETED" ||
-      !match.wisdenScore ||
-      match.matchResult !== "PENDING"
-    ) {
+    if (!match || match.status !== "COMPLETED" || !match.wisdenScore) {
       return ranked;
     }
 
