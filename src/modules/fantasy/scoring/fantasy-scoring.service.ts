@@ -986,10 +986,16 @@ export class FantasyScoringService {
         wisdenScore: true,
         status: true,
         matchResult: true,
+        seasonId: true,
       },
     });
 
-    if (!match || match.status !== "COMPLETED" || !match.wisdenScore) {
+    if (
+      !match ||
+      match.status !== "COMPLETED" ||
+      !match.wisdenScore ||
+      match.seasonId == null
+    ) {
       return ranked;
     }
 
@@ -1004,25 +1010,37 @@ export class FantasyScoringService {
       const entries = await this.prisma.client.fantasyContestEntry.findMany({
         where: { contest: { matchId } },
         select: {
-          id: true,
           rank: true,
           userId: true,
-          teamNo: true,
-          user: {
-            select: {
-              id: true,
-            },
-          },
         },
       });
 
-      // Convert contest ranks to season scores
-      const seasonScores = entries
-        .filter((e) => e.rank != null)
-        .map((e) => ({
-          seasonUserId: e.id,
-          rank: e.rank!,
-        }));
+      const rankedEntries = entries.filter((e) => e.rank != null);
+      if (rankedEntries.length === 0) return ranked;
+
+      // Resolve SeasonUser.id for each userId in this season
+      const uniqueUserIds = [...new Set(rankedEntries.map((e) => e.userId))];
+      const seasonUsers = await this.prisma.client.seasonUser.findMany({
+        where: { seasonId: match.seasonId, userId: { in: uniqueUserIds } },
+        select: { id: true, userId: true },
+      });
+      const seasonUserIdByUserId = new Map(
+        seasonUsers.map((su) => [su.userId, su.id]),
+      );
+
+      // One entry per user — keep their best (lowest) rank across both teams
+      const bestRankBySeasonUserId = new Map<string, number>();
+      for (const e of rankedEntries) {
+        const seasonUserId = seasonUserIdByUserId.get(e.userId);
+        if (!seasonUserId) continue;
+        const current = bestRankBySeasonUserId.get(seasonUserId) ?? Infinity;
+        if (e.rank! < current)
+          bestRankBySeasonUserId.set(seasonUserId, e.rank!);
+      }
+
+      const seasonScores = [...bestRankBySeasonUserId.entries()].map(
+        ([seasonUserId, rank]) => ({ seasonUserId, rank }),
+      );
 
       if (seasonScores.length > 0) {
         await this.scoreService.submitMatchScoresBulk(
