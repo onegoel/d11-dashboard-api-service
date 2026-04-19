@@ -234,7 +234,7 @@ export class ScoreService {
     matchId: string,
     scores: MatchScore[],
     matchResult: MatchResult,
-    updatedByUserId: number,
+    updatedByUserId?: number,
   ) {
     if (scores.length === 0 && matchResult !== MatchResult.ABANDONED) {
       throw new BadRequestException("At least one score entry is required");
@@ -262,7 +262,7 @@ export class ScoreService {
           data: {
             status: MatchStatus.COMPLETED,
             matchResult,
-            updatedByUserId,
+            ...(updatedByUserId != null ? { updatedByUserId } : {}),
           },
         }),
       ]);
@@ -398,7 +398,7 @@ export class ScoreService {
         data: {
           status: MatchStatus.COMPLETED,
           matchResult,
-          updatedByUserId,
+          ...(updatedByUserId != null ? { updatedByUserId } : {}),
         },
       }),
     ]);

@@ -11,6 +11,7 @@ import {
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   ValidateNested,
 } from "class-validator";
@@ -202,6 +203,15 @@ export class ReassignChipPlayDto extends AdminReasonDto {
   @IsOptional()
   @IsUUID()
   selectedTeamId?: string;
+
+  @ApiPropertyOptional({
+    example: "Vaibhav Suryavanshi",
+    description: "For ANCHOR_PLAYER: the player to use as the anchor",
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  anchorPlayerName?: string;
 }
 
 export class AddSeasonUserDto extends AdminReasonDto {

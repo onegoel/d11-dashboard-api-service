@@ -1,12 +1,18 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { WisdenService } from "../../wisden/wisden.service.js";
+import { ScoreService } from "../../score/score.service.js";
 import {
   FANTASY_T20_POINT_SYSTEM,
   MY11_T20_CAPTAIN_MULTIPLIER,
   MY11_T20_VICE_CAPTAIN_MULTIPLIER,
 } from "../../../common/constants/fantasy-point-rule.constants.js";
-import { FantasyContestStatus } from "../../../../generated/prisma/client.js";
+import {
+  FantasyContestStatus,
+  ChipCode,
+  ChipPlayStatus,
+} from "../../../../generated/prisma/client.js";
+import { withDerivedMatchResult } from "../../liveScore/wisden-match-result.util.js";
 import type {
   WisdenCommentaryResponse,
   WisdenScorecardResponse,
@@ -599,6 +605,7 @@ export class FantasyScoringService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly wisden: WisdenService,
+    private readonly scoreService: ScoreService,
   ) {}
 
   async scoreMatch(
@@ -633,7 +640,7 @@ export class FantasyScoringService {
       scorecard,
       true,
     );
-    const ranked = await this.finalizeContest(matchId);
+    const ranked = await this.finalizeContestAndPublishRanks(matchId);
 
     this.logger.log(
       `[scoreWisdenMatch] matchId=${matchId} scored=${scored} ranked=${ranked}`,
@@ -789,6 +796,57 @@ export class FantasyScoringService {
 
     const entryTotals: { id: string; totalPoints: number }[] = [];
 
+    // ── Anchor Player chip pre-computation ───────────────────────────────
+    // Build a set of userIds that qualify for 1.1x (anchor player scored ≥ 50)
+    const anchorGrantedUserIds = new Set<number>();
+    const hasAnchorEntries = contest.entries.some(
+      (e) => e.chipCode === ChipCode.ANCHOR_PLAYER,
+    );
+    if (hasAnchorEntries) {
+      const anchorChipPlays = await this.prisma.client.chipPlay.findMany({
+        where: {
+          startMatchId: matchId,
+          status: ChipPlayStatus.SCHEDULED,
+          chipType: { code: ChipCode.ANCHOR_PLAYER },
+        },
+        select: {
+          extraInfo: true,
+          seasonUser: { select: { userId: true } },
+        },
+      });
+
+      if (anchorChipPlays.length > 0) {
+        const allMatchPlayersForAnchor =
+          await this.prisma.client.fantasyMatchPlayer.findMany({
+            where: { matchId },
+            select: {
+              fantasyPlayerId: true,
+              fantasyPlayer: { select: { displayName: true } },
+            },
+          });
+        const fpIdByNorm = new Map(
+          allMatchPlayersForAnchor.map((mp) => [
+            normForLink(mp.fantasyPlayer.displayName),
+            mp.fantasyPlayerId,
+          ]),
+        );
+
+        for (const play of anchorChipPlays) {
+          const ei = play.extraInfo as Record<string, unknown> | null;
+          const anchorName =
+            typeof ei?.anchorPlayerName === "string"
+              ? ei.anchorPlayerName
+              : null;
+          if (!anchorName) continue;
+          const fpId = fpIdByNorm.get(normForLink(anchorName));
+          if (fpId && (scoreMap.get(fpId) ?? 0) >= 50) {
+            anchorGrantedUserIds.add(play.seasonUser.userId);
+          }
+        }
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     for (const entry of contest.entries) {
       const starters = entry.players.filter((p) => !p.isBench);
       const bench = entry.players
@@ -859,6 +917,14 @@ export class FantasyScoringService {
         total += raw * mult;
       }
 
+      // Apply Anchor Player 1.1x if the player's anchor scored ≥ 50
+      if (
+        entry.chipCode === ChipCode.ANCHOR_PLAYER &&
+        anchorGrantedUserIds.has(entry.userId)
+      ) {
+        total = Math.round(total * 1.1 * 10) / 10;
+      }
+
       entryTotals.push({ id: entry.id, totalPoints: total });
     }
 
@@ -893,5 +959,81 @@ export class FantasyScoringService {
 
   private async finalizeContest(matchId: string): Promise<number> {
     return this.recomputeContestEntries(matchId, true);
+  }
+
+  private async finalizeContestAndPublishRanks(
+    matchId: string,
+  ): Promise<number> {
+    const ranked = await this.recomputeContestEntries(matchId, true);
+
+    // Auto-derive match result from Wisden and publish rankings to score system
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: {
+        id: true,
+        wisdenScore: true,
+        status: true,
+        matchResult: true,
+      },
+    });
+
+    if (
+      !match ||
+      match.status !== "COMPLETED" ||
+      !match.wisdenScore ||
+      match.matchResult !== "PENDING"
+    ) {
+      return ranked;
+    }
+
+    try {
+      // Determine match result from Wisden scorecard
+      const derived = withDerivedMatchResult(
+        match.wisdenScore as WisdenScorecardResponse,
+      );
+      const matchResult = derived.outcome;
+
+      // Get contest leaderboard positions to publish as season scores
+      const entries = await this.prisma.client.fantasyContestEntry.findMany({
+        where: { contest: { matchId } },
+        select: {
+          id: true,
+          rank: true,
+          userId: true,
+          teamNo: true,
+          user: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      // Convert contest ranks to season scores
+      const seasonScores = entries
+        .filter((e) => e.rank != null)
+        .map((e) => ({
+          seasonUserId: e.id,
+          rank: e.rank!,
+        }));
+
+      if (seasonScores.length > 0) {
+        await this.scoreService.submitMatchScoresBulk(
+          matchId,
+          seasonScores,
+          matchResult,
+        );
+        this.logger.log(
+          `[finalizeContest] Auto-published ${seasonScores.length} ranks for matchId=${matchId} with result=${matchResult}`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `[finalizeContest] Failed to auto-publish ranks for ${matchId}: ${String(error)}`,
+      );
+      // Non-fatal; don't throw since we already successfully ranked contest
+    }
+
+    return ranked;
   }
 }

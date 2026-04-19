@@ -16,9 +16,16 @@ export function deriveWisdenMatchResult(scorecard: WisdenScorecardResponse): {
   outcome: MatchResult;
 } {
   const status = (scorecard.match_status ?? "").toLowerCase();
-  if (status.includes("abandon") || status.includes("no result")) {
+  const upstreamResult = (scorecard.match_result ?? "").trim();
+  const upstreamResultLower = upstreamResult.toLowerCase();
+  if (
+    status.includes("abandon") ||
+    status.includes("no result") ||
+    upstreamResultLower.includes("abandon") ||
+    upstreamResultLower.includes("no result")
+  ) {
     return {
-      summary: "Match abandoned",
+      summary: upstreamResult || "No result",
       outcome: MatchResult.ABANDONED,
     };
   }

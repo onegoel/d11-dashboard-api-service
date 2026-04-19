@@ -1014,6 +1014,18 @@ export class AdminService {
         },
       });
 
+      // Carry forward anchorPlayerName from dto or the original chip play's extraInfo
+      const resolvedAnchorPlayerName =
+        dto.anchorPlayerName?.trim() ??
+        (targetChipCode === ChipCode.ANCHOR_PLAYER
+          ? ((existing.extraInfo as Record<string, unknown>)
+              ?.anchorPlayerName as string | undefined)
+          : undefined);
+      const extraInfo =
+        targetChipCode === ChipCode.ANCHOR_PLAYER && resolvedAnchorPlayerName
+          ? ({ anchorPlayerName: resolvedAnchorPlayerName } as object)
+          : {};
+
       const replacement = existingTargetPlay
         ? await tx.chipPlay.update({
             where: { id: existingTargetPlay.id },
@@ -1024,6 +1036,7 @@ export class AdminService {
                 targetChipCode === ChipCode.TEAM_FORM
                   ? targetSelectedTeamId
                   : null,
+              extraInfo,
             },
           })
         : await tx.chipPlay.create({
@@ -1036,6 +1049,7 @@ export class AdminService {
                   ? targetSelectedTeamId
                   : null,
               status: ChipPlayStatus.SCHEDULED,
+              extraInfo,
             },
           });
 

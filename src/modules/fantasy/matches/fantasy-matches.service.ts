@@ -827,6 +827,7 @@ export class FantasyMatchesService {
         displayName: e.user.display_name,
         userName: e.user.user_name,
         photoUrl: e.user.photo_url,
+        chipCode: e.chipCode,
       })),
     };
   }
