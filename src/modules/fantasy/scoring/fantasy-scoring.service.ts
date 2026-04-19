@@ -797,53 +797,70 @@ export class FantasyScoringService {
     const entryTotals: { id: string; totalPoints: number }[] = [];
 
     // ── Anchor Player chip pre-computation ───────────────────────────────
-    // Build a set of userIds that qualify for 1.1x (anchor player scored ≥ 50)
-    const anchorGrantedUserIds = new Set<number>();
-    const hasAnchorEntries = contest.entries.some(
-      (e) => e.chipCode === ChipCode.ANCHOR_PLAYER,
-    );
-    if (hasAnchorEntries) {
-      const anchorChipPlays = await this.prisma.client.chipPlay.findMany({
-        where: {
-          startMatchId: matchId,
-          status: ChipPlayStatus.SCHEDULED,
-          chipType: { code: ChipCode.ANCHOR_PLAYER },
-        },
-        select: {
-          extraInfo: true,
-          seasonUser: { select: { userId: true } },
-        },
-      });
+    // Always query chip plays directly — entry.chipCode may be null if the
+    // team was submitted before the chip was activated.
+    const anchorGrantedUserIds = new Set<number>(); // qualify for 1.1x
+    const anchorActiveUserIds = new Set<number>(); // have an AP chip for this match
 
-      if (anchorChipPlays.length > 0) {
-        const allMatchPlayersForAnchor =
-          await this.prisma.client.fantasyMatchPlayer.findMany({
-            where: { matchId },
-            select: {
-              fantasyPlayerId: true,
-              fantasyPlayer: { select: { displayName: true } },
-            },
-          });
-        const fpIdByNorm = new Map(
-          allMatchPlayersForAnchor.map((mp) => [
-            normForLink(mp.fantasyPlayer.displayName),
-            mp.fantasyPlayerId,
-          ]),
-        );
+    const anchorChipPlays = await this.prisma.client.chipPlay.findMany({
+      where: {
+        startMatchId: matchId,
+        status: ChipPlayStatus.SCHEDULED,
+        chipType: { code: ChipCode.ANCHOR_PLAYER },
+      },
+      select: {
+        extraInfo: true,
+        seasonUser: { select: { userId: true } },
+      },
+    });
 
-        for (const play of anchorChipPlays) {
-          const ei = play.extraInfo as Record<string, unknown> | null;
-          const anchorName =
-            typeof ei?.anchorPlayerName === "string"
-              ? ei.anchorPlayerName
-              : null;
-          if (!anchorName) continue;
-          const fpId = fpIdByNorm.get(normForLink(anchorName));
-          if (fpId && (scoreMap.get(fpId) ?? 0) >= 50) {
-            anchorGrantedUserIds.add(play.seasonUser.userId);
-          }
+    if (anchorChipPlays.length > 0) {
+      for (const play of anchorChipPlays) {
+        anchorActiveUserIds.add(play.seasonUser.userId);
+      }
+
+      const allMatchPlayersForAnchor =
+        await this.prisma.client.fantasyMatchPlayer.findMany({
+          where: { matchId },
+          select: {
+            fantasyPlayerId: true,
+            fantasyPlayer: { select: { displayName: true } },
+          },
+        });
+      const fpIdByNorm = new Map(
+        allMatchPlayersForAnchor.map((mp) => [
+          normForLink(mp.fantasyPlayer.displayName),
+          mp.fantasyPlayerId,
+        ]),
+      );
+
+      for (const play of anchorChipPlays) {
+        const ei = play.extraInfo as Record<string, unknown> | null;
+        const anchorName =
+          typeof ei?.anchorPlayerName === "string" ? ei.anchorPlayerName : null;
+        if (!anchorName) continue;
+        const fpId = fpIdByNorm.get(normForLink(anchorName));
+        if (fpId && (scoreMap.get(fpId) ?? 0) >= 50) {
+          anchorGrantedUserIds.add(play.seasonUser.userId);
         }
       }
+
+      // Backfill entry.chipCode for entries whose chip was activated after
+      // team submission (so the pill shows correctly in the leaderboard).
+      await Promise.all(
+        contest.entries
+          .filter(
+            (e) =>
+              e.chipCode !== ChipCode.ANCHOR_PLAYER &&
+              anchorActiveUserIds.has(e.userId),
+          )
+          .map((e) =>
+            this.prisma.client.fantasyContestEntry.update({
+              where: { id: e.id },
+              data: { chipCode: ChipCode.ANCHOR_PLAYER },
+            }),
+          ),
+      );
     }
     // ─────────────────────────────────────────────────────────────────────
 
@@ -919,7 +936,7 @@ export class FantasyScoringService {
 
       // Apply Anchor Player 1.1x if the player's anchor scored ≥ 50
       if (
-        entry.chipCode === ChipCode.ANCHOR_PLAYER &&
+        anchorActiveUserIds.has(entry.userId) &&
         anchorGrantedUserIds.has(entry.userId)
       ) {
         total = Math.round(total * 1.1 * 10) / 10;
