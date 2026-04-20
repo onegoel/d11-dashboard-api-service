@@ -894,15 +894,19 @@ export class FantasyMatchesService {
     });
 
     // Backfill chipCode from chip plays for entries where it wasn't stored at
-    // submission time (e.g. chip activated after team was locked in).
+    // submission time (e.g. chip activated after team was locked in). Use any
+    // non-cancelled play affecting this match so pills remain visible once the
+    // chip status advances beyond SCHEDULED.
     const chipByUserId = new Map<number, string>();
     const entriesWithNullChip = entries.filter((e) => !e.chipCode);
     if (entriesWithNullChip.length > 0) {
       const userIds = entriesWithNullChip.map((e) => e.userId);
       const chipPlays = await this.prisma.client.chipPlay.findMany({
         where: {
-          startMatchId: matchId,
-          status: ChipPlayStatus.SCHEDULED,
+          status: { not: ChipPlayStatus.CANCELLED },
+          affectedMatches: {
+            some: { id: matchId },
+          },
           seasonUser: { userId: { in: userIds } },
         },
         select: {
