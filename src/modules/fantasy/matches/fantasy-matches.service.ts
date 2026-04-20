@@ -20,6 +20,35 @@ export class FantasyMatchesService {
   private static readonly BUDGET_CAP = 100;
   private static readonly DEV_UNLOCK_TEAM_VISIBILITY = false;
 
+  private getMatchStartMs(matchDate: Date | string): number {
+    return new Date(matchDate).getTime();
+  }
+
+  private hasMatchStarted(matchDate: Date | string): boolean {
+    return Date.now() >= this.getMatchStartMs(matchDate);
+  }
+
+  private async syncContestLockState(
+    matchId: string,
+    matchDate: Date | string,
+  ): Promise<void> {
+    const hasStarted = this.hasMatchStarted(matchDate);
+    const lockAt = new Date(this.getMatchStartMs(matchDate));
+
+    if (hasStarted) {
+      await this.prisma.client.fantasyContest.updateMany({
+        where: { matchId, status: FantasyContestStatus.OPEN },
+        data: { status: FantasyContestStatus.LOCKED, lockedAt: lockAt },
+      });
+      return;
+    }
+
+    await this.prisma.client.fantasyContest.updateMany({
+      where: { matchId, status: FantasyContestStatus.LOCKED },
+      data: { status: FantasyContestStatus.OPEN, lockedAt: null },
+    });
+  }
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly squads: FantasySquadsService,
@@ -105,11 +134,9 @@ export class FantasyMatchesService {
 
     const announcedSquadKnown = Boolean(announcedSquadIds?.size);
 
-    const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
+    const lockTimeReached = this.hasMatchStarted(match.matchDate);
     const shouldRevealSelectionData =
-      FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY ||
-      lockTimeReached ||
-      contest?.status !== FantasyContestStatus.OPEN;
+      FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY || lockTimeReached;
 
     const scoreByPlayerId = new Map(
       playerScores.map((score) => [score.fantasyPlayerId, score]),
@@ -268,11 +295,9 @@ export class FantasyMatchesService {
       select: { id: true, status: true },
     });
 
-    const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
+    const lockTimeReached = this.hasMatchStarted(match.matchDate);
     const isLocked =
-      FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY ||
-      lockTimeReached ||
-      (contest != null && contest.status !== FantasyContestStatus.OPEN);
+      FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY || lockTimeReached;
 
     if (!contest || !isLocked) {
       throw new ForbiddenException(
@@ -441,29 +466,35 @@ export class FantasyMatchesService {
 
     const matchMeta = await this.prisma.client.match.findUnique({
       where: { id: matchId },
-      select: { matchDate: true },
+      select: { matchDate: true, status: true },
     });
 
     if (!matchMeta) {
       throw new NotFoundException(`Match ${matchId} not found`);
     }
 
+    await this.syncContestLockState(matchId, matchMeta.matchDate);
+
     const now = new Date();
-    if (now >= new Date(matchMeta.matchDate)) {
+    const lockAt = new Date(this.getMatchStartMs(matchMeta.matchDate));
+    const deadlineReached = this.hasMatchStarted(matchMeta.matchDate);
+    const allowLiveEdits = matchMeta.status === MatchStatus.LIVE;
+    if (!allowLiveEdits && deadlineReached) {
       await this.prisma.client.fantasyContest.updateMany({
         where: { matchId, status: FantasyContestStatus.OPEN },
-        data: { status: FantasyContestStatus.LOCKED, lockedAt: now },
+        data: { status: FantasyContestStatus.LOCKED, lockedAt: lockAt },
       });
       throw new BadRequestException(
         "Contest deadline passed. Team edits are locked at match start.",
       );
     }
 
-    // Recover from accidental early lock (e.g. temporary bad matchDate during dev seeding)
-    await this.prisma.client.fantasyContest.updateMany({
-      where: { matchId, status: FantasyContestStatus.LOCKED },
-      data: { status: FantasyContestStatus.OPEN, lockedAt: null },
-    });
+    if (allowLiveEdits) {
+      await this.prisma.client.fantasyContest.updateMany({
+        where: { matchId, status: FantasyContestStatus.LOCKED },
+        data: { status: FantasyContestStatus.OPEN, lockedAt: null },
+      });
+    }
 
     // Validate exactly one captain, one vice-captain
     const captains = dto.players.filter((p) => p.isCaptain);
@@ -622,7 +653,11 @@ export class FantasyMatchesService {
         create: { matchId, status: FantasyContestStatus.OPEN },
       });
 
-      if (contest.status !== FantasyContestStatus.OPEN) {
+      const canAcceptEntries =
+        contest.status === FantasyContestStatus.OPEN ||
+        (allowLiveEdits && contest.status !== FantasyContestStatus.COMPLETED);
+
+      if (!canAcceptEntries) {
         throw new BadRequestException(
           `Contest is ${contest.status} — entries are no longer accepted`,
         );
@@ -794,7 +829,14 @@ export class FantasyMatchesService {
   // ── Leaderboard ──────────────────────────────────────────────────────────
 
   async getLeaderboard(matchId: string) {
-    await this.assertMatchExists(matchId);
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: { id: true, matchDate: true },
+    });
+
+    if (!match) throw new NotFoundException(`Match ${matchId} not found`);
+
+    await this.syncContestLockState(matchId, match.matchDate);
 
     const contest = await this.prisma.client.fantasyContest.findUnique({
       where: { matchId },
@@ -899,14 +941,12 @@ export class FantasyMatchesService {
     }
 
     const isOwner = entry.userId === requesterUserId;
-    const lockTimeReached = Date.now() >= new Date(match.matchDate).getTime();
-    const isLockedOrBeyond = contest.status !== FantasyContestStatus.OPEN;
+    const lockTimeReached = this.hasMatchStarted(match.matchDate);
 
     if (
       !FantasyMatchesService.DEV_UNLOCK_TEAM_VISIBILITY &&
       !isOwner &&
-      !lockTimeReached &&
-      !isLockedOrBeyond
+      !lockTimeReached
     ) {
       throw new ForbiddenException(
         "Other user teams are visible only after contest lock",
