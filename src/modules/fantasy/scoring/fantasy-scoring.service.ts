@@ -59,6 +59,11 @@ interface PlayerStats {
   played: boolean;
 }
 
+type SwapperActionType =
+  | "CHANGE_CAPTAIN"
+  | "CHANGE_VICE_CAPTAIN"
+  | "SWAP_PLAYER";
+
 function emptyStats(): PlayerStats {
   return {
     runs: 0,
@@ -81,6 +86,48 @@ function emptyStats(): PlayerStats {
     runOutCatcher: 0,
     motm: false,
     played: false,
+  };
+}
+
+function parseSwapperConfig(extraInfo: unknown): {
+  actionType: SwapperActionType;
+  teamNo: number;
+  incomingFantasyPlayerId: string | null;
+  outgoingFantasyPlayerId: string | null;
+} | null {
+  if (!extraInfo || typeof extraInfo !== "object" || Array.isArray(extraInfo)) {
+    return null;
+  }
+
+  const info = extraInfo as Record<string, unknown>;
+  const actionType =
+    typeof info.swapperActionType === "string"
+      ? (info.swapperActionType as SwapperActionType)
+      : null;
+
+  if (
+    actionType !== "CHANGE_CAPTAIN" &&
+    actionType !== "CHANGE_VICE_CAPTAIN" &&
+    actionType !== "SWAP_PLAYER"
+  ) {
+    return null;
+  }
+
+  const incomingFantasyPlayerId =
+    typeof info.swapperIncomingFantasyPlayerId === "string"
+      ? info.swapperIncomingFantasyPlayerId
+      : null;
+  const outgoingFantasyPlayerId =
+    typeof info.swapperOutgoingFantasyPlayerId === "string"
+      ? info.swapperOutgoingFantasyPlayerId
+      : null;
+  const teamNo = info.swapperTeamNo === 2 ? 2 : 1;
+
+  return {
+    actionType,
+    teamNo,
+    incomingFantasyPlayerId,
+    outgoingFantasyPlayerId,
   };
 }
 
@@ -796,23 +843,47 @@ export class FantasyScoringService {
 
     const entryTotals: { id: string; totalPoints: number }[] = [];
 
-    // ── Anchor Player chip pre-computation ───────────────────────────────
+    // ── Chip pre-computation ──────────────────────────────────────────────
     // Always query chip plays directly — entry.chipCode may be null if the
     // team was submitted before the chip was activated.
     const anchorGrantedUserIds = new Set<number>(); // qualify for 1.1x
     const anchorActiveUserIds = new Set<number>(); // have an AP chip for this match
+    const chipCodeByUserId = new Map<number, ChipCode>();
+    const swapperConfigByUserId = new Map<
+      number,
+      {
+        actionType: SwapperActionType;
+        teamNo: number;
+        incomingFantasyPlayerId: string | null;
+        outgoingFantasyPlayerId: string | null;
+      }
+    >();
 
-    const anchorChipPlays = await this.prisma.client.chipPlay.findMany({
+    const chipPlays = await this.prisma.client.chipPlay.findMany({
       where: {
         startMatchId: matchId,
         status: ChipPlayStatus.SCHEDULED,
-        chipType: { code: ChipCode.ANCHOR_PLAYER },
       },
       select: {
+        chipType: { select: { code: true } },
         extraInfo: true,
         seasonUser: { select: { userId: true } },
       },
     });
+
+    for (const play of chipPlays) {
+      chipCodeByUserId.set(play.seasonUser.userId, play.chipType.code);
+      if (play.chipType.code === ChipCode.SWAPPER) {
+        const parsed = parseSwapperConfig(play.extraInfo);
+        if (parsed) {
+          swapperConfigByUserId.set(play.seasonUser.userId, parsed);
+        }
+      }
+    }
+
+    const anchorChipPlays = chipPlays.filter(
+      (play) => play.chipType.code === ChipCode.ANCHOR_PLAYER,
+    );
 
     if (anchorChipPlays.length > 0) {
       for (const play of anchorChipPlays) {
@@ -839,29 +910,117 @@ export class FantasyScoringService {
           anchorGrantedUserIds.add(play.seasonUser.userId);
         }
       }
-
-      // Backfill entry.chipCode for entries whose chip was activated after
-      // team submission (so the pill shows correctly in the leaderboard).
-      await Promise.all(
-        contest.entries
-          .filter(
-            (e) =>
-              e.chipCode !== ChipCode.ANCHOR_PLAYER &&
-              anchorActiveUserIds.has(e.userId),
-          )
-          .map((e) =>
-            this.prisma.client.fantasyContestEntry.update({
-              where: { id: e.id },
-              data: { chipCode: ChipCode.ANCHOR_PLAYER },
-            }),
-          ),
-      );
     }
+    // Backfill entry.chipCode for entries whose chip was activated after
+    // team submission (so the pill shows correctly in the leaderboard).
+    await Promise.all(
+      contest.entries
+        .map((entry) => ({
+          entry,
+          chipCode: chipCodeByUserId.get(entry.userId) ?? null,
+        }))
+        .filter(
+          (
+            item,
+          ): item is {
+            entry: (typeof contest.entries)[number];
+            chipCode: ChipCode;
+          } => item.chipCode !== null && item.entry.chipCode !== item.chipCode,
+        )
+        .map(({ entry, chipCode }) =>
+          this.prisma.client.fantasyContestEntry.update({
+            where: { id: entry.id },
+            data: { chipCode },
+          }),
+        ),
+    );
     // ─────────────────────────────────────────────────────────────────────
 
     for (const entry of contest.entries) {
-      const starters = entry.players.filter((p) => !p.isBench);
-      const bench = entry.players
+      const effectivePlayers = entry.players.map((player) => ({ ...player }));
+      const swapperConfig = swapperConfigByUserId.get(entry.userId);
+
+      if (swapperConfig && swapperConfig.teamNo === entry.teamNo) {
+        const starters = effectivePlayers.filter((player) => !player.isBench);
+        const starterIds = new Set(
+          starters.map((player) => player.fantasyPlayerId),
+        );
+        const captain = starters.find((player) => player.isCaptain);
+        const viceCaptain = starters.find((player) => player.isViceCaptain);
+
+        if (
+          swapperConfig.actionType === "CHANGE_CAPTAIN" &&
+          swapperConfig.incomingFantasyPlayerId &&
+          starterIds.has(swapperConfig.incomingFantasyPlayerId) &&
+          viceCaptain?.fantasyPlayerId !== swapperConfig.incomingFantasyPlayerId
+        ) {
+          for (const player of effectivePlayers) {
+            if (!player.isBench) {
+              player.isCaptain =
+                player.fantasyPlayerId ===
+                swapperConfig.incomingFantasyPlayerId;
+            }
+          }
+        }
+
+        if (
+          swapperConfig.actionType === "CHANGE_VICE_CAPTAIN" &&
+          swapperConfig.incomingFantasyPlayerId &&
+          starterIds.has(swapperConfig.incomingFantasyPlayerId) &&
+          captain?.fantasyPlayerId !== swapperConfig.incomingFantasyPlayerId
+        ) {
+          for (const player of effectivePlayers) {
+            if (!player.isBench) {
+              player.isViceCaptain =
+                player.fantasyPlayerId ===
+                swapperConfig.incomingFantasyPlayerId;
+            }
+          }
+        }
+
+        if (
+          swapperConfig.actionType === "SWAP_PLAYER" &&
+          swapperConfig.incomingFantasyPlayerId &&
+          swapperConfig.outgoingFantasyPlayerId &&
+          !starterIds.has(swapperConfig.incomingFantasyPlayerId)
+        ) {
+          const outgoingStarter = starters.find(
+            (player) =>
+              player.fantasyPlayerId === swapperConfig.outgoingFantasyPlayerId,
+          );
+
+          if (
+            outgoingStarter &&
+            !outgoingStarter.isCaptain &&
+            !outgoingStarter.isViceCaptain
+          ) {
+            const targetStarter = effectivePlayers.find(
+              (player) =>
+                !player.isBench &&
+                player.fantasyPlayerId ===
+                  swapperConfig.outgoingFantasyPlayerId,
+            );
+
+            if (targetStarter) {
+              targetStarter.fantasyPlayerId =
+                swapperConfig.incomingFantasyPlayerId;
+              effectivePlayers.forEach((player) => {
+                if (
+                  player.isBench &&
+                  player.fantasyPlayerId ===
+                    swapperConfig.incomingFantasyPlayerId
+                ) {
+                  player.fantasyPlayerId =
+                    swapperConfig.outgoingFantasyPlayerId!;
+                }
+              });
+            }
+          }
+        }
+      }
+
+      const starters = effectivePlayers.filter((p) => !p.isBench);
+      const bench = effectivePlayers
         .filter((p) => p.isBench)
         .sort((a, b) => (a.benchPriority ?? 99) - (b.benchPriority ?? 99));
 
@@ -1012,11 +1171,28 @@ export class FantasyScoringService {
         select: {
           rank: true,
           userId: true,
+          teamNo: true,
+          totalPoints: true,
         },
       });
 
       const rankedEntries = entries.filter((e) => e.rank != null);
       if (rankedEntries.length === 0) return ranked;
+
+      const dtSeasonUserIds = new Set(
+        (
+          await this.prisma.client.chipPlay.findMany({
+            where: {
+              startMatchId: matchId,
+              status: ChipPlayStatus.SCHEDULED,
+              chipType: { code: ChipCode.DOUBLE_TEAM },
+            },
+            select: {
+              seasonUserId: true,
+            },
+          })
+        ).map((play) => play.seasonUserId),
+      );
 
       // Resolve SeasonUser.id for each userId in this season
       const uniqueUserIds = [...new Set(rankedEntries.map((e) => e.userId))];
@@ -1028,19 +1204,56 @@ export class FantasyScoringService {
         seasonUsers.map((su) => [su.userId, su.id]),
       );
 
-      // One entry per user — keep their best (lowest) rank across both teams
-      const bestRankBySeasonUserId = new Map<string, number>();
-      for (const e of rankedEntries) {
-        const seasonUserId = seasonUserIdByUserId.get(e.userId);
+      const entryScoresBySeasonUserId = new Map<
+        string,
+        { team1: number; team2: number }
+      >();
+
+      for (const entry of entries) {
+        const seasonUserId = seasonUserIdByUserId.get(entry.userId);
         if (!seasonUserId) continue;
-        const current = bestRankBySeasonUserId.get(seasonUserId) ?? Infinity;
-        if (e.rank! < current)
-          bestRankBySeasonUserId.set(seasonUserId, e.rank!);
+
+        const existing = entryScoresBySeasonUserId.get(seasonUserId) ?? {
+          team1: 0,
+          team2: 0,
+        };
+        if (entry.teamNo === 1) {
+          existing.team1 = entry.totalPoints ?? 0;
+        }
+        if (entry.teamNo === 2) {
+          existing.team2 = entry.totalPoints ?? 0;
+        }
+        entryScoresBySeasonUserId.set(seasonUserId, existing);
       }
 
-      const seasonScores = [...bestRankBySeasonUserId.entries()].map(
-        ([seasonUserId, rank]) => ({ seasonUserId, rank }),
-      );
+      const rankedByEffectiveScore = [...entryScoresBySeasonUserId.entries()]
+        .map(([seasonUserId, teamScores]) => {
+          const hasDoubleTeam = dtSeasonUserIds.has(seasonUserId);
+          const effectiveScore = hasDoubleTeam
+            ? Math.max(teamScores.team1, teamScores.team2)
+            : teamScores.team1;
+
+          return {
+            seasonUserId,
+            rawScore: teamScores.team1,
+            secondaryRawScore: hasDoubleTeam ? teamScores.team2 : null,
+            effectiveScore,
+          };
+        })
+        .sort((a, b) => {
+          if (b.effectiveScore !== a.effectiveScore) {
+            return b.effectiveScore - a.effectiveScore;
+          }
+          return a.seasonUserId.localeCompare(b.seasonUserId);
+        });
+
+      const seasonScores = rankedByEffectiveScore.map((entry, index) => ({
+        seasonUserId: entry.seasonUserId,
+        rank: index + 1,
+        rawScore: entry.rawScore,
+        secondaryRawScore: entry.secondaryRawScore,
+        effectiveScore: entry.effectiveScore,
+      }));
 
       if (seasonScores.length > 0) {
         await this.scoreService.submitMatchScoresBulk(

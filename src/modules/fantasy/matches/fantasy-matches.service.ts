@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import {
+  ChipPlayStatus,
   FantasyContestStatus,
   MatchStatus,
 } from "../../../../generated/prisma/client.js";
@@ -816,23 +817,48 @@ export class FantasyMatchesService {
       orderBy: [{ rank: "asc" }, { totalPoints: "desc" }],
     });
 
+    // Backfill chipCode from chip plays for entries where it wasn't stored at
+    // submission time (e.g. chip activated after team was locked in).
+    const chipByUserId = new Map<number, string>();
+    const entriesWithNullChip = entries.filter((e) => !e.chipCode);
+    if (entriesWithNullChip.length > 0) {
+      const userIds = entriesWithNullChip.map((e) => e.userId);
+      const chipPlays = await this.prisma.client.chipPlay.findMany({
+        where: {
+          startMatchId: matchId,
+          status: ChipPlayStatus.SCHEDULED,
+          seasonUser: { userId: { in: userIds } },
+        },
+        select: {
+          seasonUser: { select: { userId: true } },
+          chipType: { select: { code: true } },
+        },
+      });
+      for (const cp of chipPlays) {
+        chipByUserId.set(cp.seasonUser.userId, cp.chipType.code);
+      }
+    }
+
     return {
       status: contest.status,
-      entries: entries.map((e) => ({
-        id: e.id,
-        teamNo: e.teamNo,
-        totalPoints: e.totalPoints,
-        basePoints:
-          e.chipCode === "ANCHOR_PLAYER" && e.totalPoints != null
-            ? Math.round((e.totalPoints / 1.1) * 10) / 10
-            : null,
-        rank: e.rank,
-        userId: e.userId,
-        displayName: e.user.display_name,
-        userName: e.user.user_name,
-        photoUrl: e.user.photo_url,
-        chipCode: e.chipCode,
-      })),
+      entries: entries.map((e) => {
+        const chipCode = e.chipCode ?? chipByUserId.get(e.userId) ?? null;
+        return {
+          id: e.id,
+          teamNo: e.teamNo,
+          totalPoints: e.totalPoints,
+          basePoints:
+            chipCode === "ANCHOR_PLAYER" && e.totalPoints != null
+              ? Math.round((e.totalPoints / 1.1) * 10) / 10
+              : null,
+          rank: e.rank,
+          userId: e.userId,
+          displayName: e.user.display_name,
+          userName: e.user.user_name,
+          photoUrl: e.user.photo_url,
+          chipCode,
+        };
+      }),
     };
   }
 

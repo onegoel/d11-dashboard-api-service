@@ -90,6 +90,20 @@ export class ChipController {
       ...(body.anchorPlayerName
         ? { anchorPlayerName: body.anchorPlayerName }
         : {}),
+      ...(body.swapperActionType
+        ? { swapperActionType: body.swapperActionType }
+        : {}),
+      ...(body.swapperTeamNo ? { swapperTeamNo: body.swapperTeamNo } : {}),
+      ...(body.swapperIncomingFantasyPlayerId
+        ? {
+            swapperIncomingFantasyPlayerId: body.swapperIncomingFantasyPlayerId,
+          }
+        : {}),
+      ...(body.swapperOutgoingFantasyPlayerId
+        ? {
+            swapperOutgoingFantasyPlayerId: body.swapperOutgoingFantasyPlayerId,
+          }
+        : {}),
       actorUserId: appUser.id,
       actorRole: appUser.role,
     });

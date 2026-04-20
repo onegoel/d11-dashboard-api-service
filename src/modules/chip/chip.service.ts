@@ -9,6 +9,8 @@ import {
   UserRole,
 } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
+import type { WisdenScorecardResponse } from "../../common/types/wisden.types.js";
+import { SwapperActionType } from "./dto/select-powerup.dto.js";
 
 type PrismaExecutor = Prisma.TransactionClient | PrismaClient;
 
@@ -71,6 +73,10 @@ type SelectPowerupInput = {
   selectedTeamId?: string;
   anchorFantasyPlayerId?: string;
   anchorPlayerName?: string; // display only, stored alongside ID
+  swapperActionType?: SwapperActionType;
+  swapperTeamNo?: number;
+  swapperIncomingFantasyPlayerId?: string;
+  swapperOutgoingFantasyPlayerId?: string;
   actorUserId: number;
   actorRole: UserRole;
 };
@@ -287,6 +293,90 @@ const isBottomHalfPosition = (position: number, totalPlayers: number) => {
 
   return position > Math.ceil(totalPlayers / 2);
 };
+
+const SWAPPER_GRACE_AFTER_FIRST_INNINGS_MS = 15 * 60 * 1000;
+const POWERUP_ACTIVATION_CUTOFF_MS = 15 * 60 * 1000;
+
+function toNumber(value: unknown): number {
+  if (typeof value === "number") return value;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function oversToBalls(overs: string | number | undefined): number {
+  if (overs == null) return 0;
+  const normalized = typeof overs === "number" ? overs : Number(overs);
+  if (!Number.isFinite(normalized)) return 0;
+  const whole = Math.floor(normalized);
+  const partial = Math.round((normalized - whole) * 10);
+  return whole * 6 + partial;
+}
+
+function getSwapperWindowState(
+  now: Date,
+  matchDate: Date,
+  scorecardJson: Prisma.JsonValue | null | undefined,
+  scoreSyncedAt: Date | null | undefined,
+  matchUpdatedAt: Date | null | undefined,
+) {
+  if (now < matchDate) {
+    return { canManage: true, reason: null as string | null };
+  }
+
+  const scorecard =
+    scorecardJson && typeof scorecardJson === "object"
+      ? (scorecardJson as WisdenScorecardResponse)
+      : null;
+
+  const innings = [...(scorecard?.innings ?? [])].sort(
+    (a, b) => (a.innings_number ?? 0) - (b.innings_number ?? 0),
+  );
+  const firstInnings = innings[0];
+  const secondInnings = innings.find(
+    (inning) => (inning.innings_number ?? 0) >= 2,
+  );
+
+  const secondHasStarted = Boolean(
+    secondInnings &&
+    (toNumber(secondInnings.total_ball_count) > 0 ||
+      oversToBalls(secondInnings.overs) > 0 ||
+      toNumber(secondInnings.runs) > 0 ||
+      toNumber(secondInnings.wickets) > 0),
+  );
+
+  if (secondHasStarted) {
+    return {
+      canManage: false,
+      reason:
+        "Swapper can no longer be changed after the second innings starts",
+    };
+  }
+
+  const scheduledOvers = toNumber(scorecard?.scheduled_overs);
+  const firstInningsComplete = Boolean(
+    firstInnings &&
+    (toNumber(firstInnings.wickets) >= 10 ||
+      (scheduledOvers > 0 &&
+        oversToBalls(firstInnings.overs) >= scheduledOvers * 6)),
+  );
+
+  if (firstInningsComplete) {
+    const baseTs =
+      scoreSyncedAt?.getTime() ??
+      matchUpdatedAt?.getTime() ??
+      matchDate.getTime();
+    const cutoffTs = baseTs + SWAPPER_GRACE_AFTER_FIRST_INNINGS_MS;
+    if (now.getTime() > cutoffTs) {
+      return {
+        canManage: false,
+        reason:
+          "Swapper can be changed only up to 15 minutes after first innings completion",
+      };
+    }
+  }
+
+  return { canManage: true, reason: null as string | null };
+}
 
 const resolveActiveChipAssignmentsForMatchTx = async (
   tx: PrismaExecutor,
@@ -691,6 +781,10 @@ const selectPowerupForSeasonMatch = async (
     selectedTeamId,
     anchorFantasyPlayerId,
     anchorPlayerName,
+    swapperActionType,
+    swapperTeamNo,
+    swapperIncomingFantasyPlayerId,
+    swapperOutgoingFantasyPlayerId,
     actorUserId,
     actorRole,
   }: SelectPowerupInput,
@@ -717,11 +811,217 @@ const selectPowerupForSeasonMatch = async (
     throw new ChipServiceError(404, "Selected match not found in this season");
   }
 
-  if (startMatch.matchDate <= now) {
+  const startMatchMeta = await prismaClient.match.findUnique({
+    where: { id: startMatchId },
+    select: {
+      matchDate: true,
+      updatedAt: true,
+      wisdenLastSyncedAt: true,
+      wisdenScore: true,
+    },
+  });
+
+  if (!startMatchMeta) {
+    throw new ChipServiceError(404, "Selected match not found");
+  }
+
+  const existingPlayForMatch = await prismaClient.chipPlay.findUnique({
+    where: {
+      seasonUserId_chipTypeId_startMatchId: {
+        seasonUserId,
+        chipTypeId: chipType.id,
+        startMatchId,
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+      extraInfo: true,
+    },
+  });
+
+  const cutoffTs =
+    startMatch.matchDate.getTime() - POWERUP_ACTIVATION_CUTOFF_MS;
+  const hasScheduledPlay =
+    existingPlayForMatch?.status === ChipPlayStatus.SCHEDULED;
+
+  if (chipType.code !== ChipCode.SWAPPER && now.getTime() >= cutoffTs) {
     throw new ChipServiceError(
       400,
-      "Powerup selection is locked once the selected match has started",
+      "Powerup activation is locked 15 minutes before match start",
     );
+  }
+
+  if (chipType.code === ChipCode.SWAPPER) {
+    const matchStarted = now >= startMatchMeta.matchDate;
+
+    if (!matchStarted && now.getTime() >= cutoffTs) {
+      throw new ChipServiceError(
+        400,
+        "Powerup activation is locked 15 minutes before match start",
+      );
+    }
+
+    if (matchStarted && !hasScheduledPlay) {
+      throw new ChipServiceError(
+        400,
+        "Swapper must be activated before the 15-minute pre-match deadline",
+      );
+    }
+
+    if (matchStarted) {
+      const windowState = getSwapperWindowState(
+        now,
+        startMatchMeta.matchDate,
+        startMatchMeta.wisdenScore as Prisma.JsonValue,
+        startMatchMeta.wisdenLastSyncedAt,
+        startMatchMeta.updatedAt,
+      );
+
+      if (!windowState.canManage) {
+        throw new ChipServiceError(
+          400,
+          windowState.reason ?? "Swapper can no longer be activated",
+        );
+      }
+
+      if (!swapperActionType) {
+        throw new ChipServiceError(
+          400,
+          "Swapper action can be configured only after kickoff and requires selecting one action",
+        );
+      }
+    }
+
+    if (swapperActionType) {
+      const resolvedSwapperTeamNo = swapperTeamNo === 2 ? 2 : 1;
+      const entry = await prismaClient.fantasyContestEntry.findFirst({
+        where: {
+          userId: seasonUser.userId,
+          teamNo: resolvedSwapperTeamNo,
+          contest: { matchId: startMatchId },
+        },
+        include: {
+          players: true,
+        },
+      });
+
+      if (!entry) {
+        throw new ChipServiceError(
+          400,
+          `No Team ${resolvedSwapperTeamNo} found for this match`,
+        );
+      }
+
+      const starters = entry.players.filter((player) => !player.isBench);
+      const starterIds = new Set(
+        starters.map((player) => player.fantasyPlayerId),
+      );
+      const captain = starters.find((player) => player.isCaptain);
+      const viceCaptain = starters.find((player) => player.isViceCaptain);
+
+      if (swapperActionType === SwapperActionType.CHANGE_CAPTAIN) {
+        if (!swapperIncomingFantasyPlayerId) {
+          throw new ChipServiceError(400, "Select a new captain for Swapper");
+        }
+
+        if (!starterIds.has(swapperIncomingFantasyPlayerId)) {
+          throw new ChipServiceError(
+            400,
+            "New captain must be in your starting XI",
+          );
+        }
+
+        if (viceCaptain?.fantasyPlayerId === swapperIncomingFantasyPlayerId) {
+          throw new ChipServiceError(
+            400,
+            "Captain cannot be the current vice-captain",
+          );
+        }
+      }
+
+      if (swapperActionType === SwapperActionType.CHANGE_VICE_CAPTAIN) {
+        if (!swapperIncomingFantasyPlayerId) {
+          throw new ChipServiceError(
+            400,
+            "Select a new vice-captain for Swapper",
+          );
+        }
+
+        if (!starterIds.has(swapperIncomingFantasyPlayerId)) {
+          throw new ChipServiceError(
+            400,
+            "New vice-captain must be in your starting XI",
+          );
+        }
+
+        if (captain?.fantasyPlayerId === swapperIncomingFantasyPlayerId) {
+          throw new ChipServiceError(
+            400,
+            "Vice-captain cannot be the current captain",
+          );
+        }
+      }
+
+      if (swapperActionType === SwapperActionType.SWAP_PLAYER) {
+        if (
+          !swapperIncomingFantasyPlayerId ||
+          !swapperOutgoingFantasyPlayerId
+        ) {
+          throw new ChipServiceError(
+            400,
+            "Swapper player swap needs both incoming and outgoing players",
+          );
+        }
+
+        if (swapperIncomingFantasyPlayerId === swapperOutgoingFantasyPlayerId) {
+          throw new ChipServiceError(
+            400,
+            "Incoming and outgoing players must be different",
+          );
+        }
+
+        const outgoingStarter = starters.find(
+          (player) => player.fantasyPlayerId === swapperOutgoingFantasyPlayerId,
+        );
+
+        if (!outgoingStarter) {
+          throw new ChipServiceError(
+            400,
+            "Outgoing player must be in your starting XI",
+          );
+        }
+
+        if (outgoingStarter.isCaptain || outgoingStarter.isViceCaptain) {
+          throw new ChipServiceError(
+            400,
+            "Swapper cannot replace your captain or vice-captain",
+          );
+        }
+
+        if (starterIds.has(swapperIncomingFantasyPlayerId)) {
+          throw new ChipServiceError(
+            400,
+            "Incoming player must not already be in your starting XI",
+          );
+        }
+
+        const incomingInPool = await prismaClient.fantasyMatchPlayer.findFirst({
+          where: {
+            matchId: startMatchId,
+            fantasyPlayerId: swapperIncomingFantasyPlayerId,
+          },
+          select: { fantasyPlayerId: true },
+        });
+
+        if (!incomingInPool) {
+          throw new ChipServiceError(
+            400,
+            "Incoming player is not available in this match pool",
+          );
+        }
+      }
+    }
   }
 
   if (chipType.code === ChipCode.TEAM_FORM) {
@@ -813,7 +1113,7 @@ const selectPowerupForSeasonMatch = async (
 
   // Short write transaction: uniqueness checks + DB write only
   return prismaClient.$transaction(async (tx) => {
-    const existingPlayForMatch = await tx.chipPlay.findUnique({
+    const existingPlayForMatchTx = await tx.chipPlay.findUnique({
       where: {
         seasonUserId_chipTypeId_startMatchId: {
           seasonUserId,
@@ -833,10 +1133,65 @@ const selectPowerupForSeasonMatch = async (
       },
     });
 
-    if (existingPlayForMatch?.status === ChipPlayStatus.SCHEDULED) {
+    const resolvedSwapperTeamNo = swapperTeamNo === 2 ? 2 : 1;
+    const chipExtraInfo: Prisma.InputJsonValue =
+      chipType.code === ChipCode.ANCHOR_PLAYER
+        ? ({
+            anchorFantasyPlayerId,
+            anchorPlayerName: anchorPlayerName?.trim(),
+          } as Prisma.InputJsonValue)
+        : chipType.code === ChipCode.SWAPPER
+          ? ({
+              swapperActionType,
+              swapperTeamNo: resolvedSwapperTeamNo,
+              swapperIncomingFantasyPlayerId,
+              swapperOutgoingFantasyPlayerId,
+            } as Prisma.InputJsonValue)
+          : {};
+
+    if (existingPlayForMatchTx?.status === ChipPlayStatus.SCHEDULED) {
+      if (chipType.code === ChipCode.SWAPPER) {
+        if (!swapperActionType || now < startMatchMeta.matchDate) {
+          return serializeChipPlay(
+            {
+              ...existingPlayForMatchTx,
+              startMatch,
+            },
+            orderedMatches,
+            now,
+          );
+        }
+
+        const updated = await tx.chipPlay.update({
+          where: { id: existingPlayForMatchTx.id },
+          data: {
+            extraInfo: chipExtraInfo,
+          },
+          include: {
+            chipType: true,
+            selectedTeam: {
+              select: {
+                id: true,
+                shortCode: true,
+                name: true,
+              },
+            },
+          },
+        });
+
+        return serializeChipPlay(
+          {
+            ...updated,
+            startMatch,
+          },
+          orderedMatches,
+          now,
+        );
+      }
+
       return serializeChipPlay(
         {
-          ...existingPlayForMatch,
+          ...existingPlayForMatchTx,
           startMatch,
         },
         orderedMatches,
@@ -924,10 +1279,10 @@ const selectPowerupForSeasonMatch = async (
       }
     }
 
-    if (existingPlayForMatch?.status === ChipPlayStatus.CANCELLED) {
+    if (existingPlayForMatchTx?.status === ChipPlayStatus.CANCELLED) {
       const reactivated = await tx.chipPlay.update({
         where: {
-          id: existingPlayForMatch.id,
+          id: existingPlayForMatchTx.id,
         },
         data: {
           status: ChipPlayStatus.SCHEDULED,
@@ -936,13 +1291,7 @@ const selectPowerupForSeasonMatch = async (
             chipType.code === ChipCode.TEAM_FORM
               ? (selectedTeamId ?? null)
               : null,
-          extraInfo:
-            chipType.code === ChipCode.ANCHOR_PLAYER
-              ? ({
-                  anchorFantasyPlayerId,
-                  anchorPlayerName: anchorPlayerName?.trim(),
-                } as Prisma.InputJsonValue)
-              : {},
+          extraInfo: chipExtraInfo,
         },
         include: {
           chipType: true,
@@ -975,13 +1324,7 @@ const selectPowerupForSeasonMatch = async (
           chipType.code === ChipCode.TEAM_FORM
             ? (selectedTeamId ?? null)
             : null,
-        extraInfo:
-          chipType.code === ChipCode.ANCHOR_PLAYER
-            ? ({
-                anchorFantasyPlayerId,
-                anchorPlayerName: anchorPlayerName?.trim(),
-              } as Prisma.InputJsonValue)
-            : {},
+        extraInfo: chipExtraInfo,
       },
       include: {
         chipType: true,

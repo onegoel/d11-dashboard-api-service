@@ -19,6 +19,9 @@ interface MatchScore {
   seasonUserId: string;
   rank: number;
   points?: number;
+  rawScore?: number | null;
+  effectiveScore?: number | null;
+  secondaryRawScore?: number | null;
 }
 
 @Injectable()
@@ -331,6 +334,9 @@ export class ScoreService {
           seasonUserId: score.seasonUserId,
           rank: score.rank,
           points: RANK_POINTS[score.rank] ?? 0,
+          rawScore: score.rawScore ?? null,
+          effectiveScore: score.effectiveScore ?? null,
+          secondaryRawScore: score.secondaryRawScore ?? null,
           chipPlayId: chipAssignment?.chipPlayId ?? null,
         };
       });
@@ -361,9 +367,9 @@ export class ScoreService {
         update: {
           points: score.points,
           rank: score.rank,
-          rawScore: null,
-          effectiveScore: null,
-          secondaryRawScore: null,
+          rawScore: score.rawScore,
+          effectiveScore: score.effectiveScore,
+          secondaryRawScore: score.secondaryRawScore,
           chipPlayId: score.chipPlayId,
         },
         create: {
@@ -371,9 +377,9 @@ export class ScoreService {
           matchId,
           points: score.points,
           rank: score.rank,
-          rawScore: null,
-          effectiveScore: null,
-          secondaryRawScore: null,
+          rawScore: score.rawScore,
+          effectiveScore: score.effectiveScore,
+          secondaryRawScore: score.secondaryRawScore,
           chipPlayId: score.chipPlayId,
         },
       }),

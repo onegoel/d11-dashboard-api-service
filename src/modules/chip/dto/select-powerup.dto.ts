@@ -3,13 +3,22 @@ import { Transform } from "class-transformer";
 import {
   IsEnum,
   IsNotEmpty,
+  IsInt,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   MaxLength,
+  Min,
   ValidateIf,
 } from "class-validator";
 import { ChipCode } from "../../../../generated/prisma/client.js";
+
+export enum SwapperActionType {
+  CHANGE_CAPTAIN = "CHANGE_CAPTAIN",
+  CHANGE_VICE_CAPTAIN = "CHANGE_VICE_CAPTAIN",
+  SWAP_PLAYER = "SWAP_PLAYER",
+}
 
 export class SelectPowerupDto {
   @ApiProperty({
@@ -73,4 +82,46 @@ export class SelectPowerupDto {
   @IsString()
   @MaxLength(80)
   anchorPlayerName?: string;
+
+  @ApiProperty({
+    required: false,
+    enum: SwapperActionType,
+    description: "Required for SWAPPER: which swapper action to apply",
+  })
+  @IsOptional()
+  @IsEnum(SwapperActionType)
+  swapperActionType?: SwapperActionType;
+
+  @ApiProperty({
+    required: false,
+    minimum: 1,
+    maximum: 2,
+    description:
+      "Optional for SWAPPER: which team slot to apply on (defaults to 1)",
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(2)
+  swapperTeamNo?: number;
+
+  @ApiProperty({
+    required: false,
+    format: "uuid",
+    description:
+      "For SWAPPER: incoming player UUID (new captain/vice OR replacement in XI)",
+  })
+  @IsOptional()
+  @IsUUID()
+  swapperIncomingFantasyPlayerId?: string;
+
+  @ApiProperty({
+    required: false,
+    format: "uuid",
+    description:
+      "For SWAPPER + SWAP_PLAYER: outgoing non C/VC starter to remove from XI",
+  })
+  @IsOptional()
+  @IsUUID()
+  swapperOutgoingFantasyPlayerId?: string;
 }
