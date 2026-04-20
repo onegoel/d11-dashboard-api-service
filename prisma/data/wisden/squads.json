@@ -1604,6 +1604,18 @@
           "player_name": "SA Yadav",
           "player_role": "batsman",
           "photo_url": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/11803.png"
+        },
+        {
+          "batting_hand": "right",
+          "bowling_hand": "right",
+          "is_captain": 0,
+          "is_keeper": 0,
+          "player_id": 87066,
+          "player_image": null,
+          "player_known_as": "Krish Bhagat",
+          "player_name": "K Bhagat",
+          "player_role": "batsman",
+          "photo_url": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/88262.png"
         }
       ],
       "squad_class_id": 6,
