@@ -459,9 +459,21 @@ export class FantasyMatchesService {
     });
   }
 
+  async getEntriesForUser(matchId: string, userId: number) {
+    return this.getMyEntries(matchId, userId);
+  }
+
   // ── Submit entry ─────────────────────────────────────────────────────────
 
-  async submitEntry(matchId: string, userId: number, dto: SubmitEntryDto) {
+  async submitEntry(
+    matchId: string,
+    userId: number,
+    dto: SubmitEntryDto,
+    options: {
+      bypassDeadlineGate?: boolean;
+      bypassContestStatusGate?: boolean;
+    } = {},
+  ) {
     await this.assertMatchExists(matchId);
 
     const matchMeta = await this.prisma.client.match.findUnique({
@@ -473,13 +485,19 @@ export class FantasyMatchesService {
       throw new NotFoundException(`Match ${matchId} not found`);
     }
 
+    if (matchMeta.status === MatchStatus.COMPLETED) {
+      throw new BadRequestException(
+        "Match is COMPLETED — entries can no longer be edited.",
+      );
+    }
+
     await this.syncContestLockState(matchId, matchMeta.matchDate);
 
     const now = new Date();
     const lockAt = new Date(this.getMatchStartMs(matchMeta.matchDate));
     const deadlineReached = this.hasMatchStarted(matchMeta.matchDate);
     const allowLiveEdits = matchMeta.status === MatchStatus.LIVE;
-    if (!allowLiveEdits && deadlineReached) {
+    if (!options.bypassDeadlineGate && !allowLiveEdits && deadlineReached) {
       await this.prisma.client.fantasyContest.updateMany({
         where: { matchId, status: FantasyContestStatus.OPEN },
         data: { status: FantasyContestStatus.LOCKED, lockedAt: lockAt },
@@ -654,6 +672,7 @@ export class FantasyMatchesService {
       });
 
       const canAcceptEntries =
+        options.bypassContestStatusGate ||
         contest.status === FantasyContestStatus.OPEN ||
         (allowLiveEdits && contest.status !== FantasyContestStatus.COMPLETED);
 
@@ -737,6 +756,21 @@ export class FantasyMatchesService {
         where: { id: entryId },
         include: { players: true },
       });
+    });
+  }
+
+  async submitEntryAsAdmin(
+    matchId: string,
+    userId: number,
+    dto: SubmitEntryDto,
+  ) {
+    this.logger.warn(
+      `ADMIN override submit on matchId=${matchId} for userId=${userId}`,
+    );
+
+    return this.submitEntry(matchId, userId, dto, {
+      bypassDeadlineGate: true,
+      bypassContestStatusGate: true,
     });
   }
 

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   UseGuards,
@@ -68,6 +69,22 @@ export class FantasyMatchesController {
     return this.service.getMyEntries(matchId, appUser.id);
   }
 
+  @Get(":matchId/admin/users/:userId/entries")
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: "Get a specific user's fantasy entries for a match (admin only)",
+  })
+  @ApiParam({ name: "matchId", format: "uuid" })
+  @ApiParam({ name: "userId", example: 1 })
+  @ApiResponse({ status: 200, description: "Target user's contest entries" })
+  getEntriesForUser(
+    @Param("matchId", ParseUUIDPipe) matchId: string,
+    @Param("userId", ParseIntPipe) userId: number,
+  ) {
+    return this.service.getEntriesForUser(matchId, userId);
+  }
+
   @Get(":matchId/entries/:entryId")
   @ApiOperation({
     summary: "Get a specific contest entry with players for preview",
@@ -93,6 +110,23 @@ export class FantasyMatchesController {
     @Body() dto: SubmitEntryDto,
   ) {
     return this.service.submitEntry(matchId, appUser.id, dto);
+  }
+
+  @Post(":matchId/admin/users/:userId/entries")
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: "Submit or update a user's fantasy entry for a match (admin only)",
+  })
+  @ApiParam({ name: "matchId", format: "uuid" })
+  @ApiParam({ name: "userId", example: 1 })
+  @ApiResponse({ status: 201, description: "Entry created or updated" })
+  submitEntryAsAdmin(
+    @Param("matchId", ParseUUIDPipe) matchId: string,
+    @Param("userId", ParseIntPipe) userId: number,
+    @Body() dto: SubmitEntryDto,
+  ) {
+    return this.service.submitEntryAsAdmin(matchId, userId, dto);
   }
 
   @Post(":matchId/sync")
