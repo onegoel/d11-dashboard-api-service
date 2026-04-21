@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { WisdenService } from "../../wisden/wisden.service.js";
 import { ScoreService } from "../../score/score.service.js";
+import { FantasyLineupService } from "../lineup/fantasy-lineup.service.js";
 import {
   FANTASY_T20_POINT_SYSTEM,
   MY11_T20_CAPTAIN_MULTIPLIER,
@@ -59,11 +60,6 @@ interface PlayerStats {
   played: boolean;
 }
 
-type SwapperActionType =
-  | "CHANGE_CAPTAIN"
-  | "CHANGE_VICE_CAPTAIN"
-  | "SWAP_PLAYER";
-
 function emptyStats(): PlayerStats {
   return {
     runs: 0,
@@ -86,48 +82,6 @@ function emptyStats(): PlayerStats {
     runOutCatcher: 0,
     motm: false,
     played: false,
-  };
-}
-
-function parseSwapperConfig(extraInfo: unknown): {
-  actionType: SwapperActionType;
-  teamNo: number;
-  incomingFantasyPlayerId: string | null;
-  outgoingFantasyPlayerId: string | null;
-} | null {
-  if (!extraInfo || typeof extraInfo !== "object" || Array.isArray(extraInfo)) {
-    return null;
-  }
-
-  const info = extraInfo as Record<string, unknown>;
-  const actionType =
-    typeof info.swapperActionType === "string"
-      ? (info.swapperActionType as SwapperActionType)
-      : null;
-
-  if (
-    actionType !== "CHANGE_CAPTAIN" &&
-    actionType !== "CHANGE_VICE_CAPTAIN" &&
-    actionType !== "SWAP_PLAYER"
-  ) {
-    return null;
-  }
-
-  const incomingFantasyPlayerId =
-    typeof info.swapperIncomingFantasyPlayerId === "string"
-      ? info.swapperIncomingFantasyPlayerId
-      : null;
-  const outgoingFantasyPlayerId =
-    typeof info.swapperOutgoingFantasyPlayerId === "string"
-      ? info.swapperOutgoingFantasyPlayerId
-      : null;
-  const teamNo = info.swapperTeamNo === 2 ? 2 : 1;
-
-  return {
-    actionType,
-    teamNo,
-    incomingFantasyPlayerId,
-    outgoingFantasyPlayerId,
   };
 }
 
@@ -653,6 +607,7 @@ export class FantasyScoringService {
     private readonly prisma: PrismaService,
     private readonly wisden: WisdenService,
     private readonly scoreService: ScoreService,
+    private readonly lineup: FantasyLineupService,
   ) {}
 
   async scoreMatch(
@@ -849,15 +804,7 @@ export class FantasyScoringService {
     const anchorGrantedUserIds = new Set<number>(); // qualify for 1.1x
     const anchorActiveUserIds = new Set<number>(); // have an AP chip for this match
     const chipCodeByUserId = new Map<number, ChipCode>();
-    const swapperConfigByUserId = new Map<
-      number,
-      {
-        actionType: SwapperActionType;
-        teamNo: number;
-        incomingFantasyPlayerId: string | null;
-        outgoingFantasyPlayerId: string | null;
-      }
-    >();
+    const chipPlaysByUserId = new Map<number, (typeof chipPlays)[number][]>();
 
     const chipPlays = await this.prisma.client.chipPlay.findMany({
       where: {
@@ -873,12 +820,9 @@ export class FantasyScoringService {
 
     for (const play of chipPlays) {
       chipCodeByUserId.set(play.seasonUser.userId, play.chipType.code);
-      if (play.chipType.code === ChipCode.SWAPPER) {
-        const parsed = parseSwapperConfig(play.extraInfo);
-        if (parsed) {
-          swapperConfigByUserId.set(play.seasonUser.userId, parsed);
-        }
-      }
+      const existing = chipPlaysByUserId.get(play.seasonUser.userId) ?? [];
+      existing.push(play);
+      chipPlaysByUserId.set(play.seasonUser.userId, existing);
     }
 
     const anchorChipPlays = chipPlays.filter(
@@ -937,87 +881,11 @@ export class FantasyScoringService {
     // ─────────────────────────────────────────────────────────────────────
 
     for (const entry of contest.entries) {
-      const effectivePlayers = entry.players.map((player) => ({ ...player }));
-      const swapperConfig = swapperConfigByUserId.get(entry.userId);
-
-      if (swapperConfig && swapperConfig.teamNo === entry.teamNo) {
-        const starters = effectivePlayers.filter((player) => !player.isBench);
-        const starterIds = new Set(
-          starters.map((player) => player.fantasyPlayerId),
-        );
-        const captain = starters.find((player) => player.isCaptain);
-        const viceCaptain = starters.find((player) => player.isViceCaptain);
-
-        if (
-          swapperConfig.actionType === "CHANGE_CAPTAIN" &&
-          swapperConfig.incomingFantasyPlayerId &&
-          starterIds.has(swapperConfig.incomingFantasyPlayerId) &&
-          viceCaptain?.fantasyPlayerId !== swapperConfig.incomingFantasyPlayerId
-        ) {
-          for (const player of effectivePlayers) {
-            if (!player.isBench) {
-              player.isCaptain =
-                player.fantasyPlayerId ===
-                swapperConfig.incomingFantasyPlayerId;
-            }
-          }
-        }
-
-        if (
-          swapperConfig.actionType === "CHANGE_VICE_CAPTAIN" &&
-          swapperConfig.incomingFantasyPlayerId &&
-          starterIds.has(swapperConfig.incomingFantasyPlayerId) &&
-          captain?.fantasyPlayerId !== swapperConfig.incomingFantasyPlayerId
-        ) {
-          for (const player of effectivePlayers) {
-            if (!player.isBench) {
-              player.isViceCaptain =
-                player.fantasyPlayerId ===
-                swapperConfig.incomingFantasyPlayerId;
-            }
-          }
-        }
-
-        if (
-          swapperConfig.actionType === "SWAP_PLAYER" &&
-          swapperConfig.incomingFantasyPlayerId &&
-          swapperConfig.outgoingFantasyPlayerId &&
-          !starterIds.has(swapperConfig.incomingFantasyPlayerId)
-        ) {
-          const outgoingStarter = starters.find(
-            (player) =>
-              player.fantasyPlayerId === swapperConfig.outgoingFantasyPlayerId,
-          );
-
-          if (
-            outgoingStarter &&
-            !outgoingStarter.isCaptain &&
-            !outgoingStarter.isViceCaptain
-          ) {
-            const targetStarter = effectivePlayers.find(
-              (player) =>
-                !player.isBench &&
-                player.fantasyPlayerId ===
-                  swapperConfig.outgoingFantasyPlayerId,
-            );
-
-            if (targetStarter) {
-              targetStarter.fantasyPlayerId =
-                swapperConfig.incomingFantasyPlayerId;
-              effectivePlayers.forEach((player) => {
-                if (
-                  player.isBench &&
-                  player.fantasyPlayerId ===
-                    swapperConfig.incomingFantasyPlayerId
-                ) {
-                  player.fantasyPlayerId =
-                    swapperConfig.outgoingFantasyPlayerId!;
-                }
-              });
-            }
-          }
-        }
-      }
+      const effectivePlayers = this.lineup.buildEffectivePlayers(
+        entry.players,
+        entry.teamNo,
+        chipPlaysByUserId.get(entry.userId) ?? [],
+      );
 
       const starters = effectivePlayers.filter((p) => !p.isBench);
       const bench = effectivePlayers

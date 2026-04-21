@@ -11,6 +11,7 @@ import {
   MatchStatus,
 } from "../../../../generated/prisma/client.js";
 import { PrismaService } from "../../../common/database/prisma.service.js";
+import { FantasyLineupService } from "../lineup/fantasy-lineup.service.js";
 import { FantasySquadsService } from "../squads/fantasy-squads.service.js";
 import type { SubmitEntryDto } from "../dto/fantasy.dto.js";
 
@@ -52,6 +53,7 @@ export class FantasyMatchesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly squads: FantasySquadsService,
+    private readonly lineup: FantasyLineupService,
   ) {}
 
   // ── Player pool ──────────────────────────────────────────────────────────
@@ -453,10 +455,20 @@ export class FantasyMatchesService {
 
     if (!contest) return [];
 
-    return this.prisma.client.fantasyContestEntry.findMany({
+    const entries = await this.prisma.client.fantasyContestEntry.findMany({
       where: { contestId: contest.id, userId },
       include: { players: true },
     });
+
+    const effectivePlayersByEntryId =
+      await this.lineup.getEffectivePlayersForEntries(matchId, entries);
+
+    return entries.map((entry) => ({
+      ...entry,
+      effectivePlayers:
+        effectivePlayersByEntryId.get(entry.id) ??
+        entry.players.map((player) => ({ ...player })),
+    }));
   }
 
   async getEntriesForUser(matchId: string, userId: number) {
@@ -493,11 +505,11 @@ export class FantasyMatchesService {
 
     await this.syncContestLockState(matchId, matchMeta.matchDate);
 
-    const now = new Date();
     const lockAt = new Date(this.getMatchStartMs(matchMeta.matchDate));
     const deadlineReached = this.hasMatchStarted(matchMeta.matchDate);
-    const allowLiveEdits = matchMeta.status === MatchStatus.LIVE;
-    if (!options.bypassDeadlineGate && !allowLiveEdits && deadlineReached) {
+    // Deadline is purely matchDate vs wall clock — match.status (set by the
+    // Wisden poller) must never influence whether the gate is open.
+    if (!options.bypassDeadlineGate && deadlineReached) {
       await this.prisma.client.fantasyContest.updateMany({
         where: { matchId, status: FantasyContestStatus.OPEN },
         data: { status: FantasyContestStatus.LOCKED, lockedAt: lockAt },
@@ -505,13 +517,6 @@ export class FantasyMatchesService {
       throw new BadRequestException(
         "Contest deadline passed. Team edits are locked at match start.",
       );
-    }
-
-    if (allowLiveEdits) {
-      await this.prisma.client.fantasyContest.updateMany({
-        where: { matchId, status: FantasyContestStatus.LOCKED },
-        data: { status: FantasyContestStatus.OPEN, lockedAt: null },
-      });
     }
 
     // Validate exactly one captain, one vice-captain
@@ -671,10 +676,13 @@ export class FantasyMatchesService {
         create: { matchId, status: FantasyContestStatus.OPEN },
       });
 
+      // Before the deadline, always accept entries regardless of contest status —
+      // the status can be LOCKED or LIVE due to the live scorer/poller running
+      // early.  After the deadline only an explicit admin bypass opens it.
       const canAcceptEntries =
         options.bypassContestStatusGate ||
-        contest.status === FantasyContestStatus.OPEN ||
-        (allowLiveEdits && contest.status !== FantasyContestStatus.COMPLETED);
+        !deadlineReached ||
+        contest.status !== FantasyContestStatus.COMPLETED; // admin path: COMPLETED is the hard stop
 
       if (!canAcceptEntries) {
         throw new BadRequestException(
@@ -800,9 +808,12 @@ export class FantasyMatchesService {
       throw new NotFoundException(`Match ${matchId} not found`);
     }
 
-    if (match.status !== MatchStatus.SCHEDULED) {
+    // Deadline extension is blocked only once the match is fully COMPLETED.
+    // A LIVE match (poller started early / toss happened) can still have its
+    // deadline extended as long as the new deadline is in the future.
+    if (match.status === MatchStatus.COMPLETED) {
       throw new BadRequestException(
-        "Deadline can only be extended while match status is SCHEDULED",
+        "Deadline cannot be extended after the match has completed",
       );
     }
 
@@ -822,13 +833,11 @@ export class FantasyMatchesService {
       select: { id: true, status: true },
     });
 
-    if (
-      contest &&
-      (contest.status === FantasyContestStatus.LIVE ||
-        contest.status === FantasyContestStatus.COMPLETED)
-    ) {
+    // Only block once scoring is finalised; a LIVE contest was set prematurely
+    // by the live-scorer and can be re-opened by extending the deadline.
+    if (contest?.status === FantasyContestStatus.COMPLETED) {
       throw new BadRequestException(
-        `Contest is ${contest.status}; deadline cannot be extended`,
+        "Contest scoring is finalised; deadline cannot be extended",
       );
     }
 
@@ -837,8 +846,14 @@ export class FantasyMatchesService {
       data: { matchDate: nextDeadline },
     });
 
+    // Reopen the contest if it was locked or set to LIVE prematurely by the
+    // live scorer before the actual contest deadline.
     let reopenedContest = false;
-    if (contest?.status === FantasyContestStatus.LOCKED) {
+    if (
+      contest &&
+      (contest.status === FantasyContestStatus.LOCKED ||
+        contest.status === FantasyContestStatus.LIVE)
+    ) {
       await this.prisma.client.fantasyContest.update({
         where: { id: contest.id },
         data: { status: FantasyContestStatus.OPEN, lockedAt: null },
@@ -904,9 +919,7 @@ export class FantasyMatchesService {
       const chipPlays = await this.prisma.client.chipPlay.findMany({
         where: {
           status: { not: ChipPlayStatus.CANCELLED },
-          affectedMatches: {
-            some: { id: matchId },
-          },
+          startMatchId: matchId,
           seasonUser: { userId: { in: userIds } },
         },
         select: {
@@ -991,6 +1004,9 @@ export class FantasyMatchesService {
       );
     }
 
+    const effectivePlayersByEntryId =
+      await this.lineup.getEffectivePlayersForEntries(matchId, [entry]);
+
     return {
       id: entry.id,
       contestId: entry.contestId,
@@ -1005,6 +1021,9 @@ export class FantasyMatchesService {
         photoUrl: entry.user.photo_url,
       },
       players: entry.players,
+      effectivePlayers:
+        effectivePlayersByEntryId.get(entry.id) ??
+        entry.players.map((player) => ({ ...player })),
     };
   }
 
