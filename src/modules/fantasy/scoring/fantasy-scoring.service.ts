@@ -781,6 +781,7 @@ export class FantasyScoringService {
       select: {
         fantasyPlayerId: true,
         teamWisdenId: true,
+        isInPlayingXI: true,
         fantasyPlayer: {
           select: {
             teamId: true,
@@ -794,6 +795,13 @@ export class FantasyScoringService {
         item.fantasyPlayerId,
         item.teamWisdenId ?? item.fantasyPlayer.teamId,
       ]),
+    );
+
+    // A player is eligible for auto-substitution only if they did not play
+    // (isInPlayingXI === false). Players who played but scored 0 should NOT
+    // be substituted out.
+    const playingXIByPlayerId = new Map(
+      matchPlayers.map((item) => [item.fantasyPlayerId, item.isInPlayingXI]),
     );
 
     const entryTotals: { id: string; totalPoints: number }[] = [];
@@ -909,7 +917,10 @@ export class FantasyScoringService {
 
       for (const [fpId, sp] of activePlayers) {
         const pts = scoreMap.get(fpId) ?? 0;
-        if (pts === 0 && availableBench.length > 0) {
+        // Only auto-sub if the player didn't play (not in playing XI).
+        // A player who played but scored 0 legitimately should not be replaced.
+        const didNotPlay = !(playingXIByPlayerId.get(fpId) ?? false);
+        if (pts === 0 && didNotPlay && availableBench.length > 0) {
           const outgoingTeam = teamKeyByPlayerId.get(sp.fantasyPlayerId);
 
           const subIdx = availableBench.findIndex((sub) => {
