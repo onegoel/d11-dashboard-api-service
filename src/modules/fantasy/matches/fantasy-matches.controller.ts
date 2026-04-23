@@ -154,6 +154,18 @@ export class FantasyMatchesController {
     return this.scoring.scoreMatch(matchId);
   }
 
+  @Get("players/:fantasyPlayerId/season/:seasonId")
+  @ApiOperation({ summary: "Get a player's season profile and match history" })
+  @ApiParam({ name: "fantasyPlayerId" })
+  @ApiParam({ name: "seasonId", type: "number" })
+  @ApiResponse({ status: 200, description: "Player season profile" })
+  getPlayerSeasonProfile(
+    @Param("fantasyPlayerId") fantasyPlayerId: string,
+    @Param("seasonId", ParseIntPipe) seasonId: number,
+  ) {
+    return this.service.getPlayerSeasonProfile(fantasyPlayerId, seasonId);
+  }
+
   @Get(":matchId/player-selections")
   @ApiOperation({
     summary:

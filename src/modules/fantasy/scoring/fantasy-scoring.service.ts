@@ -18,6 +18,7 @@ import type {
   WisdenCommentaryResponse,
   WisdenScorecardResponse,
   WisdenScorecardTeamPlayer,
+  WisdenWagonWheelResponse,
 } from "../../../common/types/wisden.types.js";
 
 const LINK_ALIAS: Record<string, string> = {
@@ -258,9 +259,8 @@ function accumulateWisdenCommentary(
         typeof (batter as { is_out?: number }).is_out === "number"
           ? (batter as { is_out?: number }).is_out === 1
           : Boolean(dismissalStr) && !isNotOutDismissal(dismissalStr);
-
       stats.played = true;
-      stats.batted = ballsFaced > 0;
+      stats.batted = batter.batted === "yes";
       stats.runs += runs;
       stats.ballsFaced += ballsFaced;
       stats.fours += fours;
@@ -623,26 +623,43 @@ export class FantasyScoringService {
       throw new NotFoundException(`Match ${matchId} has no wisdenMatchGid`);
     }
 
-    const [scorecard, commentary] = await Promise.all([
-      this.wisden.getScorecard(match.wisdenMatchGid),
+    const [scorecard, commentary, wagonWheel] = await Promise.all([
+      this.wisden.getAdvancedScorecard(match.wisdenMatchGid),
       this.wisden.getCommentaryBasic(match.wisdenMatchGid),
+      this.wisden.getWagonWheel(match.wisdenMatchGid).catch((err) => {
+        this.logger.warn(
+          `[scoreMatch] wagon wheel unavailable for ${match.wisdenMatchGid}: ${String(err)}`,
+        );
+        return null;
+      }),
     ]);
 
-    return this.scoreWisdenMatch(matchId, commentary, scorecard);
+    return this.scoreWisdenMatch(matchId, commentary, scorecard, wagonWheel);
   }
 
   async scoreWisdenMatch(
     matchId: string,
     commentary: WisdenCommentaryResponse,
     scorecard: WisdenScorecardResponse,
+    wagonWheel?: WisdenWagonWheelResponse | null,
   ): Promise<{ scored: number; ranked: number }> {
     const scored = await this.computeAndPersistWisdenScores(
       matchId,
       commentary,
       scorecard,
       true,
+      wagonWheel,
     );
     const ranked = await this.finalizeContestAndPublishRanks(matchId);
+
+    // Mark blobs as pruneable and refresh season stats in parallel (non-fatal)
+    await Promise.allSettled([
+      this.prisma.client.match.update({
+        where: { id: matchId },
+        data: { wisdenScoringFinalizedAt: new Date() },
+      }),
+      this.refreshPlayerSeasonStats(matchId),
+    ]);
 
     this.logger.log(
       `[scoreWisdenMatch] matchId=${matchId} scored=${scored} ranked=${ranked}`,
@@ -678,8 +695,116 @@ export class FantasyScoringService {
     commentary: WisdenCommentaryResponse,
     scorecard: WisdenScorecardResponse,
     isFinalized = true,
+    wagonWheel?: WisdenWagonWheelResponse | null,
   ): Promise<number> {
     const statsMap = accumulateWisdenCommentary(commentary, scorecard);
+
+    // ── Advanced metrics from scorecard ──────────────────────────────────
+    type AdvancedMetrics = {
+      battingPosition?: number;
+      dotsPlayedPct?: number;
+      boundaryScoredPct?: number;
+      battingImpact?: number;
+      bowlingImpact?: number;
+    };
+    const advancedMap = new Map<string, AdvancedMetrics>();
+
+    for (const innings of scorecard.innings ?? []) {
+      for (const batter of innings.batting ?? []) {
+        const id = String(batter.player_id);
+        const m = advancedMap.get(id) ?? {};
+        if (batter.batting_position != null) {
+          m.battingPosition = Number(batter.batting_position);
+        }
+        const dotsRaw = Number(batter.dot_ball_percentage);
+        if (!Number.isNaN(dotsRaw)) m.dotsPlayedPct = dotsRaw;
+        const boundaryRaw = Number(batter.boundary_percentage);
+        if (!Number.isNaN(boundaryRaw)) m.boundaryScoredPct = boundaryRaw;
+        if (batter.impact != null) {
+          const impactRaw = Number(batter.impact);
+          if (!Number.isNaN(impactRaw)) m.battingImpact = impactRaw;
+        }
+        advancedMap.set(id, m);
+      }
+      for (const bowler of innings.bowling ?? []) {
+        const id = String(
+          (bowler as { bowler_id?: number }).bowler_id ??
+            bowler.player_id ??
+            "",
+        );
+        const m = advancedMap.get(id) ?? {};
+        if (bowler.impact != null) {
+          const impactRaw = Number(bowler.impact);
+          if (!Number.isNaN(impactRaw)) m.bowlingImpact = impactRaw;
+        }
+        advancedMap.set(id, m);
+      }
+    }
+
+    // ── Wagon wheel aggregation ───────────────────────────────────────────
+    type ShotAgg = {
+      paceRuns: number;
+      paceBalls: number;
+      paceBoundaries: number;
+      spinRuns: number;
+      spinBalls: number;
+      spinBoundaries: number;
+      zones: Record<number, { balls: number; runs: number }>;
+      caughtVsPace: number;
+      caughtVsSpin: number;
+      caughtZones: Record<number, number>;
+    };
+    const shotMap = new Map<string, ShotAgg>();
+
+    const initShot = (): ShotAgg => ({
+      paceRuns: 0,
+      paceBalls: 0,
+      paceBoundaries: 0,
+      spinRuns: 0,
+      spinBalls: 0,
+      spinBoundaries: 0,
+      zones: {},
+      caughtVsPace: 0,
+      caughtVsSpin: 0,
+      caughtZones: {},
+    });
+
+    if (wagonWheel) {
+      for (const ball of wagonWheel.spider_data ?? []) {
+        const id = String(ball.batting_player_id);
+        if (!shotMap.has(id)) shotMap.set(id, initShot());
+        const agg = shotMap.get(id)!;
+        const rob = Number(ball.runs_off_bat ?? 0);
+        const isBoundary = rob >= 4;
+        if (ball.bowling_type_simple === "pace") {
+          agg.paceBalls++;
+          agg.paceRuns += rob;
+          if (isBoundary) agg.paceBoundaries++;
+        } else {
+          agg.spinBalls++;
+          agg.spinRuns += rob;
+          if (isBoundary) agg.spinBoundaries++;
+        }
+        const zone = ball.field_zone;
+        if (zone >= 1 && zone <= 8) {
+          agg.zones[zone] ??= { balls: 0, runs: 0 };
+          agg.zones[zone].balls++;
+          agg.zones[zone].runs += rob;
+        }
+      }
+
+      for (const ball of wagonWheel.catch_map ?? []) {
+        const id = String(ball.batting_player_id);
+        if (!shotMap.has(id)) shotMap.set(id, initShot());
+        const agg = shotMap.get(id)!;
+        if (ball.bowling_type_simple === "pace") agg.caughtVsPace++;
+        else agg.caughtVsSpin++;
+        const zone = ball.field_zone;
+        if (zone >= 1 && zone <= 8) {
+          agg.caughtZones[zone] = (agg.caughtZones[zone] ?? 0) + 1;
+        }
+      }
+    }
 
     const matchPlayers = await this.prisma.client.fantasyMatchPlayer.findMany({
       where: { matchId, wisdenPlayerId: { not: null } },
@@ -704,37 +829,173 @@ export class FantasyScoringService {
 
       const stats = statsMap.get(matchPlayer.wisdenPlayerId) ?? emptyStats();
       const { points, breakdown } = computePoints(stats);
+      const advanced = advancedMap.get(matchPlayer.wisdenPlayerId) ?? {};
 
-      await this.prisma.client.fantasyPlayerScore.upsert({
-        where: {
-          fantasyPlayerId_matchId: {
+      const matchStatsPayload = {
+        runs: stats.runs,
+        ballsFaced: stats.ballsFaced,
+        fours: stats.fours,
+        sixes: stats.sixes,
+        battingPosition: advanced.battingPosition ?? null,
+        wickets: stats.wickets,
+        ballsBowled: stats.ballsBowled,
+        runsConceded: stats.runsConceded,
+        maidens: stats.maidens,
+        dotBalls: stats.dotBalls,
+        catches: stats.catches,
+        stumpings: stats.stumpings,
+        runOutDirect: stats.runOutDirect,
+        runOutAssist: stats.runOutThrower + stats.runOutCatcher,
+        battingImpact: advanced.battingImpact ?? null,
+        boundaryScoredPct: advanced.boundaryScoredPct ?? null,
+        dotsPlayedPct: advanced.dotsPlayedPct ?? null,
+        bowlingImpact: advanced.bowlingImpact ?? null,
+        played: stats.played,
+      };
+
+      // Build FantasyPlayerShotData payload from wagon wheel aggregation
+      const rawShot = shotMap.get(matchPlayer.wisdenPlayerId);
+      const shot = rawShot
+        ? {
+            paceRuns: rawShot.paceRuns,
+            paceBalls: rawShot.paceBalls,
+            paceBoundaries: rawShot.paceBoundaries,
+            spinRuns: rawShot.spinRuns,
+            spinBalls: rawShot.spinBalls,
+            spinBoundaries: rawShot.spinBoundaries,
+            zone1Balls: rawShot.zones[1]?.balls ?? 0,
+            zone1Runs: rawShot.zones[1]?.runs ?? 0,
+            zone2Balls: rawShot.zones[2]?.balls ?? 0,
+            zone2Runs: rawShot.zones[2]?.runs ?? 0,
+            zone3Balls: rawShot.zones[3]?.balls ?? 0,
+            zone3Runs: rawShot.zones[3]?.runs ?? 0,
+            zone4Balls: rawShot.zones[4]?.balls ?? 0,
+            zone4Runs: rawShot.zones[4]?.runs ?? 0,
+            zone5Balls: rawShot.zones[5]?.balls ?? 0,
+            zone5Runs: rawShot.zones[5]?.runs ?? 0,
+            zone6Balls: rawShot.zones[6]?.balls ?? 0,
+            zone6Runs: rawShot.zones[6]?.runs ?? 0,
+            zone7Balls: rawShot.zones[7]?.balls ?? 0,
+            zone7Runs: rawShot.zones[7]?.runs ?? 0,
+            zone8Balls: rawShot.zones[8]?.balls ?? 0,
+            zone8Runs: rawShot.zones[8]?.runs ?? 0,
+            caughtVsPaceCount: rawShot.caughtVsPace,
+            caughtVsSpinCount: rawShot.caughtVsSpin,
+            caughtZone1Count: rawShot.caughtZones[1] ?? 0,
+            caughtZone2Count: rawShot.caughtZones[2] ?? 0,
+            caughtZone3Count: rawShot.caughtZones[3] ?? 0,
+            caughtZone4Count: rawShot.caughtZones[4] ?? 0,
+            caughtZone5Count: rawShot.caughtZones[5] ?? 0,
+            caughtZone6Count: rawShot.caughtZones[6] ?? 0,
+            caughtZone7Count: rawShot.caughtZones[7] ?? 0,
+            caughtZone8Count: rawShot.caughtZones[8] ?? 0,
+          }
+        : null;
+
+      await Promise.all([
+        this.prisma.client.fantasyPlayerScore.upsert({
+          where: {
+            fantasyPlayerId_matchId: {
+              fantasyPlayerId: matchPlayer.fantasyPlayerId,
+              matchId,
+            },
+          },
+          update: {
+            points,
+            breakdown: breakdown as never,
+            isFinalized,
+            wisdenPlayerId: matchPlayer.wisdenPlayerId,
+            wisdenMatchGid: matchPlayer.wisdenMatchGid,
+          },
+          create: {
             fantasyPlayerId: matchPlayer.fantasyPlayerId,
             matchId,
+            points,
+            breakdown: breakdown as never,
+            isFinalized,
+            wisdenPlayerId: matchPlayer.wisdenPlayerId,
+            wisdenMatchGid: matchPlayer.wisdenMatchGid,
           },
-        },
-        update: {
-          points,
-          breakdown: breakdown as never,
-          isFinalized,
-          wisdenPlayerId: matchPlayer.wisdenPlayerId,
-          wisdenMatchGid: matchPlayer.wisdenMatchGid,
-        },
-        create: {
-          fantasyPlayerId: matchPlayer.fantasyPlayerId,
-          matchId,
-          points,
-          breakdown: breakdown as never,
-          isFinalized,
-          wisdenPlayerId: matchPlayer.wisdenPlayerId,
-          wisdenMatchGid: matchPlayer.wisdenMatchGid,
-        },
-      });
+        }),
+
+        this.prisma.client.fantasyPlayerMatchStats.upsert({
+          where: {
+            fantasyPlayerId_matchId: {
+              fantasyPlayerId: matchPlayer.fantasyPlayerId,
+              matchId,
+            },
+          },
+          update: matchStatsPayload,
+          create: {
+            fantasyPlayerId: matchPlayer.fantasyPlayerId,
+            matchId,
+            ...matchStatsPayload,
+          },
+        }),
+
+        ...(shot
+          ? [
+              this.prisma.client.fantasyPlayerShotData.upsert({
+                where: {
+                  fantasyPlayerId_matchId: {
+                    fantasyPlayerId: matchPlayer.fantasyPlayerId,
+                    matchId,
+                  },
+                },
+                update: shot,
+                create: {
+                  fantasyPlayerId: matchPlayer.fantasyPlayerId,
+                  matchId,
+                  ...shot,
+                },
+              }),
+            ]
+          : []),
+
+        ...(advanced.battingPosition != null
+          ? [
+              this.prisma.client.fantasyMatchPlayer.update({
+                where: {
+                  matchId_fantasyPlayerId: {
+                    matchId,
+                    fantasyPlayerId: matchPlayer.fantasyPlayerId,
+                  },
+                },
+                data: { battingPosition: advanced.battingPosition },
+              }),
+            ]
+          : []),
+      ]);
 
       upserted++;
     }
 
+    // Mark isStatsAvailable=true for all players who had stats upserted in this match
+    if (upserted > 0) {
+      const playedPlayerIds = matchPlayers
+        .filter((mp) => {
+          if (!mp.wisdenPlayerId) return false;
+          const stats = statsMap.get(mp.wisdenPlayerId);
+          return stats?.played === true;
+        })
+        .map((mp) => mp.fantasyPlayerId);
+
+      if (playedPlayerIds.length > 0) {
+        await this.prisma.client.fantasyPlayer
+          .updateMany({
+            where: { id: { in: playedPlayerIds } },
+            data: { isStatsAvailable: true },
+          })
+          .catch((err: unknown) => {
+            this.logger.warn(
+              `[scoring] Failed to update isStatsAvailable for matchId=${matchId}: ${String(err)}`,
+            );
+          });
+      }
+    }
+
     this.logger.log(
-      `[scoring] Upserted ${upserted} Wisden player scores for matchId=${matchId}`,
+      `[scoring] Upserted ${upserted} Wisden player scores + match stats for matchId=${matchId}`,
     );
     return upserted;
   }
@@ -1152,5 +1413,167 @@ export class FantasyScoringService {
     }
 
     return ranked;
+  }
+
+  /**
+   * Recomputes FantasyPlayerSeasonStats for all players who appeared in a match.
+   * Called after finalizing scoring. Safe to re-run at any time.
+   */
+  private async refreshPlayerSeasonStats(matchId: string): Promise<void> {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: { seasonId: true },
+    });
+    if (!match?.seasonId) return;
+    const seasonId = match.seasonId;
+
+    // Gather all players who appeared in this match
+    const matchStats =
+      await this.prisma.client.fantasyPlayerMatchStats.findMany({
+        where: { matchId, played: true },
+        select: { fantasyPlayerId: true },
+      });
+    if (matchStats.length === 0) return;
+
+    const playerIds = matchStats.map((m) => m.fantasyPlayerId);
+
+    // Resolve all match IDs in this season upfront (FantasyPlayerMatchStats has no Match relation)
+    const seasonMatches = await this.prisma.client.match.findMany({
+      where: { seasonId },
+      select: { id: true },
+    });
+    const seasonMatchIds = seasonMatches.map((m) => m.id);
+
+    // Aggregate per-player across all matches in this season
+    const allSeasonStats =
+      await this.prisma.client.fantasyPlayerMatchStats.findMany({
+        where: {
+          fantasyPlayerId: { in: playerIds },
+          matchId: { in: seasonMatchIds },
+          played: true,
+        },
+        select: {
+          fantasyPlayerId: true,
+          runs: true,
+          ballsFaced: true,
+          fours: true,
+          sixes: true,
+          wickets: true,
+          ballsBowled: true,
+          runsConceded: true,
+          maidens: true,
+          dotBalls: true,
+          catches: true,
+          stumpings: true,
+          runOutDirect: true,
+          runOutAssist: true,
+        },
+      });
+
+    const fantasyScores = await this.prisma.client.fantasyPlayerScore.findMany({
+      where: {
+        fantasyPlayerId: { in: playerIds },
+        match: { is: { seasonId } },
+      },
+      select: { fantasyPlayerId: true, points: true },
+    });
+
+    // Group by player
+    type Agg = {
+      matchesPlayed: number;
+      runsTotal: number;
+      ballsFacedTotal: number;
+      foursTotal: number;
+      sixesTotal: number;
+      highScore: number;
+      wicketsTotal: number;
+      ballsBowledTotal: number;
+      runsConcededTotal: number;
+      maidensTotal: number;
+      dotBallsTotal: number;
+      bestBowlingWickets: number;
+      bestBowlingRuns: number;
+      catchesTotal: number;
+      stumpingsTotal: number;
+      runOutsTotal: number;
+      fantasyPointsTotal: number;
+      fantasyPointsBest: number;
+    };
+
+    const agg = new Map<string, Agg>();
+    const init = (): Agg => ({
+      matchesPlayed: 0,
+      runsTotal: 0,
+      ballsFacedTotal: 0,
+      foursTotal: 0,
+      sixesTotal: 0,
+      highScore: 0,
+      wicketsTotal: 0,
+      ballsBowledTotal: 0,
+      runsConcededTotal: 0,
+      maidensTotal: 0,
+      dotBallsTotal: 0,
+      bestBowlingWickets: 0,
+      bestBowlingRuns: 0,
+      catchesTotal: 0,
+      stumpingsTotal: 0,
+      runOutsTotal: 0,
+      fantasyPointsTotal: 0,
+      fantasyPointsBest: 0,
+    });
+
+    for (const s of allSeasonStats) {
+      const a = agg.get(s.fantasyPlayerId) ?? init();
+      a.matchesPlayed++;
+      a.runsTotal += s.runs;
+      a.ballsFacedTotal += s.ballsFaced;
+      a.foursTotal += s.fours;
+      a.sixesTotal += s.sixes;
+      if (s.runs > a.highScore) a.highScore = s.runs;
+      a.wicketsTotal += s.wickets;
+      a.ballsBowledTotal += s.ballsBowled;
+      a.runsConcededTotal += s.runsConceded;
+      a.maidensTotal += s.maidens;
+      a.dotBallsTotal += s.dotBalls;
+      // Best bowling: most wickets, fewest runs as tiebreaker
+      if (
+        s.wickets > a.bestBowlingWickets ||
+        (s.wickets === a.bestBowlingWickets &&
+          s.runsConceded < a.bestBowlingRuns)
+      ) {
+        a.bestBowlingWickets = s.wickets;
+        a.bestBowlingRuns = s.runsConceded;
+      }
+      a.catchesTotal += s.catches;
+      a.stumpingsTotal += s.stumpings;
+      a.runOutsTotal += s.runOutDirect + s.runOutAssist;
+      agg.set(s.fantasyPlayerId, a);
+    }
+
+    for (const fp of fantasyScores) {
+      const a = agg.get(fp.fantasyPlayerId);
+      if (!a) continue;
+      a.fantasyPointsTotal += fp.points;
+      if (fp.points > a.fantasyPointsBest) a.fantasyPointsBest = fp.points;
+    }
+
+    await Promise.all(
+      [...agg.entries()].map(([fantasyPlayerId, a]) => {
+        const fantasyPointsAvg =
+          a.matchesPlayed > 0
+            ? Math.round((a.fantasyPointsTotal / a.matchesPlayed) * 10) / 10
+            : 0;
+        const data = { ...a, fantasyPointsAvg };
+        return this.prisma.client.fantasyPlayerSeasonStats.upsert({
+          where: { fantasyPlayerId_seasonId: { fantasyPlayerId, seasonId } },
+          update: data,
+          create: { fantasyPlayerId, seasonId, ...data },
+        });
+      }),
+    );
+
+    this.logger.log(
+      `[refreshPlayerSeasonStats] Updated ${agg.size} player season stats for seasonId=${seasonId}`,
+    );
   }
 }

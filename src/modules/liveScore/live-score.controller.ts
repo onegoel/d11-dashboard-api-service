@@ -34,4 +34,18 @@ export class LiveScoreController {
   backfillHistoricalMatches() {
     return this.liveScoreService.backfillHistoricalMatches();
   }
+
+  @Post("backfill/match-stats")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  backfillMatchStats() {
+    return this.liveScoreService.backfillMatchStats();
+  }
+
+  @Post("backfill/player-profiles")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  backfillPlayerProfiles() {
+    return this.liveScoreService.backfillPlayerProfiles();
+  }
 }

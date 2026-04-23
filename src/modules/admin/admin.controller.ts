@@ -31,6 +31,7 @@ import {
   AuditLogQueryDto,
   BulkCreateAdminMatchesDto,
   CreateAdminMatchDto,
+  CreateAdminPlayerDto,
   CreateSeasonDto,
   DeleteAdminMatchDto,
   ReassignChipPlayDto,
@@ -40,6 +41,7 @@ import {
   ReverseChipPlayDto,
   UpdateUserRoleDto,
   UpdateAdminMatchDto,
+  UpdateAdminPlayerDto,
   UpdateScoreRankDto,
   UpdateSeasonDto,
 } from "./dto/admin.dto.js";
@@ -240,5 +242,31 @@ export class AdminController {
     @Body() body: RemoveSeasonUserDto,
   ) {
     return this.adminService.removeSeasonUser(seasonUserId, body ?? {});
+  }
+
+  // ─── Player catalog ─────────────────────────────────────────────────────────────────
+
+  @Get("players")
+  @ApiOperation({ summary: "Get all fantasy players" })
+  getPlayers() {
+    return this.adminService.getAdminPlayers();
+  }
+
+  @Post("players")
+  @ApiOperation({ summary: "Create a new fantasy player" })
+  @ApiBody({ type: CreateAdminPlayerDto })
+  createPlayer(@Body() body: CreateAdminPlayerDto) {
+    return this.adminService.createAdminPlayer(body);
+  }
+
+  @Patch("players/:playerId")
+  @ApiOperation({ summary: "Update a fantasy player" })
+  @ApiParam({ name: "playerId", format: "uuid" })
+  @ApiBody({ type: UpdateAdminPlayerDto })
+  updatePlayer(
+    @Param("playerId", ParseUUIDPipe) playerId: string,
+    @Body() body: UpdateAdminPlayerDto,
+  ) {
+    return this.adminService.updateAdminPlayer(playerId, body);
   }
 }

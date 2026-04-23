@@ -3,6 +3,8 @@ import { AxiosError } from "axios";
 import type {
   WisdenCommentaryResponse,
   WisdenScorecardResponse,
+  WisdenScorecardBattingEntry,
+  WisdenScorecardBowlingEntry,
 } from "../../common/types/wisden.types.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { WisdenService } from "../wisden/wisden.service.js";
@@ -46,6 +48,7 @@ export class LiveScoreService {
         wisdenStatus: true,
         matchResult: true,
         matchResultText: true,
+        wisdenScoringFinalizedAt: true,
       },
     });
 
@@ -95,10 +98,16 @@ export class LiveScoreService {
         });
       }
 
-      return {
+      const base = {
         ...(storedScorecard as WisdenScorecardResponse),
         ...(resultText ? { match_result: resultText } : {}),
       };
+
+      // If scoring has been finalized, enrich innings rows with advanced metrics from DB
+      if (match.wisdenScoringFinalizedAt) {
+        return this.enrichScorecardFromDb(matchId, base);
+      }
+      return base;
     }
 
     // Match GID is now managed via fixture-seed ingestion; no runtime lookup needed.
@@ -118,7 +127,8 @@ export class LiveScoreService {
 
     const stale = this.getAny(this.scorecardCache, key);
     try {
-      const data = await this.wisden.getScorecard(wisdenMatchGid);
+      // Use the advanced scorecard for live matches to get impact metrics
+      const data = await this.wisden.getAdvancedScorecard(wisdenMatchGid);
       this.setCache(this.scorecardCache, key, data);
       return data;
     } catch (error) {
@@ -130,6 +140,84 @@ export class LiveScoreService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Overlays advanced metrics (impact, dot%, boundary%) from FantasyPlayerMatchStats
+   * onto the stored basic scorecard blob for completed, finalized matches.
+   */
+  private async enrichScorecardFromDb(
+    matchId: string,
+    scorecard: WisdenScorecardResponse,
+  ): Promise<WisdenScorecardResponse> {
+    const matchPlayers = await this.prisma.client.fantasyMatchPlayer.findMany({
+      where: { matchId, wisdenPlayerId: { not: null } },
+      select: { wisdenPlayerId: true, fantasyPlayerId: true },
+    });
+
+    if (matchPlayers.length === 0) return scorecard;
+
+    const fantasyPlayerIds = matchPlayers.map((mp) => mp.fantasyPlayerId);
+    const statsRows = await this.prisma.client.fantasyPlayerMatchStats.findMany(
+      {
+        where: { matchId, fantasyPlayerId: { in: fantasyPlayerIds } },
+        select: {
+          fantasyPlayerId: true,
+          battingImpact: true,
+          boundaryScoredPct: true,
+          dotsPlayedPct: true,
+          bowlingImpact: true,
+          dotBalls: true,
+          ballsBowled: true,
+        },
+      },
+    );
+
+    const fpIdToStats = new Map(statsRows.map((s) => [s.fantasyPlayerId, s]));
+    const wisdenIdToStats = new Map<string, (typeof statsRows)[number]>();
+    for (const mp of matchPlayers) {
+      if (!mp.wisdenPlayerId) continue;
+      const stats = fpIdToStats.get(mp.fantasyPlayerId);
+      if (stats) wisdenIdToStats.set(mp.wisdenPlayerId, stats);
+    }
+
+    if (wisdenIdToStats.size === 0) return scorecard;
+
+    const enrichedInnings = (scorecard.innings ?? []).map((innings) => ({
+      ...innings,
+      batting: (innings.batting ?? []).map((batter) => {
+        const stats = wisdenIdToStats.get(String(batter.player_id));
+        if (!stats) return batter;
+        return {
+          ...batter,
+          dot_ball_percentage:
+            stats.dotsPlayedPct ?? batter.dot_ball_percentage ?? null,
+          boundary_percentage:
+            stats.boundaryScoredPct ?? batter.boundary_percentage ?? null,
+          impact: stats.battingImpact ?? batter.impact ?? null,
+        } satisfies WisdenScorecardBattingEntry;
+      }),
+      bowling: (innings.bowling ?? []).map((bowler) => {
+        const bowlerId = String(
+          (bowler as { bowler_id?: number }).bowler_id ??
+            bowler.player_id ??
+            "",
+        );
+        const stats = wisdenIdToStats.get(bowlerId);
+        if (!stats) return bowler;
+        const dotPct =
+          stats.ballsBowled > 0
+            ? Math.round((stats.dotBalls / stats.ballsBowled) * 1000) / 10
+            : null;
+        return {
+          ...bowler,
+          impact: stats.bowlingImpact ?? bowler.impact ?? null,
+          dot_ball_percentage: dotPct ?? bowler.dot_ball_percentage ?? null,
+        } satisfies WisdenScorecardBowlingEntry;
+      }),
+    }));
+
+    return { ...scorecard, innings: enrichedInnings };
   }
 
   async getWisdenCommentary(matchId: string): Promise<unknown> {
@@ -268,6 +356,80 @@ export class LiveScoreService {
       `Backfill complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
     );
     return { processed, skipped, errors };
+  }
+
+  async backfillMatchStats(): Promise<{
+    processed: number;
+    errors: number;
+  }> {
+    const matches = await this.prisma.client.match.findMany({
+      where: {
+        status: MatchStatus.COMPLETED,
+        wisdenMatchGid: { not: null },
+      },
+      orderBy: { matchDate: "asc" },
+      select: { id: true, wisdenMatchGid: true },
+    });
+
+    let processed = 0;
+    let errors = 0;
+
+    for (const match of matches) {
+      try {
+        await this.scoringService.scoreMatch(match.id);
+        processed++;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `backfillMatchStats failed for matchId=${match.id}: ${msg}`,
+        );
+        errors++;
+      }
+      await new Promise((r) => setTimeout(r, 500));
+    }
+
+    this.logger.log(
+      `backfillMatchStats complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
+    );
+    return { processed, errors };
+  }
+
+  async backfillPlayerProfiles(): Promise<{
+    processed: number;
+    errors: number;
+  }> {
+    const matches = await this.prisma.client.match.findMany({
+      where: {
+        status: MatchStatus.COMPLETED,
+        wisdenMatchGid: { not: null },
+      },
+      orderBy: { matchDate: "asc" },
+      select: { id: true, wisdenMatchGid: true },
+    });
+
+    let processed = 0;
+    let errors = 0;
+
+    for (const match of matches) {
+      try {
+        await this.squadsService.enrichPlayersFromPitchmap(
+          match.wisdenMatchGid!,
+        );
+        processed++;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `backfillPlayerProfiles failed for matchId=${match.id}: ${msg}`,
+        );
+        errors++;
+      }
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
+    this.logger.log(
+      `backfillPlayerProfiles complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
+    );
+    return { processed, errors };
   }
 
   async pollAndCacheWisdenMatch(matchGid: string): Promise<{

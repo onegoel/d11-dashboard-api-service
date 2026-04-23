@@ -12,6 +12,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "sync:cricapi:ids": "tsx scripts/sync-cricapi-ids.ts",
     "sync:cricapi:ids:deploy": "tsx scripts/sync-cricapi-ids.ts --apply --optional",
+    "backfill:match-stats": "tsx scripts/backfill-match-stats.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier . --write",

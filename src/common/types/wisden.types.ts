@@ -54,18 +54,38 @@ export type WisdenScorecardBattingEntry = {
   sixes: number;
   dismissal_str?: string;
   is_out?: number;
+  // Advanced scorecard fields (available when ?advanced=true)
+  batting_position?: number;
+  dot_ball_percentage?: string | number | null;
+  boundary_percentage?: string | number | null;
+  impact?: number | null;
+  type?: string; // "substitute" | "replaced" for impact subs
+  batted: "yes" | "DNB";
 };
 
 export type WisdenScorecardBowlingEntry = {
-  player_id: number;
-  player_known_as: string;
-  player_name: string;
+  // Basic scorecard uses player_id/player_known_as/player_name
+  // Advanced scorecard uses bowler_id/bowler_known_as/bowler_name
+  player_id?: number;
+  player_known_as?: string;
+  player_name?: string;
+  bowler_id?: number;
+  bowler_known_as?: string;
+  bowler_name?: string;
   overs?: string | number;
   wickets?: number;
   maidens?: number;
+  runs?: number; // advanced scorecard field (runs conceded)
   runs_conceded?: number;
   wides?: number;
+  noballs?: number;
   no_balls?: number;
+  economy_rate?: string | number;
+  type?: string; // "substitute" | "replaced"
+  // Advanced scorecard fields (available when ?advanced=true)
+  bowling_position?: number;
+  impact?: number | null;
+  dot_ball_percentage?: string | number | null;
 };
 
 export type WisdenScorecardInnings = {
@@ -129,4 +149,41 @@ export type WisdenCommentaryResponse = {
   innings?: WisdenCommentaryInnings[];
   team1?: { id: number; name: string; abbreviation: string };
   team2?: { id: number; name: string; abbreviation: string };
+};
+
+// Per-ball entry from /wagon endpoint (spider_data and catch_map arrays)
+export type WisdenWagonWheelBall = {
+  ball_id: number;
+  ball_number: number;
+  batting_player_id: number;
+  batting_player_name: string;
+  batting_player_hand: string;
+  batting_team_id: number;
+  bowling_type_simple: string; // "pace" | "spin"
+  bowling_technique: string;
+  field_zone: number; // 1–8
+  innings_number: number;
+  over_number: number;
+  runs: number; // total runs on ball (inc. extras)
+  runs_off_bat: number; // runs credited to batter
+};
+
+export type WisdenWagonWheelResponse = {
+  spider_data: WisdenWagonWheelBall[];
+  catch_map: WisdenWagonWheelBall[];
+};
+
+// Player entry from /pitchmap teams array
+export type WisdenPitchmapPlayer = {
+  id: number;
+  name: string;
+  batting_hand: string;
+  bowling_hand: string;
+  bowling_technique: string;
+  bowling_type_simple: string;
+};
+
+export type WisdenPitchmapResponse = {
+  teams: Array<{ id: number; players: WisdenPitchmapPlayer[] }>;
+  tracking_data: unknown[];
 };

@@ -3,6 +3,36 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { WisdenService } from "../../wisden/wisden.service.js";
+import {
+  BowlingTechnique,
+  BowlingStyle,
+} from "../../../../generated/prisma/client.js";
+
+const BOWLING_STYLE_MAP: Record<string, BowlingStyle> = {
+  pace: BowlingStyle.PACE,
+  spin: BowlingStyle.SPIN,
+};
+
+function mapBowlingStyle(raw: string | null | undefined): BowlingStyle | null {
+  if (!raw) return null;
+  return BOWLING_STYLE_MAP[raw.toLowerCase().trim()] ?? null;
+}
+
+const BOWLING_TECHNIQUE_MAP: Record<string, BowlingTechnique> = {
+  "off break": BowlingTechnique.OFF_BREAK,
+  "left orthodox": BowlingTechnique.LEFT_ORTHODOX,
+  "right pace": BowlingTechnique.RIGHT_PACE,
+  "left pace": BowlingTechnique.LEFT_PACE,
+  "leg break": BowlingTechnique.LEG_BREAK,
+  "left unorthodox": BowlingTechnique.LEFT_UNORTHODOX,
+};
+
+function mapBowlingTechnique(
+  raw: string | null | undefined,
+): BowlingTechnique | null {
+  if (!raw) return null;
+  return BOWLING_TECHNIQUE_MAP[raw.toLowerCase().trim()] ?? null;
+}
 
 type WisdenSquadsResponse = {
   teams: Array<{
@@ -185,15 +215,15 @@ export class FantasySquadsService {
         await this.prisma.client.fantasyPlayer.upsert({
           where: { wisdenPlayerId: String(player.player_id) },
           update: {
+            // Only sync "safe" fields on update — do NOT overwrite admin-editable
+            // fields like role, battingHand, bowlingHand which may have been
+            // manually corrected in the admin panel.
             firstName,
             lastName,
             displayName,
             shortName: player.player_name,
-            role,
             teamId: team.id,
             teamWisdenId: String(wisdenTeam.team_id),
-            battingHand: player.batting_hand,
-            bowlingHand: player.bowling_hand,
             ...(incomingPhotoUrl ? { photoUrl: incomingPhotoUrl } : {}),
             isActive: true,
           },
@@ -366,30 +396,19 @@ export class FantasySquadsService {
       }
     }
 
-    const seasonScoreWhere = matchMeta.seasonId
-      ? {
-          match: {
+    // Use the canonical season stats table instead of summing raw scores.
+    const seasonStatsRows = matchMeta.seasonId
+      ? await this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            fantasyPlayerId: { in: squadPlayers.map((player) => player.id) },
             seasonId: matchMeta.seasonId,
-            matchDate: { lt: matchMeta.matchDate },
           },
-        }
-      : {
-          match: {
-            matchDate: { lt: matchMeta.matchDate },
-          },
-        };
-
-    const historicalScores =
-      await this.prisma.client.fantasyPlayerScore.findMany({
-        where: {
-          fantasyPlayerId: { in: squadPlayers.map((player) => player.id) },
-          ...seasonScoreWhere,
-        },
-        select: {
-          fantasyPlayerId: true,
-          points: true,
-        },
-      });
+          select: { fantasyPlayerId: true, fantasyPointsTotal: true },
+        })
+      : [];
+    const seasonStatsByPlayerId = new Map(
+      seasonStatsRows.map((s) => [s.fantasyPlayerId, s.fantasyPointsTotal]),
+    );
 
     let effectiveScorecard: unknown = null;
 
@@ -407,14 +426,6 @@ export class FantasySquadsService {
 
     const currentPlayingXi = extractPlayedPlayerIds(effectiveScorecard);
     const currentPlayingXiKnown = currentPlayingXi.size > 0;
-
-    const seasonPointsByPlayerId = new Map<string, number>();
-    for (const score of historicalScores) {
-      seasonPointsByPlayerId.set(
-        score.fantasyPlayerId,
-        (seasonPointsByPlayerId.get(score.fantasyPlayerId) ?? 0) + score.points,
-      );
-    }
 
     let created = 0;
     for (const player of squadPlayers) {
@@ -455,7 +466,7 @@ export class FantasySquadsService {
           ...xiDelta,
           isLastMatchPlayed,
           inLastMatchBestXI: false,
-          currentSeasonPoints: seasonPointsByPlayerId.get(player.id) ?? 0,
+          currentSeasonPoints: seasonStatsByPlayerId.get(player.id) ?? 0,
         },
         create: {
           matchId,
@@ -470,12 +481,38 @@ export class FantasySquadsService {
             currentPlayingXiKnown && !isInPlayingXI && isLastMatchPlayed,
           isLastMatchPlayed,
           inLastMatchBestXI: false,
-          currentSeasonPoints: seasonPointsByPlayerId.get(player.id) ?? 0,
+          currentSeasonPoints: seasonStatsByPlayerId.get(player.id) ?? 0,
         },
       });
       created++;
     }
 
     this.logger.log(`Wisden squad ready: ${created} players for ${matchId}`);
+  }
+
+  async enrichPlayersFromPitchmap(matchGid: string): Promise<number> {
+    const pitchmap = await this.wisden.getPitchmap(matchGid);
+    let updated = 0;
+    for (const team of pitchmap.teams ?? []) {
+      for (const p of team.players ?? []) {
+        if (!p.bowling_technique && !p.bowling_type_simple) continue;
+        const bowlingTechnique = mapBowlingTechnique(p.bowling_technique);
+        await this.prisma.client.fantasyPlayer.updateMany({
+          where: {
+            wisdenPlayerId: String(p.id),
+            bowlingTechnique: null,
+          },
+          data: {
+            bowlingTechnique,
+            bowlingStyle: mapBowlingStyle(p.bowling_type_simple),
+          },
+        });
+        updated++;
+      }
+    }
+    this.logger.log(
+      `enrichPlayersFromPitchmap(${matchGid}): ${updated} player(s) processed`,
+    );
+    return updated;
   }
 }

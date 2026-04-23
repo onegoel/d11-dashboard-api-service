@@ -19,6 +19,8 @@ import type {
   WisdenCommentaryResponse,
   WisdenScorecardResponse,
   WisdenTableResponse,
+  WisdenWagonWheelResponse,
+  WisdenPitchmapResponse,
 } from "../../common/types/wisden.types.js";
 
 const execFileAsync = promisify(execFile);
@@ -58,6 +60,38 @@ export class WisdenService {
     return this.getJson<WisdenCommentaryResponse>(
       WISDEN_ENDPOINTS.commentaryBasic(matchGid),
       `commentary:${matchGid}`,
+    );
+  }
+
+  async getAdvancedScorecard(
+    matchGid: string,
+  ): Promise<WisdenScorecardResponse> {
+    return this.getJson<WisdenScorecardResponse>(
+      WISDEN_ENDPOINTS.advancedScorecard(matchGid),
+      `scorecard-advanced:${matchGid}`,
+    );
+  }
+
+  async getCommentaryAdvanced(
+    matchGid: string,
+  ): Promise<WisdenCommentaryResponse> {
+    return this.getJson<WisdenCommentaryResponse>(
+      WISDEN_ENDPOINTS.commentaryAdvanced(matchGid),
+      `commentary-advanced:${matchGid}`,
+    );
+  }
+
+  async getWagonWheel(matchGid: string): Promise<WisdenWagonWheelResponse> {
+    return this.getJson<WisdenWagonWheelResponse>(
+      WISDEN_ENDPOINTS.wagonWheel(matchGid),
+      `wagon-wheel:${matchGid}`,
+    );
+  }
+
+  async getPitchmap(matchGid: string): Promise<WisdenPitchmapResponse> {
+    return this.getJson<WisdenPitchmapResponse>(
+      WISDEN_ENDPOINTS.pitchmap(matchGid),
+      `pitchmap:${matchGid}`,
     );
   }
 

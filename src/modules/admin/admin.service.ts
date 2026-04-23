@@ -20,6 +20,7 @@ import type {
   AddSeasonUserDto,
   BulkCreateAdminMatchesDto,
   CreateAdminMatchDto,
+  CreateAdminPlayerDto,
   CreateSeasonDto,
   DeleteAdminMatchDto,
   RemoveSeasonUserDto,
@@ -28,6 +29,7 @@ import type {
   ReplaceMatchScoresDto,
   ReverseChipPlayDto,
   UpdateAdminMatchDto,
+  UpdateAdminPlayerDto,
   UpdateScoreRankDto,
   UpdateSeasonDto,
 } from "./dto/admin.dto.js";
@@ -1287,6 +1289,76 @@ export class AdminService {
       );
 
       return updated;
+    });
+  }
+
+  // ─── Player catalog admin ─────────────────────────────────────────────────
+
+  async getAdminPlayers() {
+    return this.prisma.client.fantasyPlayer.findMany({
+      include: {
+        team: {
+          select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
+        },
+      },
+      orderBy: [{ displayName: "asc" }],
+    });
+  }
+
+  async createAdminPlayer(dto: CreateAdminPlayerDto) {
+    return this.prisma.client.fantasyPlayer.create({
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        displayName: dto.displayName,
+        role: dto.role,
+        teamId: dto.teamId ?? null,
+        photoUrl: dto.photoUrl ?? null,
+        isActive: dto.isActive ?? true,
+        shortName: dto.shortName ?? null,
+        battingHand: dto.battingHand ?? null,
+        bowlingHand: dto.bowlingHand ?? null,
+        teamWisdenId: dto.teamWisdenId ?? null,
+        wisdenPlayerId: dto.wisdenPlayerId ?? null,
+        bowlingTechnique: dto.bowlingTechnique ?? null,
+        bowlingStyle: dto.bowlingStyle ?? null,
+      },
+      include: {
+        team: {
+          select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
+        },
+      },
+    });
+  }
+
+  async updateAdminPlayer(playerId: string, dto: UpdateAdminPlayerDto) {
+    // Only set fields that were explicitly provided (not undefined)
+    const data: Record<string, unknown> = {};
+    if (dto.firstName !== undefined) data.firstName = dto.firstName;
+    if (dto.lastName !== undefined) data.lastName = dto.lastName;
+    if (dto.displayName !== undefined) data.displayName = dto.displayName;
+    if (dto.role !== undefined) data.role = dto.role;
+    if (dto.teamId !== undefined) data.teamId = dto.teamId;
+    if (dto.photoUrl !== undefined) data.photoUrl = dto.photoUrl;
+    if (dto.isActive !== undefined) data.isActive = dto.isActive;
+    if (dto.shortName !== undefined) data.shortName = dto.shortName;
+    if (dto.battingHand !== undefined) data.battingHand = dto.battingHand;
+    if (dto.bowlingHand !== undefined) data.bowlingHand = dto.bowlingHand;
+    if (dto.teamWisdenId !== undefined) data.teamWisdenId = dto.teamWisdenId;
+    if (dto.wisdenPlayerId !== undefined)
+      data.wisdenPlayerId = dto.wisdenPlayerId;
+    if (dto.bowlingTechnique !== undefined)
+      data.bowlingTechnique = dto.bowlingTechnique;
+    if (dto.bowlingStyle !== undefined) data.bowlingStyle = dto.bowlingStyle;
+
+    return this.prisma.client.fantasyPlayer.update({
+      where: { id: playerId },
+      data,
+      include: {
+        team: {
+          select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
+        },
+      },
     });
   }
 }

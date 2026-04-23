@@ -61,18 +61,11 @@ export class FantasyMatchesService {
   async getPlayerPool(matchId: string) {
     await this.assertMatchExists(matchId);
 
-    const [existingPoolCount, existingXiCount] = await Promise.all([
-      this.prisma.client.fantasyMatchPlayer.count({
-        where: { matchId },
-      }),
-      this.prisma.client.fantasyMatchPlayer.count({
-        where: { matchId, isInPlayingXI: true },
-      }),
-    ]);
-
+    // Bootstrap the pool the very first time — never re-sync on a plain read.
+    const existingPoolCount = await this.prisma.client.fantasyMatchPlayer.count(
+      { where: { matchId } },
+    );
     if (existingPoolCount === 0) {
-      await this.squads.getMatchSquad(matchId);
-    } else if (existingXiCount === 0) {
       await this.squads.getMatchSquad(matchId);
     }
 
@@ -82,9 +75,7 @@ export class FantasyMatchesService {
         select: {
           status: true,
           matchDate: true,
-          wisdenMatchGid: true,
-          homeTeam: { select: { wisdenTeamId: true } },
-          awayTeam: { select: { wisdenTeamId: true } },
+          seasonId: true,
         },
       }),
       this.prisma.client.fantasyContest.findUnique({
@@ -102,10 +93,12 @@ export class FantasyMatchesService {
               photoUrl: true,
               teamId: true,
               shortName: true,
+              battingHand: true,
+              bowlingHand: true,
+              bowlingStyle: true,
+              bowlingTechnique: true,
               team: {
-                select: {
-                  shortCode: true,
-                },
+                select: { shortCode: true },
               },
             },
           },
@@ -123,18 +116,20 @@ export class FantasyMatchesService {
       }),
     ]);
 
-    const teamWisdenIds = [
-      match.homeTeam?.wisdenTeamId,
-      match.awayTeam?.wisdenTeamId,
-    ].filter((teamId): teamId is string => Boolean(teamId));
-
-    const announcedSquadIds =
-      await this.squads.getAnnouncedSquadPlayerIdsForMatch(
-        match.wisdenMatchGid,
-        teamWisdenIds,
-      );
-
-    const announcedSquadKnown = Boolean(announcedSquadIds?.size);
+    // Fetch fresh season totals from the canonical stats table.
+    const playerIds = matchPlayers.map((mp) => mp.fantasyPlayerId);
+    const seasonStats = match.seasonId
+      ? await this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            fantasyPlayerId: { in: playerIds },
+            seasonId: match.seasonId,
+          },
+          select: { fantasyPlayerId: true, fantasyPointsTotal: true },
+        })
+      : [];
+    const seasonTotalByPlayerId = new Map(
+      seasonStats.map((s) => [s.fantasyPlayerId, s.fantasyPointsTotal]),
+    );
 
     const lockTimeReached = this.hasMatchStarted(match.matchDate);
     const shouldRevealSelectionData =
@@ -216,13 +211,15 @@ export class FantasyMatchesService {
 
         return {
           ...matchPlayer,
+          currentSeasonPoints:
+            seasonTotalByPlayerId.get(matchPlayer.fantasyPlayerId) ??
+            matchPlayer.currentSeasonPoints,
           teamShortCode: matchPlayer.fantasyPlayer.team?.shortCode ?? null,
-          isInAnnouncedSquad: announcedSquadKnown
-            ? Boolean(
-                matchPlayer.wisdenPlayerId &&
-                announcedSquadIds?.has(matchPlayer.wisdenPlayerId),
-              )
-            : null,
+          battingHand: matchPlayer.fantasyPlayer.battingHand ?? null,
+          bowlingHand: matchPlayer.fantasyPlayer.bowlingHand ?? null,
+          bowlingStyle: matchPlayer.fantasyPlayer.bowlingStyle ?? null,
+          bowlingTechnique: matchPlayer.fantasyPlayer.bowlingTechnique ?? null,
+          isInAnnouncedSquad: null,
           selectedEntryCount: shouldRevealSelectionData
             ? selectedEntryCount
             : 0,
@@ -252,13 +249,15 @@ export class FantasyMatchesService {
       const playerScore = scoreByPlayerId.get(matchPlayer.fantasyPlayerId);
       return {
         ...matchPlayer,
+        currentSeasonPoints:
+          seasonTotalByPlayerId.get(matchPlayer.fantasyPlayerId) ??
+          matchPlayer.currentSeasonPoints,
         teamShortCode: matchPlayer.fantasyPlayer.team?.shortCode ?? null,
-        isInAnnouncedSquad: announcedSquadKnown
-          ? Boolean(
-              matchPlayer.wisdenPlayerId &&
-              announcedSquadIds?.has(matchPlayer.wisdenPlayerId),
-            )
-          : null,
+        battingHand: matchPlayer.fantasyPlayer.battingHand ?? null,
+        bowlingHand: matchPlayer.fantasyPlayer.bowlingHand ?? null,
+        bowlingStyle: matchPlayer.fantasyPlayer.bowlingStyle ?? null,
+        bowlingTechnique: matchPlayer.fantasyPlayer.bowlingTechnique ?? null,
+        isInAnnouncedSquad: null,
         selectedEntryCount: 0,
         selectedByUsers: [],
         selectionPct: null,
@@ -281,6 +280,76 @@ export class FantasyMatchesService {
       where: { matchId },
       select: { fantasyPlayerId: true, points: true, breakdown: true },
     });
+  }
+
+  // ── Player season profile ─────────────────────────────────────────────────
+
+  async getPlayerSeasonProfile(fantasyPlayerId: string, seasonId: number) {
+    const player = await this.prisma.client.fantasyPlayer.findUnique({
+      where: { id: fantasyPlayerId },
+      select: {
+        id: true,
+        displayName: true,
+        role: true,
+        photoUrl: true,
+        shortName: true,
+        battingHand: true,
+        bowlingHand: true,
+        bowlingStyle: true,
+        bowlingTechnique: true,
+      },
+    });
+
+    if (!player)
+      throw new NotFoundException(`Player ${fantasyPlayerId} not found`);
+
+    const [seasonStats, recentScores] = await Promise.all([
+      this.prisma.client.fantasyPlayerSeasonStats.findUnique({
+        where: { fantasyPlayerId_seasonId: { fantasyPlayerId, seasonId } },
+        select: {
+          matchesPlayed: true,
+          fantasyPointsTotal: true,
+          fantasyPointsAvg: true,
+          fantasyPointsBest: true,
+          runsTotal: true,
+          wicketsTotal: true,
+        },
+      }),
+      this.prisma.client.fantasyPlayerScore.findMany({
+        where: { fantasyPlayerId, match: { seasonId } },
+        orderBy: { match: { matchDate: "desc" } },
+        take: 10,
+        select: {
+          matchId: true,
+          points: true,
+          breakdown: true,
+          isFinalized: true,
+          match: {
+            select: {
+              matchNo: true,
+              matchDate: true,
+              homeTeam: { select: { shortCode: true } },
+              awayTeam: { select: { shortCode: true } },
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      player,
+      seasonStats: seasonStats ?? null,
+      recentMatches: recentScores.map((s) => ({
+        matchId: s.matchId,
+        matchNo: s.match.matchNo,
+        matchDate: s.match.matchDate.toISOString(),
+        homeTeamShortCode: s.match.homeTeam.shortCode,
+        awayTeamShortCode: s.match.awayTeam.shortCode,
+        points: s.points,
+        breakdown: (s.breakdown as Record<string, number> | null) ?? null,
+        isFinalized: s.isFinalized,
+      })),
+    };
   }
 
   // ── Player selections (contest-wide) ─────────────────────────────────────

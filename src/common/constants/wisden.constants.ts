@@ -53,4 +53,12 @@ export const WISDEN_ENDPOINTS = {
     `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/scorecard?lang=&advanced=true&partnerships=true`,
   commentaryBasic: (matchGid: string) =>
     `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/commentary?type=basic`,
+  commentaryAdvanced: (matchGid: string) =>
+    `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/commentary?type=advanced`,
+  wagonWheel: (matchGid: string) =>
+    `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/wagon`,
+  pitchmap: (matchGid: string) =>
+    `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/pitchmap`,
+  standings: (compId = WISDEN_COMP_ID) =>
+    `https://epr.ellipsedata.com/redirect/1/comp/${compId}/table`,
 } as const;

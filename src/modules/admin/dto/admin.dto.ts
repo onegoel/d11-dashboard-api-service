@@ -16,7 +16,10 @@ import {
   ValidateNested,
 } from "class-validator";
 import {
+  BowlingStyle,
+  BowlingTechnique,
   ChipCode,
+  FantasyPlayerRole,
   MatchResult,
   MatchStatus,
   UserRole,
@@ -333,4 +336,146 @@ export class UpdateUserRoleDto extends AdminReasonDto {
   )
   @IsEnum(UserRole)
   role!: UserRole;
+}
+
+// ─── Player admin DTOs ────────────────────────────────────────────────────────
+
+export class CreateAdminPlayerDto {
+  @ApiProperty({ example: "Jos" })
+  @IsString()
+  firstName!: string;
+
+  @ApiProperty({ example: "Buttler" })
+  @IsString()
+  lastName!: string;
+
+  @ApiProperty({ example: "Jos Buttler" })
+  @IsString()
+  displayName!: string;
+
+  @ApiProperty({ enum: FantasyPlayerRole, example: FantasyPlayerRole.BATSMAN })
+  @IsEnum(FantasyPlayerRole)
+  role!: FantasyPlayerRole;
+
+  @ApiPropertyOptional({ format: "uuid", description: "Team ID (UUID)" })
+  @IsOptional()
+  @IsUUID()
+  teamId?: string;
+
+  @ApiPropertyOptional({ example: "https://example.com/photo.png" })
+  @IsOptional()
+  @IsString()
+  photoUrl?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({ example: "Buttler" })
+  @IsOptional()
+  @IsString()
+  shortName?: string;
+
+  @ApiPropertyOptional({ example: "RIGHT_HAND" })
+  @IsOptional()
+  @IsString()
+  battingHand?: string;
+
+  @ApiPropertyOptional({ example: "RIGHT_HAND" })
+  @IsOptional()
+  @IsString()
+  bowlingHand?: string;
+
+  @ApiPropertyOptional({ description: "Wisden team ID" })
+  @IsOptional()
+  @IsString()
+  teamWisdenId?: string;
+
+  @ApiPropertyOptional({ description: "Wisden player ID" })
+  @IsOptional()
+  @IsString()
+  wisdenPlayerId?: string;
+
+  @ApiPropertyOptional({ enum: BowlingTechnique })
+  @IsOptional()
+  @IsEnum(BowlingTechnique)
+  bowlingTechnique?: BowlingTechnique;
+
+  @ApiPropertyOptional({ enum: BowlingStyle })
+  @IsOptional()
+  @IsEnum(BowlingStyle)
+  bowlingStyle?: BowlingStyle;
+}
+
+export class UpdateAdminPlayerDto {
+  @ApiPropertyOptional({ example: "Jos" })
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @ApiPropertyOptional({ example: "Buttler" })
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @ApiPropertyOptional({ example: "Jos Buttler" })
+  @IsOptional()
+  @IsString()
+  displayName?: string;
+
+  @ApiPropertyOptional({ enum: FantasyPlayerRole })
+  @IsOptional()
+  @IsEnum(FantasyPlayerRole)
+  role?: FantasyPlayerRole;
+
+  @ApiPropertyOptional({ format: "uuid", nullable: true })
+  @IsOptional()
+  @IsUUID()
+  teamId?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  photoUrl?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  shortName?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  battingHand?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  bowlingHand?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  teamWisdenId?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  wisdenPlayerId?: string | null;
+
+  @ApiPropertyOptional({ enum: BowlingTechnique, nullable: true })
+  @IsOptional()
+  @IsEnum(BowlingTechnique)
+  bowlingTechnique?: BowlingTechnique | null;
+
+  @ApiPropertyOptional({ enum: BowlingStyle, nullable: true })
+  @IsOptional()
+  @IsEnum(BowlingStyle)
+  bowlingStyle?: BowlingStyle | null;
 }

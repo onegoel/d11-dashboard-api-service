@@ -358,11 +358,7 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
       );
 
       try {
-        const result = await this.scoringService.scoreWisdenMatch(
-          match.id,
-          commentaryData ?? {},
-          scorecardData,
-        );
+        const result = await this.scoringService.scoreMatch(match.id);
         this.logger.log(
           `[${matchId}] Fantasy scoring complete: scored=${result.scored} ranked=${result.ranked}`,
         );
