@@ -1242,13 +1242,21 @@ export class FantasyScoringService {
     entryTotals.sort((a, b) => b.totalPoints - a.totalPoints);
 
     let rank = 1;
+    let prevPoints: number | null = null;
+    let processed = 0;
     await Promise.all(
-      entryTotals.map((e) =>
-        this.prisma.client.fantasyContestEntry.update({
+      entryTotals.map((e) => {
+        if (prevPoints == null || e.totalPoints !== prevPoints) {
+          rank = processed + 1;
+          prevPoints = e.totalPoints;
+        }
+        processed += 1;
+
+        return this.prisma.client.fantasyContestEntry.update({
           where: { id: e.id },
-          data: { totalPoints: e.totalPoints, rank: rank++ },
-        }),
-      ),
+          data: { totalPoints: e.totalPoints, rank },
+        });
+      }),
     );
 
     await this.prisma.client.fantasyContest.update({
@@ -1387,13 +1395,36 @@ export class FantasyScoringService {
           return a.seasonUserId.localeCompare(b.seasonUserId);
         });
 
-      const seasonScores = rankedByEffectiveScore.map((entry, index) => ({
-        seasonUserId: entry.seasonUserId,
-        rank: index + 1,
-        rawScore: entry.rawScore,
-        secondaryRawScore: entry.secondaryRawScore,
-        effectiveScore: entry.effectiveScore,
-      }));
+      const seasonScores: Array<{
+        seasonUserId: string;
+        rank: number;
+        rawScore: number;
+        secondaryRawScore: number | null;
+        effectiveScore: number;
+      }> = [];
+
+      let seasonRank = 1;
+      let prevEffectiveScore: number | null = null;
+      let processedSeason = 0;
+
+      for (const entry of rankedByEffectiveScore) {
+        if (
+          prevEffectiveScore == null ||
+          entry.effectiveScore !== prevEffectiveScore
+        ) {
+          seasonRank = processedSeason + 1;
+          prevEffectiveScore = entry.effectiveScore;
+        }
+        processedSeason += 1;
+
+        seasonScores.push({
+          seasonUserId: entry.seasonUserId,
+          rank: seasonRank,
+          rawScore: entry.rawScore,
+          secondaryRawScore: entry.secondaryRawScore,
+          effectiveScore: entry.effectiveScore,
+        });
+      }
 
       if (seasonScores.length > 0) {
         await this.scoreService.submitMatchScoresBulk(

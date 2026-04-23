@@ -220,7 +220,7 @@ model Score {
   seasonUserId String
   matchId      String
 
-  points Int
+  points Float
   rank   Int
 
   rawScore       Float?
