@@ -209,21 +209,21 @@ export class FantasySquadsService {
           player.player_role,
           player.is_keeper,
         );
-        const incomingPhotoUrl =
-          player.photo_url?.trim() || player.player_image?.trim() || null;
+        const incomingPhotoUrl = player.photo_url?.trim() || null;
 
         await this.prisma.client.fantasyPlayer.upsert({
           where: { wisdenPlayerId: String(player.player_id) },
           update: {
+            // TODO: Revert to proper update later
             // Only sync "safe" fields on update — do NOT overwrite admin-editable
             // fields like role, battingHand, bowlingHand which may have been
             // manually corrected in the admin panel.
-            firstName,
-            lastName,
-            displayName,
-            shortName: player.player_name,
-            teamId: team.id,
-            teamWisdenId: String(wisdenTeam.team_id),
+            // firstName,
+            // lastName,
+            // displayName,
+            // shortName: player.player_name,
+            // teamId: team.id,
+            // teamWisdenId: String(wisdenTeam.team_id),
             ...(incomingPhotoUrl ? { photoUrl: incomingPhotoUrl } : {}),
             isActive: true,
           },
