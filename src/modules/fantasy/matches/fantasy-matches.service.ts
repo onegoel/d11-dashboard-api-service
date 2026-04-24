@@ -311,8 +311,27 @@ export class FantasyMatchesService {
           fantasyPointsTotal: true,
           fantasyPointsAvg: true,
           fantasyPointsBest: true,
+          // batting
           runsTotal: true,
+          ballsFacedTotal: true,
+          foursTotal: true,
+          sixesTotal: true,
+          highScore: true,
+          thirtiesTotal: true,
+          fiftiesTotal: true,
+          centuriesTotal: true,
+          // bowling
           wicketsTotal: true,
+          ballsBowledTotal: true,
+          runsConcededTotal: true,
+          maidensTotal: true,
+          dotBallsTotal: true,
+          bestBowlingWickets: true,
+          bestBowlingRuns: true,
+          // fielding
+          catchesTotal: true,
+          stumpingsTotal: true,
+          runOutsTotal: true,
         },
       }),
       this.prisma.client.fantasyPlayerScore.findMany({

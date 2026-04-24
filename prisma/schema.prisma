@@ -250,8 +250,9 @@ model PlayerPick {
   seasonUserId String
   matchId      String
 
-  playerName String
+  fantasyPlayerId String
   isCaptain  Boolean @default(false)
+  isViceCaptain Boolean @default(false)
 
   points Int?
 
@@ -260,6 +261,7 @@ model PlayerPick {
 
   seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
   match      Match      @relation(fields: [matchId], references: [id])
+  fantasyPlayer FantasyPlayer @relation(fields: [fantasyPlayerId], references: [id])
 
   @@index([seasonUserId])
   @@index([matchId])
@@ -329,6 +331,7 @@ model FantasyPlayer {
 
   @@index([teamId])
   @@index([teamWisdenId])
+  playerPicks PlayerPick[]
 }
 
 // Per-match player pool: credit value, announced XI status
@@ -347,6 +350,8 @@ model FantasyMatchPlayer {
 
   playerIn            Boolean @default(false)  // announced as new addition
   playerOut           Boolean @default(false)  // announced as dropped
+  subbedIn            Boolean @default(false)  // came in as substitute during match
+  subbedOut           Boolean @default(false)  // taken out as substitute during match
   isLastMatchPlayed   Boolean @default(false)  // played in previous match
   inLastMatchBestXI   Boolean @default(false)  // was in best XI last match
   currentSeasonPoints Float?                   // cumulative fantasy pts this season
@@ -590,6 +595,11 @@ model FantasyPlayerSeasonStats {
   dotBallsTotal     Int @default(0)
   bestBowlingWickets Int @default(0)  // wickets in best bowling spell
   bestBowlingRuns    Int @default(0)  // runs conceded in best bowling spell
+
+  // batting milestones (non-overlapping: 30-49, 50-99, 100+)
+  thirtiesTotal    Int @default(0)
+  fiftiesTotal     Int @default(0)
+  centuriesTotal   Int @default(0)
 
   // fielding
   catchesTotal      Int @default(0)

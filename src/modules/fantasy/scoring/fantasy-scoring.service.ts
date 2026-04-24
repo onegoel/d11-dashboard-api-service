@@ -637,6 +637,45 @@ export class FantasyScoringService {
     return this.scoreWisdenMatch(matchId, commentary, scorecard, wagonWheel);
   }
 
+  async scoreMatchStatsOnly(matchId: string): Promise<{ upserted: number }> {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: { id: true, wisdenMatchGid: true },
+    });
+
+    if (!match) throw new NotFoundException(`Match ${matchId} not found`);
+    if (!match.wisdenMatchGid) {
+      throw new NotFoundException(`Match ${matchId} has no wisdenMatchGid`);
+    }
+
+    const [scorecard, commentary, wagonWheel] = await Promise.all([
+      this.wisden.getAdvancedScorecard(match.wisdenMatchGid),
+      this.wisden.getCommentaryBasic(match.wisdenMatchGid),
+      this.wisden.getWagonWheel(match.wisdenMatchGid).catch((err) => {
+        this.logger.warn(
+          `[scoreMatchStatsOnly] wagon wheel unavailable for ${match.wisdenMatchGid}: ${String(err)}`,
+        );
+        return null;
+      }),
+    ]);
+
+    const upserted = await this.computeAndPersistWisdenScores(
+      matchId,
+      commentary,
+      scorecard,
+      true,
+      wagonWheel,
+      false,
+    );
+
+    await this.refreshPlayerSeasonStats(matchId);
+
+    this.logger.log(
+      `[scoreMatchStatsOnly] matchId=${matchId} upserted=${upserted}`,
+    );
+    return { upserted };
+  }
+
   async scoreWisdenMatch(
     matchId: string,
     commentary: WisdenCommentaryResponse,
@@ -696,6 +735,7 @@ export class FantasyScoringService {
     scorecard: WisdenScorecardResponse,
     isFinalized = true,
     wagonWheel?: WisdenWagonWheelResponse | null,
+    persistFantasyPoints = true,
   ): Promise<number> {
     const statsMap = accumulateWisdenCommentary(commentary, scorecard);
 
@@ -828,7 +868,7 @@ export class FantasyScoringService {
       if (!matchPlayer.wisdenPlayerId) continue;
 
       const stats = statsMap.get(matchPlayer.wisdenPlayerId) ?? emptyStats();
-      const { points, breakdown } = computePoints(stats);
+      const fantasyScore = persistFantasyPoints ? computePoints(stats) : null;
       const advanced = advancedMap.get(matchPlayer.wisdenPlayerId) ?? {};
 
       const matchStatsPayload = {
@@ -893,30 +933,34 @@ export class FantasyScoringService {
         : null;
 
       await Promise.all([
-        this.prisma.client.fantasyPlayerScore.upsert({
-          where: {
-            fantasyPlayerId_matchId: {
-              fantasyPlayerId: matchPlayer.fantasyPlayerId,
-              matchId,
-            },
-          },
-          update: {
-            points,
-            breakdown: breakdown as never,
-            isFinalized,
-            wisdenPlayerId: matchPlayer.wisdenPlayerId,
-            wisdenMatchGid: matchPlayer.wisdenMatchGid,
-          },
-          create: {
-            fantasyPlayerId: matchPlayer.fantasyPlayerId,
-            matchId,
-            points,
-            breakdown: breakdown as never,
-            isFinalized,
-            wisdenPlayerId: matchPlayer.wisdenPlayerId,
-            wisdenMatchGid: matchPlayer.wisdenMatchGid,
-          },
-        }),
+        ...(persistFantasyPoints && fantasyScore
+          ? [
+              this.prisma.client.fantasyPlayerScore.upsert({
+                where: {
+                  fantasyPlayerId_matchId: {
+                    fantasyPlayerId: matchPlayer.fantasyPlayerId,
+                    matchId,
+                  },
+                },
+                update: {
+                  points: fantasyScore.points,
+                  breakdown: fantasyScore.breakdown as never,
+                  isFinalized,
+                  wisdenPlayerId: matchPlayer.wisdenPlayerId,
+                  wisdenMatchGid: matchPlayer.wisdenMatchGid,
+                },
+                create: {
+                  fantasyPlayerId: matchPlayer.fantasyPlayerId,
+                  matchId,
+                  points: fantasyScore.points,
+                  breakdown: fantasyScore.breakdown as never,
+                  isFinalized,
+                  wisdenPlayerId: matchPlayer.wisdenPlayerId,
+                  wisdenMatchGid: matchPlayer.wisdenMatchGid,
+                },
+              }),
+            ]
+          : []),
 
         this.prisma.client.fantasyPlayerMatchStats.upsert({
           where: {
@@ -995,7 +1039,9 @@ export class FantasyScoringService {
     }
 
     this.logger.log(
-      `[scoring] Upserted ${upserted} Wisden player scores + match stats for matchId=${matchId}`,
+      persistFantasyPoints
+        ? `[scoring] Upserted ${upserted} Wisden player scores + match stats for matchId=${matchId}`
+        : `[scoring] Upserted ${upserted} Wisden player match stats for matchId=${matchId}`,
     );
     return upserted;
   }
@@ -1517,6 +1563,9 @@ export class FantasyScoringService {
       foursTotal: number;
       sixesTotal: number;
       highScore: number;
+      thirtiesTotal: number;
+      fiftiesTotal: number;
+      centuriesTotal: number;
       wicketsTotal: number;
       ballsBowledTotal: number;
       runsConcededTotal: number;
@@ -1539,6 +1588,9 @@ export class FantasyScoringService {
       foursTotal: 0,
       sixesTotal: 0,
       highScore: 0,
+      thirtiesTotal: 0,
+      fiftiesTotal: 0,
+      centuriesTotal: 0,
       wicketsTotal: 0,
       ballsBowledTotal: 0,
       runsConcededTotal: 0,
@@ -1561,6 +1613,9 @@ export class FantasyScoringService {
       a.foursTotal += s.fours;
       a.sixesTotal += s.sixes;
       if (s.runs > a.highScore) a.highScore = s.runs;
+      if (s.runs >= 100) a.centuriesTotal++;
+      else if (s.runs >= 50) a.fiftiesTotal++;
+      else if (s.runs >= 30) a.thirtiesTotal++;
       a.wicketsTotal += s.wickets;
       a.ballsBowledTotal += s.ballsBowled;
       a.runsConcededTotal += s.runsConceded;

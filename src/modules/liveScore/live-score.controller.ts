@@ -42,6 +42,13 @@ export class LiveScoreController {
     return this.liveScoreService.backfillMatchStats();
   }
 
+  @Post("backfill/recalculate-fantasy-points")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  backfillRecalculateFantasyPoints() {
+    return this.liveScoreService.backfillRecalculateFantasyPoints();
+  }
+
   @Post("backfill/player-profiles")
   @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)

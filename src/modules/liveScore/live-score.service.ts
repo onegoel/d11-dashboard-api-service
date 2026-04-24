@@ -376,7 +376,7 @@ export class LiveScoreService {
 
     for (const match of matches) {
       try {
-        await this.scoringService.scoreMatch(match.id);
+        await this.scoringService.scoreMatchStatsOnly(match.id);
         processed++;
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -390,6 +390,42 @@ export class LiveScoreService {
 
     this.logger.log(
       `backfillMatchStats complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
+    );
+    return { processed, errors };
+  }
+
+  async backfillRecalculateFantasyPoints(): Promise<{
+    processed: number;
+    errors: number;
+  }> {
+    const matches = await this.prisma.client.match.findMany({
+      where: {
+        status: MatchStatus.COMPLETED,
+        wisdenMatchGid: { not: null },
+      },
+      orderBy: { matchDate: "asc" },
+      select: { id: true, wisdenMatchGid: true },
+    });
+
+    let processed = 0;
+    let errors = 0;
+
+    for (const match of matches) {
+      try {
+        await this.scoringService.scoreMatch(match.id);
+        processed++;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `backfillRecalculateFantasyPoints failed for matchId=${match.id}: ${msg}`,
+        );
+        errors++;
+      }
+      await new Promise((r) => setTimeout(r, 500));
+    }
+
+    this.logger.log(
+      `backfillRecalculateFantasyPoints complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
     );
     return { processed, errors };
   }
