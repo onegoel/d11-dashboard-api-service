@@ -4,6 +4,7 @@ import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
 import type { WisdenScorecardResponse } from "../../common/types/wisden.types.js";
 import { withDerivedMatchResult } from "../liveScore/wisden-match-result.util.js";
+import { WisdenService } from "../wisden/wisden.service.js";
 
 type GetSeasonMatchesOptions = {
   status?: MatchStatus;
@@ -11,7 +12,174 @@ type GetSeasonMatchesOptions = {
 
 @Injectable()
 export class MatchService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly wisden: WisdenService,
+  ) {}
+
+  private async getStandings(): Promise<Awaited<
+    ReturnType<WisdenService["getTable"]>
+  > | null> {
+    try {
+      return await this.wisden.getTable();
+    } catch {
+      return null;
+    }
+  }
+
+  async getSeasonRecords(seasonId: number) {
+    const [standings, battingRows, bowlingRows, fieldingRows] =
+      await Promise.all([
+        this.getStandings(),
+        this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            seasonId,
+            runsTotal: { gt: 0 },
+          },
+          orderBy: [{ runsTotal: "desc" }, { ballsFacedTotal: "asc" }],
+          take: 12,
+          select: {
+            matchesPlayed: true,
+            runsTotal: true,
+            ballsFacedTotal: true,
+            foursTotal: true,
+            sixesTotal: true,
+            highScore: true,
+            fantasyPlayer: {
+              select: {
+                displayName: true,
+                photoUrl: true,
+                team: { select: { shortCode: true } },
+              },
+            },
+          },
+        }),
+        this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            seasonId,
+            OR: [{ wicketsTotal: { gt: 0 } }, { ballsBowledTotal: { gt: 0 } }],
+          },
+          orderBy: [
+            { wicketsTotal: "desc" },
+            { runsConcededTotal: "asc" },
+            { ballsBowledTotal: "asc" },
+          ],
+          take: 12,
+          select: {
+            matchesPlayed: true,
+            wicketsTotal: true,
+            ballsBowledTotal: true,
+            runsConcededTotal: true,
+            maidensTotal: true,
+            bestBowlingWickets: true,
+            bestBowlingRuns: true,
+            fantasyPlayer: {
+              select: {
+                displayName: true,
+                photoUrl: true,
+                team: { select: { shortCode: true } },
+              },
+            },
+          },
+        }),
+        this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            seasonId,
+            OR: [
+              { catchesTotal: { gt: 0 } },
+              { stumpingsTotal: { gt: 0 } },
+              { runOutsTotal: { gt: 0 } },
+            ],
+          },
+          orderBy: [
+            { catchesTotal: "desc" },
+            { stumpingsTotal: "desc" },
+            { runOutsTotal: "desc" },
+          ],
+          take: 12,
+          select: {
+            matchesPlayed: true,
+            catchesTotal: true,
+            stumpingsTotal: true,
+            runOutsTotal: true,
+            fantasyPlayer: {
+              select: {
+                displayName: true,
+                photoUrl: true,
+                team: { select: { shortCode: true } },
+              },
+            },
+          },
+        }),
+      ]);
+
+    return {
+      seasonId,
+      standings: standings
+        ? {
+            compName: standings.comp_name,
+            season: standings.season,
+            teams: standings.groups.flatMap((group) => group.team),
+          }
+        : null,
+      batting: battingRows.map((row) => ({
+        playerName: row.fantasyPlayer.displayName,
+        playerPhotoUrl: row.fantasyPlayer.photoUrl,
+        teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+        matches: row.matchesPlayed,
+        runs: row.runsTotal,
+        average:
+          row.matchesPlayed > 0
+            ? Math.round((row.runsTotal / row.matchesPlayed) * 10) / 10
+            : 0,
+        strikeRate:
+          row.ballsFacedTotal > 0
+            ? Math.round((row.runsTotal / row.ballsFacedTotal) * 1000) / 10
+            : 0,
+        fours: row.foursTotal,
+        sixes: row.sixesTotal,
+        highScore: row.highScore,
+      })),
+      bowling: bowlingRows.map((row) => ({
+        playerName: row.fantasyPlayer.displayName,
+        playerPhotoUrl: row.fantasyPlayer.photoUrl,
+        teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+        matches: row.matchesPlayed,
+        wickets: row.wicketsTotal,
+        average:
+          row.wicketsTotal > 0
+            ? Math.round((row.runsConcededTotal / row.wicketsTotal) * 10) / 10
+            : null,
+        strikeRate:
+          row.wicketsTotal > 0
+            ? Math.round((row.ballsBowledTotal / row.wicketsTotal) * 10) / 10
+            : null,
+        economy:
+          row.ballsBowledTotal > 0
+            ? Math.round(
+                (row.runsConcededTotal / (row.ballsBowledTotal / 6)) * 100,
+              ) / 100
+            : null,
+        maidens: row.maidensTotal,
+        best:
+          row.bestBowlingWickets > 0
+            ? `${row.bestBowlingWickets}/${row.bestBowlingRuns}`
+            : "-",
+      })),
+      fielding: fieldingRows
+        .map((row) => ({
+          playerName: row.fantasyPlayer.displayName,
+          playerPhotoUrl: row.fantasyPlayer.photoUrl,
+          teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+          matches: row.matchesPlayed,
+          catches: row.catchesTotal,
+          stumpings: row.stumpingsTotal,
+          runOuts: row.runOutsTotal,
+          dismissals: row.catchesTotal + row.stumpingsTotal + row.runOutsTotal,
+        }))
+        .sort((a, b) => b.dismissals - a.dismissals || b.catches - a.catches),
+    };
+  }
 
   async getMatchById(matchId: string) {
     const match = await this.prisma.client.match.findUnique({

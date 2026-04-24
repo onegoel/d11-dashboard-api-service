@@ -80,6 +80,26 @@ export class MatchController {
     return this.matchService.getSeasonMatches(seasonId);
   }
 
+  @Get("season/:seasonId/records")
+  @ApiOperation({
+    summary: "Get season records",
+    description:
+      "Returns IPL standings plus top batting, bowling, and fielding season records",
+  })
+  @ApiParam({
+    name: "seasonId",
+    type: "number",
+    description: "The season ID",
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Season records payload returned successfully",
+  })
+  async getSeasonRecords(@Param("seasonId", ParseIntPipe) seasonId: number) {
+    return this.matchService.getSeasonRecords(seasonId);
+  }
+
   @Get("by-wisden/:wisdenMatchGid")
   @ApiOperation({ summary: "Look up a match by Wisden match gid" })
   @ApiParam({ name: "wisdenMatchGid", type: String })
