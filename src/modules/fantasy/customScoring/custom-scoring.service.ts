@@ -109,7 +109,15 @@ export class CustomScoringService {
     });
   }
 
-  /** Compute a per-player leaderboard for a match under the given scoring system. */
+  /**
+   * Compute a per-user-team leaderboard for a match under the given scoring system.
+   * Mirrors the real contest leaderboard: each user's picked 11 players' custom points
+   * are summed with captain/VC multipliers from the custom config.
+   *
+   * Alpha limitations (vs. real scoring pipeline):
+   *  - No chip effects applied (Swapper, DoubleTeam, Anchor, TeamForm).
+   *  - No auto-substitution of benched players for zero-scorers.
+   */
   async getMatchLeaderboard(systemId: string, matchId: string) {
     const system = await this.getById(systemId);
     const cfg = system.config as unknown as FantasyPointSystem;
@@ -120,77 +128,140 @@ export class CustomScoringService {
     });
     if (!match) throw new NotFoundException("Match not found");
 
-    const rows = await this.prisma.client.fantasyPlayerMatchStats.findMany({
+    const contest = await this.prisma.client.fantasyContest.findUnique({
       where: { matchId },
-      select: {
-        fantasyPlayerId: true,
-        runs: true,
-        ballsFaced: true,
-        fours: true,
-        sixes: true,
-        wickets: true,
-        ballsBowled: true,
-        runsConceded: true,
-        maidens: true,
-        dotBalls: true,
-        catches: true,
-        stumpings: true,
-        runOutDirect: true,
-        runOutAssist: true,
-        played: true,
+      include: {
+        entries: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                display_name: true,
+                user_name: true,
+                photo_url: true,
+              },
+            },
+            players: {
+              where: { isBench: false },
+              select: {
+                fantasyPlayerId: true,
+                isCaptain: true,
+                isViceCaptain: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    if (rows.length === 0) {
-      return {
-        system,
-        match,
-        entries: [] as Array<{
-          fantasyPlayerId: string;
-          displayName: string;
-          shortName: string | null;
-          role: string;
-          teamId: string | null;
-          photoUrl: string | null;
-          points: number;
-          breakdown: Record<string, number>;
-          rank: number;
-        }>,
-      };
+    if (!contest || contest.entries.length === 0) {
+      return { system, match, entries: [] };
     }
 
-    const playerIds = rows.map((r) => r.fantasyPlayerId);
-    const players = await this.prisma.client.fantasyPlayer.findMany({
-      where: { id: { in: playerIds } },
-      select: {
-        id: true,
-        displayName: true,
-        shortName: true,
-        role: true,
-        teamId: true,
-        photoUrl: true,
-      },
-    });
-    const byId = new Map(players.map((p) => [p.id, p] as const));
+    // All distinct player ids referenced by any starter in any entry.
+    const starterIds = Array.from(
+      new Set(
+        contest.entries.flatMap((e) => e.players.map((p) => p.fantasyPlayerId)),
+      ),
+    );
 
-    const scored = rows.map((r) => {
+    const [statRows, playerRows] = await Promise.all([
+      this.prisma.client.fantasyPlayerMatchStats.findMany({
+        where: { matchId, fantasyPlayerId: { in: starterIds } },
+        select: {
+          fantasyPlayerId: true,
+          runs: true,
+          ballsFaced: true,
+          fours: true,
+          sixes: true,
+          wickets: true,
+          ballsBowled: true,
+          runsConceded: true,
+          maidens: true,
+          dotBalls: true,
+          catches: true,
+          stumpings: true,
+          runOutDirect: true,
+          runOutAssist: true,
+          played: true,
+        },
+      }),
+      this.prisma.client.fantasyPlayer.findMany({
+        where: { id: { in: starterIds } },
+        select: {
+          id: true,
+          displayName: true,
+          shortName: true,
+          role: true,
+          photoUrl: true,
+        },
+      }),
+    ]);
+
+    const rawPointsById = new Map<string, number>();
+    const statsRowById = new Map<string, StoredPlayerMatchStats>();
+    for (const r of statRows) {
       const stats: StoredPlayerMatchStats = r;
-      const { points, breakdown } = computeCustomPoints(stats, cfg);
-      const p = byId.get(r.fantasyPlayerId);
+      statsRowById.set(r.fantasyPlayerId, stats);
+      const { points } = computeCustomPoints(stats, cfg);
+      rawPointsById.set(r.fantasyPlayerId, points);
+    }
+    const playerById = new Map(playerRows.map((p) => [p.id, p] as const));
+
+    const captainMult = cfg.other.captain_multiplier;
+    const viceCaptainMult = cfg.other.vice_captain_multiplier;
+
+    const aggregated = contest.entries.map((entry) => {
+      let total = 0;
+      const breakdown = entry.players.map((ep) => {
+        const raw = rawPointsById.get(ep.fantasyPlayerId) ?? 0;
+        const mult = ep.isCaptain
+          ? captainMult
+          : ep.isViceCaptain
+            ? viceCaptainMult
+            : 1;
+        const finalPoints = raw * mult;
+        total += finalPoints;
+        const p = playerById.get(ep.fantasyPlayerId);
+        return {
+          fantasyPlayerId: ep.fantasyPlayerId,
+          displayName: p?.displayName ?? "Unknown",
+          shortName: p?.shortName ?? null,
+          role: p?.role ?? "BATSMAN",
+          photoUrl: p?.photoUrl ?? null,
+          rawPoints: raw,
+          multiplier: mult,
+          finalPoints,
+          isCaptain: ep.isCaptain,
+          isViceCaptain: ep.isViceCaptain,
+          played: statsRowById.get(ep.fantasyPlayerId)?.played ?? false,
+        };
+      });
+
       return {
-        fantasyPlayerId: r.fantasyPlayerId,
-        displayName: p?.displayName ?? "Unknown",
-        shortName: p?.shortName ?? null,
-        role: p?.role ?? "BATSMAN",
-        teamId: p?.teamId ?? null,
-        photoUrl: p?.photoUrl ?? null,
-        points,
+        entryId: entry.id,
+        userId: entry.userId,
+        displayName: entry.user.display_name,
+        userName: entry.user.user_name,
+        photoUrl: entry.user.photo_url,
+        teamNo: entry.teamNo,
+        chipCode: entry.chipCode,
+        points: Math.round(total * 10) / 10,
         breakdown,
       };
     });
 
-    scored.sort((a, b) => b.points - a.points);
-    const entries = scored.map((e, i) => ({ ...e, rank: i + 1 }));
+    aggregated.sort((a, b) => b.points - a.points);
+    // Dense-rank ties at same points.
+    let rank = 1;
+    let prev: number | null = null;
+    const entries = aggregated.map((e, i) => {
+      if (prev == null || e.points !== prev) {
+        rank = i + 1;
+        prev = e.points;
+      }
+      return { ...e, rank };
+    });
 
     return { system, match, entries };
   }
