@@ -62,6 +62,8 @@ model User {
   fantasyEntries FantasyContestEntry[]
 
   fantasySeasonLeaderboards FantasySeasonLeaderboard[]
+
+  customScoringSystems CustomScoringSystem[]
 }
 
 model Season {
@@ -634,4 +636,24 @@ model AdminAuditLog {
   @@index([entityType])
   @@index([entityId])
   @@index([createdAt])
+}
+
+// Scoring Lab (alpha): user-defined variants of the fantasy points system
+// for experimentation. Not tied to real contests/leaderboards.
+model CustomScoringSystem {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  createdById Int
+  createdBy   User @relation(fields: [createdById], references: [id])
+
+  // JSON matches the FantasyPointSystem shape in pointsSystem.json
+  config Json
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdById])
 }
