@@ -13,7 +13,10 @@ import {
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { FantasyLineupService } from "../lineup/fantasy-lineup.service.js";
 import { FantasySquadsService } from "../squads/fantasy-squads.service.js";
-import type { SubmitEntryDto } from "../dto/fantasy.dto.js";
+import type {
+  SubmitEntryDto,
+  SyncLineupPlayerDto,
+} from "../dto/fantasy.dto.js";
 
 @Injectable()
 export class FantasyMatchesService {
@@ -219,7 +222,7 @@ export class FantasyMatchesService {
           bowlingHand: matchPlayer.fantasyPlayer.bowlingHand ?? null,
           bowlingStyle: matchPlayer.fantasyPlayer.bowlingStyle ?? null,
           bowlingTechnique: matchPlayer.fantasyPlayer.bowlingTechnique ?? null,
-          isInAnnouncedSquad: null,
+          isInAnnouncedSquad: matchPlayer.isInAnnouncedSquad,
           selectedEntryCount: shouldRevealSelectionData
             ? selectedEntryCount
             : 0,
@@ -257,7 +260,7 @@ export class FantasyMatchesService {
         bowlingHand: matchPlayer.fantasyPlayer.bowlingHand ?? null,
         bowlingStyle: matchPlayer.fantasyPlayer.bowlingStyle ?? null,
         bowlingTechnique: matchPlayer.fantasyPlayer.bowlingTechnique ?? null,
-        isInAnnouncedSquad: null,
+        isInAnnouncedSquad: matchPlayer.isInAnnouncedSquad,
         selectedEntryCount: 0,
         selectedByUsers: [],
         selectionPct: null,
@@ -1113,6 +1116,63 @@ export class FantasyMatchesService {
         effectivePlayersByEntryId.get(entry.id) ??
         entry.players.map((player) => ({ ...player })),
     };
+  }
+
+  // ── Lineup sync ─────────────────────────────────────────────────────────
+
+  async syncLineupFromScorecard(
+    matchId: string,
+    players: SyncLineupPlayerDto[],
+  ): Promise<{ updated: number }> {
+    await this.assertMatchExists(matchId);
+
+    const poolPlayers = await this.prisma.client.fantasyMatchPlayer.findMany({
+      where: { matchId },
+      select: { id: true, wisdenPlayerId: true },
+    });
+
+    const incomingByWisdenId = new Map(
+      players.map((p) => [p.wisdenPlayerId, p]),
+    );
+
+    const updates = poolPlayers.map((mp) => {
+      const incoming = mp.wisdenPlayerId
+        ? incomingByWisdenId.get(mp.wisdenPlayerId)
+        : undefined;
+
+      if (incoming) {
+        return this.prisma.client.fantasyMatchPlayer.update({
+          where: { id: mp.id },
+          data: {
+            isInPlayingXI: incoming.isInPlayingXI,
+            isInAnnouncedSquad: incoming.isInAnnouncedSquad,
+            subbedIn: incoming.subbedIn ?? false,
+            subbedOut: incoming.subbedOut ?? false,
+            ...(incoming.isKeeper !== undefined && {
+              isKeeper: incoming.isKeeper,
+            }),
+            ...(incoming.isCaptain !== undefined && {
+              isCaptain: incoming.isCaptain,
+            }),
+            ...(incoming.playerOrder !== undefined && {
+              playerOrder: incoming.playerOrder,
+            }),
+          },
+        });
+      }
+
+      // Player is in pool but NOT in the incoming scorecard list
+      return this.prisma.client.fantasyMatchPlayer.update({
+        where: { id: mp.id },
+        data: {
+          isInPlayingXI: false,
+          isInAnnouncedSquad: false,
+        },
+      });
+    });
+
+    await this.prisma.client.$transaction(updates);
+    return { updated: poolPlayers.length };
   }
 
   // ── Internal helpers ─────────────────────────────────────────────────────

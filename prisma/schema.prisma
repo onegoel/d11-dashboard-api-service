@@ -348,6 +348,7 @@ model FantasyMatchPlayer {
 
   creditValue         Float   // e.g. 9.5
   isInPlayingXI       Boolean @default(false)
+  isInAnnouncedSquad  Boolean?                 // null = not yet announced, true/false = announced status
   selectionPct        Float?  // % of contest entries that include this player
 
   playerIn            Boolean @default(false)  // announced as new addition
@@ -357,7 +358,11 @@ model FantasyMatchPlayer {
   isLastMatchPlayed   Boolean @default(false)  // played in previous match
   inLastMatchBestXI   Boolean @default(false)  // was in best XI last match
   currentSeasonPoints Float?                   // cumulative fantasy pts this season
-  battingPosition     Int?    
+  battingPosition     Int? 
+  isKeeper            Boolean @default(false)
+  isCaptain           Boolean @default(false)
+  isViceCaptain       Boolean? @default(false)
+  playerOrder         Int?
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

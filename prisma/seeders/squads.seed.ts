@@ -12,6 +12,7 @@ type WisdenSquadsResponse = {
       is_keeper: number;
       player_id: number;
       player_image: string | null;
+      photo_url?: string | null;
       player_known_as: string;
       player_name: string;
       player_role: string;
@@ -100,7 +101,12 @@ export async function seedSquads(prisma: PrismaClient) {
           teamWisdenId: String(wisdenTeam.team_id),
           battingHand: player.batting_hand,
           bowlingHand: player.bowling_hand,
-          photoUrl: player.player_image,
+          ...(player.photo_url?.trim() || player.player_image?.trim()
+            ? {
+                photoUrl:
+                  player.photo_url?.trim() || player.player_image?.trim(),
+              }
+            : {}),
           isActive: true,
         },
         create: {
@@ -114,7 +120,8 @@ export async function seedSquads(prisma: PrismaClient) {
           teamWisdenId: String(wisdenTeam.team_id),
           battingHand: player.batting_hand,
           bowlingHand: player.bowling_hand,
-          photoUrl: player.player_image,
+          photoUrl:
+            player.photo_url?.trim() || player.player_image?.trim() || null,
           isActive: true,
         },
       });

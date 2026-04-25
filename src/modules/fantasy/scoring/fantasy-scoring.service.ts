@@ -439,7 +439,10 @@ function accumulateWisdenCommentary(
   return statsMap;
 }
 
-function computePoints(s: PlayerStats): {
+function computePoints(
+  s: PlayerStats,
+  role?: string,
+): {
   points: number;
   breakdown: Record<string, number>;
 } {
@@ -466,7 +469,7 @@ function computePoints(s: PlayerStats): {
   } else if (s.runs >= 25) {
     add("twentyFiveBonus", FANTASY_T20_POINT_SYSTEM.batting["25_runs_bonus"]);
   }
-  if (s.batted && s.gotOut && s.runs === 0) {
+  if (s.batted && s.gotOut && s.runs === 0 && role !== "BOWLER") {
     add("duckPenalty", FANTASY_T20_POINT_SYSTEM.batting.duck_penalty);
   }
 
@@ -852,6 +855,7 @@ export class FantasyScoringService {
         fantasyPlayerId: true,
         wisdenPlayerId: true,
         wisdenMatchGid: true,
+        fantasyPlayer: { select: { role: true } },
       },
     });
 
@@ -868,7 +872,9 @@ export class FantasyScoringService {
       if (!matchPlayer.wisdenPlayerId) continue;
 
       const stats = statsMap.get(matchPlayer.wisdenPlayerId) ?? emptyStats();
-      const fantasyScore = persistFantasyPoints ? computePoints(stats) : null;
+      const fantasyScore = persistFantasyPoints
+        ? computePoints(stats, matchPlayer.fantasyPlayer?.role)
+        : null;
       const advanced = advancedMap.get(matchPlayer.wisdenPlayerId) ?? {};
 
       const matchStatsPayload = {

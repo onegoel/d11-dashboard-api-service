@@ -8,6 +8,7 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
+  IsString,
   IsUUID,
   Max,
   Min,
@@ -82,4 +83,51 @@ export class ExtendContestDeadlineDto {
   @Min(1)
   @Max(360)
   extendByMinutes!: number;
+}
+
+export class SyncLineupPlayerDto {
+  @ApiProperty({ description: "Wisden player ID string" })
+  @IsString()
+  wisdenPlayerId!: string;
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  isInPlayingXI!: boolean;
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  isInAnnouncedSquad!: boolean;
+
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  subbedIn?: boolean;
+
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  subbedOut?: boolean;
+
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  isKeeper?: boolean;
+
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  isCaptain?: boolean;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsOptional()
+  @IsInt()
+  playerOrder?: number;
+}
+
+export class SyncLineupDto {
+  @ApiProperty({ type: [SyncLineupPlayerDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SyncLineupPlayerDto)
+  players!: SyncLineupPlayerDto[];
 }

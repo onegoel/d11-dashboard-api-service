@@ -26,6 +26,7 @@ import { UserRole } from "../../../../generated/prisma/client.js";
 import {
   ExtendContestDeadlineDto,
   SubmitEntryDto,
+  SyncLineupDto,
 } from "../dto/fantasy.dto.js";
 import { FantasyMatchesService } from "./fantasy-matches.service.js";
 import { FantasyScoringService } from "../scoring/fantasy-scoring.service.js";
@@ -139,6 +140,20 @@ export class FantasyMatchesController {
   @ApiResponse({ status: 200, description: "Sync triggered" })
   syncMatch(@Param("matchId", ParseUUIDPipe) matchId: string) {
     return this.service.syncMatch(matchId);
+  }
+
+  @Post(":matchId/sync-lineup")
+  @ApiOperation({
+    summary: "Sync lineup status from Wisden scorecard into DB",
+  })
+  @ApiParam({ name: "matchId", format: "uuid" })
+  @ApiBody({ type: SyncLineupDto })
+  @ApiResponse({ status: 200, description: "Lineup synced" })
+  syncLineup(
+    @Param("matchId", ParseUUIDPipe) matchId: string,
+    @Body() dto: SyncLineupDto,
+  ) {
+    return this.service.syncLineupFromScorecard(matchId, dto.players);
   }
 
   @Post(":matchId/score")
