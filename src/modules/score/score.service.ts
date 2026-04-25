@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from "@nestjs/common";
 import {
@@ -26,6 +27,8 @@ interface MatchScore {
 
 @Injectable()
 export class ScoreService {
+  private readonly logger = new Logger(ScoreService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly chipService: ChipService,
@@ -415,6 +418,18 @@ export class ScoreService {
         },
       }),
     ]);
+
+    this.logger.log(
+      `[AUDIT] submitMatchScoresBulk matchId=${matchId} result=${matchResult} rows=${adjustedScores.length} ` +
+        adjustedScores
+          .map(
+            (s) =>
+              `[su=${s.seasonUserId} rank=${s.rank} pts=${s.points} raw=${s.rawScore ?? "-"} eff=${s.effectiveScore ?? "-"}${
+                s.chipPlayId ? ` chip=${s.chipPlayId}` : ""
+              }]`,
+          )
+          .join(" "),
+    );
 
     return transactionResults.slice(1, 1 + scoreUpserts.length) as Score[];
   }

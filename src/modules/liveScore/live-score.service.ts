@@ -277,12 +277,18 @@ export class LiveScoreService {
       },
     });
 
+    this.logger.log(
+      `[AUDIT] backfillHistoricalMatches START total=${matches.length}`,
+    );
     let processed = 0;
     let skipped = 0;
     let errors = 0;
 
     for (const match of matches) {
       const gid = match.wisdenMatchGid!;
+      this.logger.log(
+        `[AUDIT] backfillHistoricalMatches processing matchId=${match.id} gid=${gid}`,
+      );
       try {
         let scorecard = (match.wisdenScore ??
           null) as WisdenScorecardResponse | null;
@@ -353,7 +359,7 @@ export class LiveScoreService {
     }
 
     this.logger.log(
-      `Backfill complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
+      `[AUDIT] backfillHistoricalMatches END processed=${processed} skipped=${skipped} errors=${errors} total=${matches.length}`,
     );
     return { processed, skipped, errors };
   }
@@ -407,10 +413,16 @@ export class LiveScoreService {
       select: { id: true, wisdenMatchGid: true },
     });
 
+    this.logger.log(
+      `[AUDIT] backfillRecalculateFantasyPoints START total=${matches.length}`,
+    );
     let processed = 0;
     let errors = 0;
 
     for (const match of matches) {
+      this.logger.log(
+        `[AUDIT] backfillRecalculateFantasyPoints processing matchId=${match.id}`,
+      );
       try {
         await this.scoringService.scoreMatch(match.id);
         processed++;
@@ -425,7 +437,7 @@ export class LiveScoreService {
     }
 
     this.logger.log(
-      `backfillRecalculateFantasyPoints complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
+      `[AUDIT] backfillRecalculateFantasyPoints END processed=${processed} errors=${errors} total=${matches.length}`,
     );
     return { processed, errors };
   }

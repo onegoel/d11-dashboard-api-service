@@ -190,10 +190,8 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
 
     const poll = async () => {
       try {
-        this.logger.log(`[${matchId}] Poll tick`);
         const data =
           await this.liveScoreService.pollAndCacheWisdenMatch(wisdenMatchGid);
-        this.logger.log(`[${matchId}] Score: ${scoreSnapshot(data.scorecard)}`);
 
         if (!data.scorecard) {
           this.logger.warn(`[${matchId}] Poll tick missing scorecard`);
@@ -245,8 +243,6 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
             );
           }
         }
-
-        this.logger.log(`[${matchId}] Poll tick complete (match still live)`);
       } catch (err) {
         this.logger.warn(`[${matchId}] Poll error: ${String(err)}`);
       }

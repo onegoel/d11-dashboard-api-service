@@ -616,6 +616,7 @@ export class FantasyScoringService {
   async scoreMatch(
     matchId: string,
   ): Promise<{ scored: number; ranked: number }> {
+    this.logger.log(`[AUDIT] scoreMatch START matchId=${matchId}`);
     const match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
       select: { id: true, wisdenMatchGid: true },
@@ -685,6 +686,9 @@ export class FantasyScoringService {
     scorecard: WisdenScorecardResponse,
     wagonWheel?: WisdenWagonWheelResponse | null,
   ): Promise<{ scored: number; ranked: number }> {
+    this.logger.log(
+      `[AUDIT] scoreWisdenMatch START matchId=${matchId} scorecardStatus=${scorecard.match_status ?? "unknown"}`,
+    );
     const scored = await this.computeAndPersistWisdenScores(
       matchId,
       commentary,
@@ -704,7 +708,7 @@ export class FantasyScoringService {
     ]);
 
     this.logger.log(
-      `[scoreWisdenMatch] matchId=${matchId} scored=${scored} ranked=${ranked}`,
+      `[AUDIT] scoreWisdenMatch END matchId=${matchId} scored=${scored} ranked=${ranked}`,
     );
     return { scored, ranked };
   }
@@ -1067,10 +1071,14 @@ export class FantasyScoringService {
 
     if (!contest || contest.entries.length === 0) {
       this.logger.log(
-        `[scoring] No contest entries found for matchId=${matchId}`,
+        `[AUDIT] recomputeContestEntries matchId=${matchId} — no entries, skipping`,
       );
       return 0;
     }
+
+    this.logger.log(
+      `[AUDIT] recomputeContestEntries START matchId=${matchId} entries=${contest.entries.length} markCompleted=${markCompleted}`,
+    );
 
     const scores = await this.prisma.client.fantasyPlayerScore.findMany({
       where: { matchId },
@@ -1322,8 +1330,11 @@ export class FantasyScoringService {
 
     this.logger.log(
       markCompleted
-        ? `[scoring] Finalized ${entryTotals.length} entries for contestId=${contest.id}`
-        : `[scoring] Live-updated ${entryTotals.length} entries for contestId=${contest.id}`,
+        ? `[AUDIT] recomputeContestEntries FINALIZED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length} top3=${entryTotals
+            .slice(0, 3)
+            .map((e) => `${e.id.slice(0, 8)}:${e.totalPoints}pts`)
+            .join(",")}`
+        : `[AUDIT] recomputeContestEntries LIVE-UPDATED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length}`,
     );
     return entryTotals.length;
   }
@@ -1357,6 +1368,23 @@ export class FantasyScoringService {
     ) {
       return ranked;
     }
+
+    // Guard: if season Score rows already exist for this match, do not overwrite them.
+    // Season scores are written once when a match finishes; re-runs of scoring
+    // (backfill, live refresh, re-scoring) must not recalculate historical rank points.
+    const existingScoreCount = await this.prisma.client.score.count({
+      where: { matchId },
+    });
+    if (existingScoreCount > 0) {
+      this.logger.log(
+        `[AUDIT] finalizeContestAndPublishRanks matchId=${matchId} — season scores already exist (${existingScoreCount} rows), skipping re-publish`,
+      );
+      return ranked;
+    }
+
+    this.logger.log(
+      `[AUDIT] finalizeContestAndPublishRanks matchId=${matchId} — no existing season scores, will publish`,
+    );
 
     try {
       // Determine match result from Wisden scorecard
@@ -1479,13 +1507,26 @@ export class FantasyScoringService {
       }
 
       if (seasonScores.length > 0) {
+        this.logger.log(
+          `[AUDIT] finalizeContestAndPublishRanks matchId=${matchId} publishing ${seasonScores.length} season scores: ` +
+            seasonScores
+              .map(
+                (s) =>
+                  `[su=${s.seasonUserId.slice(0, 8)} rank=${s.rank} eff=${s.effectiveScore} raw=${s.rawScore}${
+                    s.secondaryRawScore != null
+                      ? ` raw2=${s.secondaryRawScore}`
+                      : ""
+                  }]`,
+              )
+              .join(" "),
+        );
         await this.scoreService.submitMatchScoresBulk(
           matchId,
           seasonScores,
           matchResult,
         );
         this.logger.log(
-          `[finalizeContest] Auto-published ${seasonScores.length} ranks for matchId=${matchId} with result=${matchResult}`,
+          `[AUDIT] finalizeContestAndPublishRanks matchId=${matchId} — season scores published successfully`,
         );
       }
     } catch (error) {
