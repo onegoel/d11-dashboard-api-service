@@ -2,7 +2,10 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
-import type { WisdenScorecardResponse } from "../../common/types/wisden.types.js";
+import type {
+  WisdenScorecardResponse,
+  WisdenTableResponse,
+} from "../../common/types/wisden.types.js";
 import { withDerivedMatchResult } from "../liveScore/wisden-match-result.util.js";
 import { WisdenService } from "../wisden/wisden.service.js";
 
@@ -26,6 +29,28 @@ export class MatchService {
       return null;
     }
   }
+
+  createIplSeriesStandingsPayload = (standings: WisdenTableResponse | null) => {
+    return {
+      teams: standings?.groups.flatMap((group) =>
+        group.team.map((team) => ({
+          matchesLost: team.lost,
+          matchesPlayed: team.matches,
+          matchesWon: team.won,
+          matchesTied: team.matches - team.won - team.lost - team.no_result,
+          points: team.points,
+          teamName: team.team_name,
+          netRunRate: team.net_run_rate,
+          teamShortName: team.team_short_name || team.team_abbreviation,
+          position: team.position,
+          noResults: team.no_result,
+          teamId: String(team.team_id),
+          seriesForm: [], // This would require additional data to populate
+          nextMatches: [], // This would require additional data to populate
+        })),
+      ),
+    };
+  };
 
   async getSeasonRecords(seasonId: number) {
     const [standings, battingRows, bowlingRows, fieldingRows] =
@@ -115,13 +140,7 @@ export class MatchService {
 
     return {
       seasonId,
-      standings: standings
-        ? {
-            compName: standings.comp_name,
-            season: standings.season,
-            teams: standings.groups.flatMap((group) => group.team),
-          }
-        : null,
+      standings: this.createIplSeriesStandingsPayload(standings ?? null),
       batting: battingRows.map((row) => ({
         playerName: row.fantasyPlayer.displayName,
         playerPhotoUrl: row.fantasyPlayer.photoUrl,
