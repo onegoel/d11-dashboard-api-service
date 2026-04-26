@@ -239,6 +239,9 @@ function accumulateWisdenCommentary(
   }
 
   for (const innings of scorecard.innings ?? []) {
+    // Super over innings (innings_number > 2) do not count for fantasy scoring
+    if (innings.innings_number > 2) continue;
+
     const battingTeamId = String(innings.batting_team_id);
     const bowlingTeamId =
       battingTeamId === team1WisdenId ? team2WisdenId : team1WisdenId;
@@ -397,6 +400,9 @@ function accumulateWisdenCommentary(
   }
 
   for (const innings of commentary.innings ?? []) {
+    // Super over innings (innings_number > 2) do not count for fantasy scoring
+    if (innings.innings_number > 2) continue;
+
     const battingTeamId = String(innings.batting_team_id);
     const bowlingTeamId =
       battingTeamId === team1WisdenId ? team2WisdenId : team1WisdenId;
@@ -757,6 +763,9 @@ export class FantasyScoringService {
     const advancedMap = new Map<string, AdvancedMetrics>();
 
     for (const innings of scorecard.innings ?? []) {
+      // Super over innings do not count for player statistics or fantasy scoring
+      if ((innings.innings_number ?? 0) > 2) continue;
+
       for (const batter of innings.batting ?? []) {
         const id = String(batter.player_id);
         const m = advancedMap.get(id) ?? {};
@@ -1330,10 +1339,7 @@ export class FantasyScoringService {
 
     this.logger.log(
       markCompleted
-        ? `[AUDIT] recomputeContestEntries FINALIZED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length} top3=${entryTotals
-            .slice(0, 3)
-            .map((e) => `${e.id.slice(0, 8)}:${e.totalPoints}pts`)
-            .join(",")}`
+        ? `[AUDIT] recomputeContestEntries FINALIZED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length} top3=${entryTotals.slice(0, 3).map((e) => `${e.id.slice(0, 8)}:${e.totalPoints}pts`).join(",")}`
         : `[AUDIT] recomputeContestEntries LIVE-UPDATED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length}`,
     );
     return entryTotals.length;
@@ -1513,9 +1519,7 @@ export class FantasyScoringService {
               .map(
                 (s) =>
                   `[su=${s.seasonUserId.slice(0, 8)} rank=${s.rank} eff=${s.effectiveScore} raw=${s.rawScore}${
-                    s.secondaryRawScore != null
-                      ? ` raw2=${s.secondaryRawScore}`
-                      : ""
+                    s.secondaryRawScore != null ? ` raw2=${s.secondaryRawScore}` : ""
                   }]`,
               )
               .join(" "),

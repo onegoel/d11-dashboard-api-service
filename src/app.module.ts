@@ -12,6 +12,7 @@ import { MatchModule } from "./modules/match/match.module.js";
 import { ScoreModule } from "./modules/score/score.module.js";
 import { UserModule } from "./modules/user/user.module.js";
 import { LiveScoreModule } from "./modules/liveScore/live-score.module.js";
+import { RecordsModule } from "./modules/records/records.module.js";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LiveScoreModule } from "./modules/liveScore/live-score.module.js";
     FantasyModule,
     LiveScoreModule,
     MatchIngestionModule,
+    RecordsModule,
   ],
 })
 export class AppModule {}

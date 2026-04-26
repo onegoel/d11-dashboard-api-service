@@ -208,6 +208,7 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
             where: { id: matchId },
             data: {
               status: MatchStatus.LIVE,
+              wisdenScore: data.scorecard as any,
               wisdenStatus: data.scorecard.match_status ?? "live",
               wisdenLastSyncedAt: new Date(),
             },
@@ -385,17 +386,38 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
       select: { id: true, matchDate: true },
     });
 
-    if (matches.length === 0) {
+    // Also pick up any stale LIVE matches that are older than the 4h window —
+    // these would be missed on server restart (e.g. matches that ran long, or
+    // where the server was down when the match completed).
+    const staleFrom = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days back
+    const staleMatches = await this.prisma.client.match.findMany({
+      where: {
+        wisdenMatchGid: { not: null },
+        status: "LIVE",
+        matchDate: { gte: staleFrom, lt: from },
+      },
+      select: { id: true, matchDate: true },
+    });
+
+    const allMatches = [...matches, ...staleMatches];
+
+    if (allMatches.length === 0) {
       this.logger.log("No upcoming matches to schedule");
       return;
     }
 
+    if (staleMatches.length > 0) {
+      this.logger.log(
+        `Found ${staleMatches.length} stale LIVE match(es) outside normal window — will run one-shot sync`,
+      );
+    }
+
     this.logger.log(
-      `Scheduling ${matches.length} upcoming match(es) in window ${from.toISOString()} -> ${to.toISOString()}`,
+      `Scheduling ${allMatches.length} match(es) in window ${staleFrom.toISOString()} -> ${to.toISOString()}`,
     );
 
-    for (const m of matches) this.scheduleMatch(m.id, m.matchDate);
+    for (const m of allMatches) this.scheduleMatch(m.id, m.matchDate);
 
-    this.logger.log(`Registered ${matches.length} match(es) for polling`);
+    this.logger.log(`Registered ${allMatches.length} match(es) for polling`);
   }
 }

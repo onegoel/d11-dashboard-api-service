@@ -65,6 +65,50 @@ export function deriveWisdenMatchResult(scorecard: WisdenScorecardResponse): {
     ],
   ]);
 
+  // Super over: when regular innings are tied, check super over innings (innings_number > 2)
+  // or fall back to Wisden's own match_result text.
+  if (firstRuns === secondRuns) {
+    const superOverInnings = innings.filter(
+      (inn) => (inn.innings_number ?? 0) > 2,
+    );
+    if (superOverInnings.length >= 2) {
+      // Super over innings are in the same sorted order; last two are the super overs
+      const superOverFirst = superOverInnings[superOverInnings.length - 2];
+      const superOverSecond = superOverInnings[superOverInnings.length - 1];
+      if (superOverFirst && superOverSecond) {
+        const superOverFirstRuns = toFiniteNumber(superOverFirst.runs ?? superOverFirst.score?.runs, 0);
+        const superOverSecondRuns = toFiniteNumber(superOverSecond.runs ?? superOverSecond.score?.runs, 0);
+
+        let superOverWinnerId: number | null = null;
+        if (superOverSecondRuns > superOverFirstRuns) {
+          superOverWinnerId = toFiniteNumber(superOverSecond.batting_team_id, NaN);
+        } else if (superOverFirstRuns > superOverSecondRuns) {
+          superOverWinnerId = toFiniteNumber(superOverFirst.batting_team_id, NaN);
+        }
+
+        if (superOverWinnerId !== null) {
+          const winnerName = nameById.get(superOverWinnerId) ?? "Team";
+          const outcome =
+            superOverWinnerId === team1Id
+              ? MatchResult.HOME_WIN
+              : superOverWinnerId === team2Id
+                ? MatchResult.AWAY_WIN
+                : MatchResult.PENDING;
+          return {
+            summary: `Match tied (${winnerName} won the Super Over)`,
+            outcome,
+          };
+        }
+      }
+    }
+
+    // Tie or no super over data — prefer Wisden's own result text if available
+    return {
+      summary: upstreamResult || "Match tied",
+      outcome: MatchResult.PENDING,
+    };
+  }
+
   if (secondRuns > firstRuns) {
     const winnerId = toFiniteNumber(second.batting_team_id, NaN);
     const winnerName =
@@ -105,8 +149,9 @@ export function deriveWisdenMatchResult(scorecard: WisdenScorecardResponse): {
     };
   }
 
+  // Fallback — should not be reached (the firstRuns === secondRuns case is handled above)
   return {
-    summary: "Match tied",
+    summary: upstreamResult || "Match tied",
     outcome: MatchResult.PENDING,
   };
 }
