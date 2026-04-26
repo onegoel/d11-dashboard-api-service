@@ -55,16 +55,22 @@ export class UserService {
     }
 
     // Fetch current photo URL so we can clean up the old GCS object if it changes
-    const existingUser = photoUrl !== undefined
-      ? await this.prisma.client.user.findUnique({ where: { id: userId }, select: { photo_url: true } })
-      : null;
+    const existingUser =
+      photoUrl !== undefined
+        ? await this.prisma.client.user.findUnique({
+            where: { id: userId },
+            select: { photo_url: true },
+          })
+        : null;
 
     try {
       const updated = await this.prisma.client.user.update({
         where: { id: userId },
         data: {
           display_name: displayName,
-          ...(photoUrl !== undefined ? { photo_url: photoUrl?.trim() || null } : {}),
+          ...(photoUrl !== undefined
+            ? { photo_url: photoUrl?.trim() || null }
+            : {}),
         },
       });
 
@@ -77,7 +83,9 @@ export class UserService {
       }
 
       if (photoUrl !== undefined) {
-        const newObjectPath = photoUrl ? this.extractGcsObjectPath(photoUrl) : null;
+        const newObjectPath = photoUrl
+          ? this.extractGcsObjectPath(photoUrl)
+          : null;
         if (photoUrl) {
           this.logger.log({
             event: "profile_photo_uploaded",
@@ -112,7 +120,9 @@ export class UserService {
     actor: { id: number; role: UserRole },
   ) {
     if (actor.role !== UserRole.ADMIN && actor.id !== userId) {
-      throw new ForbiddenException("You can only update your own profile photo");
+      throw new ForbiddenException(
+        "You can only update your own profile photo",
+      );
     }
 
     const normalizedType = contentType.trim().toLowerCase();
@@ -121,12 +131,21 @@ export class UserService {
       throw new BadRequestException("Unsupported image type");
     }
 
-    if (!Number.isFinite(sizeBytes) || sizeBytes < 1 || sizeBytes > PROFILE_PHOTO_MAX_BYTES) {
+    if (
+      !Number.isFinite(sizeBytes) ||
+      sizeBytes < 1 ||
+      sizeBytes > PROFILE_PHOTO_MAX_BYTES
+    ) {
       throw new BadRequestException("Image exceeds size limit (2MB)");
     }
 
     const bucket = this.firebaseAdminService.getProfilePhotoBucket();
-    const safeExt = normalizedType === "image/png" ? "png" : normalizedType === "image/webp" ? "webp" : "jpg";
+    const safeExt =
+      normalizedType === "image/png"
+        ? "png"
+        : normalizedType === "image/webp"
+          ? "webp"
+          : "jpg";
     const objectPath = `profile-photos/user-${userId}/${Date.now()}-${randomUUID()}.${safeExt}`;
     const file = bucket.file(objectPath);
     const expiresAt = Date.now() + 10 * 60 * 1000;
@@ -182,16 +201,31 @@ export class UserService {
    * Deletes a GCS object in the background (fire-and-forget).
    * Logs but does not throw on failure so the main flow is not disrupted.
    */
-  private deleteGcsObject(objectPath: string, userId: number, reason: string): void {
+  private deleteGcsObject(
+    objectPath: string,
+    userId: number,
+    reason: string,
+  ): void {
     this.firebaseAdminService
       .getProfilePhotoBucket()
       .file(objectPath)
       .delete({ ignoreNotFound: true })
       .then(() => {
-        this.logger.log({ event: "profile_photo_deleted", userId, objectPath, reason });
+        this.logger.log({
+          event: "profile_photo_deleted",
+          userId,
+          objectPath,
+          reason,
+        });
       })
       .catch((err: unknown) => {
-        this.logger.warn({ event: "profile_photo_delete_failed", userId, objectPath, reason, error: String(err) });
+        this.logger.warn({
+          event: "profile_photo_delete_failed",
+          userId,
+          objectPath,
+          reason,
+          error: String(err),
+        });
       });
   }
 

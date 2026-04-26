@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from "@nestjs/common";
 import {
@@ -19,10 +20,15 @@ interface MatchScore {
   seasonUserId: string;
   rank: number;
   points?: number;
+  rawScore?: number | null;
+  effectiveScore?: number | null;
+  secondaryRawScore?: number | null;
 }
 
 @Injectable()
 export class ScoreService {
+  private readonly logger = new Logger(ScoreService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly chipService: ChipService,
@@ -197,7 +203,7 @@ export class ScoreService {
       }),
       this.chipService.resolveActiveChipAssignmentsForMatchTx(
         this.prisma.client,
-        match.seasonId,
+        match.seasonId!,
         matchId,
       ),
     ]);
@@ -234,7 +240,7 @@ export class ScoreService {
     matchId: string,
     scores: MatchScore[],
     matchResult: MatchResult,
-    updatedByUserId: number,
+    updatedByUserId?: number,
   ) {
     if (scores.length === 0 && matchResult !== MatchResult.ABANDONED) {
       throw new BadRequestException("At least one score entry is required");
@@ -262,7 +268,7 @@ export class ScoreService {
           data: {
             status: MatchStatus.COMPLETED,
             matchResult,
-            updatedByUserId,
+            ...(updatedByUserId != null ? { updatedByUserId } : {}),
           },
         }),
       ]);
@@ -284,7 +290,7 @@ export class ScoreService {
         id: {
           in: uniqueSeasonUserIds,
         },
-        seasonId: match.seasonId,
+        ...(match.seasonId !== null ? { seasonId: match.seasonId } : {}),
       },
       select: {
         id: true,
@@ -300,45 +306,55 @@ export class ScoreService {
     const activeAssignments =
       await this.chipService.resolveActiveChipAssignmentsForMatchTx(
         this.prisma.client,
-        match.seasonId,
+        match.seasonId!,
         matchId,
         uniqueSeasonUserIds,
       );
 
-    const seenRanks = new Set<number>();
+    const rankPointsForRange = (startRank: number, size: number) => {
+      if (size <= 0) return 0;
+      let sum = 0;
+      for (let r = startRank; r < startRank + size; r += 1) {
+        sum += RANK_POINTS[r] ?? 0;
+      }
+      return sum / size;
+    };
 
-    const rankedScores = [...scores]
+    const sortedScores = [...scores]
       .map((score) => {
         if (!Number.isInteger(score.rank) || score.rank <= 0) {
           throw new BadRequestException(
             `Invalid rank for season user ${score.seasonUserId}`,
           );
         }
-
-        if (seenRanks.has(score.rank)) {
-          throw new BadRequestException("Duplicate ranks are not allowed");
-        }
-
-        seenRanks.add(score.rank);
-
         return score;
       })
-      .sort((a, b) => a.rank - b.rank)
-      .map((score) => {
-        const chipAssignment = activeAssignments.get(score.seasonUserId);
+      .sort((a, b) => a.rank - b.rank);
 
-        return {
-          seasonUserId: score.seasonUserId,
-          rank: score.rank,
-          points: RANK_POINTS[score.rank] ?? 0,
-          chipPlayId: chipAssignment?.chipPlayId ?? null,
-        };
-      });
+    const tieSizeByRank = new Map<number, number>();
+    for (const score of sortedScores) {
+      tieSizeByRank.set(score.rank, (tieSizeByRank.get(score.rank) ?? 0) + 1);
+    }
+
+    const rankedScores = sortedScores.map((score) => {
+      const chipAssignment = activeAssignments.get(score.seasonUserId);
+      const tieSize = tieSizeByRank.get(score.rank) ?? 1;
+
+      return {
+        seasonUserId: score.seasonUserId,
+        rank: score.rank,
+        points: rankPointsForRange(score.rank, tieSize),
+        rawScore: score.rawScore ?? null,
+        effectiveScore: score.effectiveScore ?? null,
+        secondaryRawScore: score.secondaryRawScore ?? null,
+        chipPlayId: chipAssignment?.chipPlayId ?? null,
+      };
+    });
 
     const teamFormBonusBySeasonUserId =
       await this.getTeamFormBonusBySeasonUserId(
         this.prisma.client,
-        match.seasonId,
+        match.seasonId!,
         matchId,
         matchResult,
       );
@@ -361,9 +377,9 @@ export class ScoreService {
         update: {
           points: score.points,
           rank: score.rank,
-          rawScore: null,
-          effectiveScore: null,
-          secondaryRawScore: null,
+          rawScore: score.rawScore,
+          effectiveScore: score.effectiveScore,
+          secondaryRawScore: score.secondaryRawScore,
           chipPlayId: score.chipPlayId,
         },
         create: {
@@ -371,9 +387,9 @@ export class ScoreService {
           matchId,
           points: score.points,
           rank: score.rank,
-          rawScore: null,
-          effectiveScore: null,
-          secondaryRawScore: null,
+          rawScore: score.rawScore,
+          effectiveScore: score.effectiveScore,
+          secondaryRawScore: score.secondaryRawScore,
           chipPlayId: score.chipPlayId,
         },
       }),
@@ -398,10 +414,22 @@ export class ScoreService {
         data: {
           status: MatchStatus.COMPLETED,
           matchResult,
-          updatedByUserId,
+          ...(updatedByUserId != null ? { updatedByUserId } : {}),
         },
       }),
     ]);
+
+    this.logger.log(
+      `[AUDIT] submitMatchScoresBulk matchId=${matchId} result=${matchResult} rows=${adjustedScores.length} ` +
+        adjustedScores
+          .map(
+            (s) =>
+              `[su=${s.seasonUserId} rank=${s.rank} pts=${s.points} raw=${s.rawScore ?? "-"} eff=${s.effectiveScore ?? "-"}${
+                s.chipPlayId ? ` chip=${s.chipPlayId}` : ""
+              }]`,
+          )
+          .join(" "),
+    );
 
     return transactionResults.slice(1, 1 + scoreUpserts.length) as Score[];
   }

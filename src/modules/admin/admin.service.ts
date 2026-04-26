@@ -20,6 +20,7 @@ import type {
   AddSeasonUserDto,
   BulkCreateAdminMatchesDto,
   CreateAdminMatchDto,
+  CreateAdminPlayerDto,
   CreateSeasonDto,
   DeleteAdminMatchDto,
   RemoveSeasonUserDto,
@@ -28,6 +29,7 @@ import type {
   ReplaceMatchScoresDto,
   ReverseChipPlayDto,
   UpdateAdminMatchDto,
+  UpdateAdminPlayerDto,
   UpdateScoreRankDto,
   UpdateSeasonDto,
 } from "./dto/admin.dto.js";
@@ -51,7 +53,9 @@ const getAffectedMatches = <T extends { id: string }>(
   startMatchId: string,
   windowSize: number,
 ) => {
-  const startIndex = orderedMatches.findIndex((match) => match.id === startMatchId);
+  const startIndex = orderedMatches.findIndex(
+    (match) => match.id === startMatchId,
+  );
 
   if (startIndex < 0) {
     return [] as T[];
@@ -145,7 +149,11 @@ export class AdminService {
     });
   }
 
-  async getAuditLogs(query: { limit?: number; entityType?: string; entityId?: string }) {
+  async getAuditLogs(query: {
+    limit?: number;
+    entityType?: string;
+    entityId?: string;
+  }) {
     return this.prisma.client.adminAuditLog.findMany({
       where: {
         ...(query.entityType ? { entityType: query.entityType } : {}),
@@ -178,39 +186,41 @@ export class AdminService {
   }
 
   async updateUserRole(userId: number, role: UserRole, reason?: string) {
-    const { updatedUser, authSubject } = await this.prisma.client.$transaction(async (tx) => {
-      const existingUser = await tx.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          role: true,
-          auth_subject: true,
-        },
-      });
+    const { updatedUser, authSubject } = await this.prisma.client.$transaction(
+      async (tx) => {
+        const existingUser = await tx.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            role: true,
+            auth_subject: true,
+          },
+        });
 
-      if (!existingUser) {
-        throw new NotFoundException("User not found");
-      }
+        if (!existingUser) {
+          throw new NotFoundException("User not found");
+        }
 
-      const updatedUser = await tx.user.update({
-        where: { id: userId },
-        data: { role },
-      });
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: { role },
+        });
 
-      await this.logAction(
-        tx,
-        "user.role.update",
-        "user",
-        String(userId),
-        reason,
-        toAuditJson({
-          previousRole: existingUser.role,
-          nextRole: role,
-        }),
-      );
+        await this.logAction(
+          tx,
+          "user.role.update",
+          "user",
+          String(userId),
+          reason,
+          toAuditJson({
+            previousRole: existingUser.role,
+            nextRole: role,
+          }),
+        );
 
-      return { updatedUser, authSubject: existingUser.auth_subject };
-    });
+        return { updatedUser, authSubject: existingUser.auth_subject };
+      },
+    );
 
     // Sync the new role into the Firebase JWT custom claims so tokens issued
     // after this carry the correct role (enables the fast-path in AppUserGuard).
@@ -243,10 +253,17 @@ export class AdminService {
           },
         });
 
-        await this.logAction(tx, "match.create", "match", match.id, dto.reason, toAuditJson({
-          seasonId: dto.seasonId,
-          matchNo: dto.matchNo,
-        }));
+        await this.logAction(
+          tx,
+          "match.create",
+          "match",
+          match.id,
+          dto.reason,
+          toAuditJson({
+            seasonId: dto.seasonId,
+            matchNo: dto.matchNo,
+          }),
+        );
 
         return match;
       });
@@ -264,10 +281,16 @@ export class AdminService {
   async bulkCreateMatches(dto: BulkCreateAdminMatchesDto) {
     try {
       return await this.prisma.client.$transaction(async (tx) => {
-        const createdMatches = [] as Awaited<ReturnType<typeof tx.match.create>>[];
+        const createdMatches = [] as Awaited<
+          ReturnType<typeof tx.match.create>
+        >[];
 
         for (const matchInput of dto.matches) {
-          await this.ensureTeamsExist(tx, matchInput.homeTeamId, matchInput.awayTeamId);
+          await this.ensureTeamsExist(
+            tx,
+            matchInput.homeTeamId,
+            matchInput.awayTeamId,
+          );
 
           const created = await tx.match.create({
             data: {
@@ -288,10 +311,17 @@ export class AdminService {
           createdMatches.push(created);
         }
 
-        await this.logAction(tx, "match.bulk-create", "match", undefined, dto.reason, toAuditJson({
-          count: createdMatches.length,
-          matchIds: createdMatches.map((match) => match.id),
-        }));
+        await this.logAction(
+          tx,
+          "match.bulk-create",
+          "match",
+          undefined,
+          dto.reason,
+          toAuditJson({
+            count: createdMatches.length,
+            matchIds: createdMatches.map((match) => match.id),
+          }),
+        );
 
         return createdMatches;
       });
@@ -344,9 +374,16 @@ export class AdminService {
           },
         });
 
-        await this.logAction(tx, "match.update", "match", matchId, dto.reason, toAuditJson({
-          changes: dto,
-        }));
+        await this.logAction(
+          tx,
+          "match.update",
+          "match",
+          matchId,
+          dto.reason,
+          toAuditJson({
+            changes: dto,
+          }),
+        );
 
         return updated;
       });
@@ -381,7 +418,9 @@ export class AdminService {
       }
 
       const hasDependencies =
-        match._count.scores > 0 || match._count.chipPlays > 0 || match._count.picks > 0;
+        match._count.scores > 0 ||
+        match._count.chipPlays > 0 ||
+        match._count.picks > 0;
 
       if (hasDependencies && !dto.force) {
         throw new BadRequestException(
@@ -397,9 +436,16 @@ export class AdminService {
 
       await tx.match.delete({ where: { id: matchId } });
 
-      await this.logAction(tx, "match.delete", "match", matchId, dto.reason, toAuditJson({
-        force: Boolean(dto.force),
-      }));
+      await this.logAction(
+        tx,
+        "match.delete",
+        "match",
+        matchId,
+        dto.reason,
+        toAuditJson({
+          force: Boolean(dto.force),
+        }),
+      );
 
       return { id: matchId, deleted: true };
     });
@@ -416,7 +462,9 @@ export class AdminService {
       const status = dto.status ?? MatchStatus.LIVE;
 
       if (status === MatchStatus.COMPLETED) {
-        throw new BadRequestException("Reopen status must be SCHEDULED or LIVE");
+        throw new BadRequestException(
+          "Reopen status must be SCHEDULED or LIVE",
+        );
       }
 
       const updated = await tx.match.update({
@@ -424,10 +472,17 @@ export class AdminService {
         data: { status, matchResult: dto.matchResult ?? MatchResult.PENDING },
       });
 
-      await this.logAction(tx, "match.reopen", "match", matchId, dto.reason, toAuditJson({
-        previousStatus: match.status,
-        nextStatus: status,
-      }));
+      await this.logAction(
+        tx,
+        "match.reopen",
+        "match",
+        matchId,
+        dto.reason,
+        toAuditJson({
+          previousStatus: match.status,
+          nextStatus: status,
+        }),
+      );
 
       return updated;
     });
@@ -458,75 +513,94 @@ export class AdminService {
           data: { status: MatchStatus.COMPLETED },
         });
 
-        await this.logAction(tx, "score.replace", "match", matchId, dto.reason, toAuditJson({
-          scoreCount: 0,
-          seasonUserIds: [],
-          skippedReason: "match_result_abandoned",
-        }));
+        await this.logAction(
+          tx,
+          "score.replace",
+          "match",
+          matchId,
+          dto.reason,
+          toAuditJson({
+            scoreCount: 0,
+            seasonUserIds: [],
+            skippedReason: "match_result_abandoned",
+          }),
+        );
       });
 
       return [];
     }
 
-    const submittedSeasonUserIds = dto.scores.map((score) => score.seasonUserId);
+    const submittedSeasonUserIds = dto.scores.map(
+      (score) => score.seasonUserId,
+    );
     const uniqueSeasonUserIds = [...new Set(submittedSeasonUserIds)];
 
     if (uniqueSeasonUserIds.length !== submittedSeasonUserIds.length) {
-      throw new BadRequestException("Duplicate seasonUserId entries are not allowed");
+      throw new BadRequestException(
+        "Duplicate seasonUserId entries are not allowed",
+      );
     }
 
     this.validateContiguousRanks(dto.scores.map((score) => score.rank));
 
     const seasonUsers = await this.prisma.client.seasonUser.findMany({
       where: {
-        seasonId: match.seasonId,
+        ...(match.seasonId !== null ? { seasonId: match.seasonId } : {}),
         id: { in: uniqueSeasonUserIds },
       },
       select: { id: true },
     });
 
     if (seasonUsers.length !== uniqueSeasonUserIds.length) {
-      throw new BadRequestException("Scores include players outside this season");
+      throw new BadRequestException(
+        "Scores include players outside this season",
+      );
     }
 
-    const activeAssignments = await this.chipService.resolveActiveChipAssignmentsForMatchTx(
-      this.prisma.client,
-      match.seasonId,
-      matchId,
-      uniqueSeasonUserIds,
-    );
+    const activeAssignments =
+      await this.chipService.resolveActiveChipAssignmentsForMatchTx(
+        this.prisma.client,
+        match.seasonId!,
+        matchId,
+        uniqueSeasonUserIds,
+      );
 
     const sortedScores = [...dto.scores].sort((a, b) => a.rank - b.rank);
 
-    const scoreRows: Prisma.ScoreCreateManyInput[] = sortedScores.map((score) => {
-      const chipAssignment = activeAssignments.get(score.seasonUserId);
-      const basePoints = RANK_POINTS[score.rank] ?? 0;
+    const scoreRows: Prisma.ScoreCreateManyInput[] = sortedScores.map(
+      (score) => {
+        const chipAssignment = activeAssignments.get(score.seasonUserId);
+        const basePoints = RANK_POINTS[score.rank] ?? 0;
 
-      let teamFormDelta = 0;
+        let teamFormDelta = 0;
 
-      if (
-        chipAssignment?.chipCode === ChipCode.TEAM_FORM
-        && chipAssignment.selectedTeamId
-        && (match.matchResult === MatchResult.HOME_WIN || match.matchResult === MatchResult.AWAY_WIN)
-      ) {
-        const isSelectedTeamWinner =
-          (match.matchResult === MatchResult.HOME_WIN && chipAssignment.selectedTeamId === match.homeTeamId)
-          || (match.matchResult === MatchResult.AWAY_WIN && chipAssignment.selectedTeamId === match.awayTeamId);
+        if (
+          chipAssignment?.chipCode === ChipCode.TEAM_FORM &&
+          chipAssignment.selectedTeamId &&
+          (match.matchResult === MatchResult.HOME_WIN ||
+            match.matchResult === MatchResult.AWAY_WIN)
+        ) {
+          const isSelectedTeamWinner =
+            (match.matchResult === MatchResult.HOME_WIN &&
+              chipAssignment.selectedTeamId === match.homeTeamId) ||
+            (match.matchResult === MatchResult.AWAY_WIN &&
+              chipAssignment.selectedTeamId === match.awayTeamId);
 
-        teamFormDelta = isSelectedTeamWinner ? 5 : -2;
-      }
+          teamFormDelta = isSelectedTeamWinner ? 5 : -2;
+        }
 
-      return {
-        seasonUserId: score.seasonUserId,
-        matchId,
-        rank: score.rank,
-        points: basePoints + teamFormDelta,
-        rawScore: null,
-        effectiveScore: null,
-        secondaryRawScore: null,
-        chipPlayId: chipAssignment?.chipPlayId ?? null,
-      };
-    });
+        return {
+          seasonUserId: score.seasonUserId,
+          matchId,
+          rank: score.rank,
+          points: basePoints + teamFormDelta,
+          rawScore: null,
+          effectiveScore: null,
+          secondaryRawScore: null,
+          chipPlayId: chipAssignment?.chipPlayId ?? null,
+        };
+      },
+    );
 
     await this.prisma.client.$transaction(async (tx) => {
       await tx.score.deleteMany({ where: { matchId } });
@@ -540,10 +614,17 @@ export class AdminService {
         data: { status: MatchStatus.COMPLETED },
       });
 
-      await this.logAction(tx, "score.replace", "match", matchId, dto.reason, toAuditJson({
-        scoreCount: scoreRows.length,
-        seasonUserIds: uniqueSeasonUserIds,
-      }));
+      await this.logAction(
+        tx,
+        "score.replace",
+        "match",
+        matchId,
+        dto.reason,
+        toAuditJson({
+          scoreCount: scoreRows.length,
+          seasonUserIds: uniqueSeasonUserIds,
+        }),
+      );
     });
 
     return this.prisma.client.score.findMany({
@@ -568,7 +649,9 @@ export class AdminService {
       });
 
       if (dto.rank > totalScores) {
-        throw new BadRequestException(`Rank must be between 1 and ${totalScores}`);
+        throw new BadRequestException(
+          `Rank must be between 1 and ${totalScores}`,
+        );
       }
 
       if (dto.rank < target.rank) {
@@ -643,11 +726,18 @@ export class AdminService {
         );
       }
 
-      await this.logAction(tx, "score.update-rank", "score", scoreId, dto.reason, toAuditJson({
-        matchId: target.matchId,
-        previousRank: target.rank,
-        nextRank: dto.rank,
-      }));
+      await this.logAction(
+        tx,
+        "score.update-rank",
+        "score",
+        scoreId,
+        dto.reason,
+        toAuditJson({
+          matchId: target.matchId,
+          previousRank: target.rank,
+          nextRank: dto.rank,
+        }),
+      );
 
       return tx.score.findMany({
         where: { matchId: target.matchId },
@@ -712,10 +802,17 @@ export class AdminService {
         });
       }
 
-      await this.logAction(tx, "score.delete", "score", scoreId, reason, toAuditJson({
-        matchId: target.matchId,
-        deletedRank: target.rank,
-      }));
+      await this.logAction(
+        tx,
+        "score.delete",
+        "score",
+        scoreId,
+        reason,
+        toAuditJson({
+          matchId: target.matchId,
+          deletedRank: target.rank,
+        }),
+      );
 
       return {
         deleted: true,
@@ -756,11 +853,18 @@ export class AdminService {
         data: { chipPlayId: null },
       });
 
-      await this.logAction(tx, "chip.reverse", "chipPlay", chipPlayId, dto.reason, toAuditJson({
-        chipCode: chipPlay.chipType.code,
-        seasonUserId: chipPlay.seasonUserId,
-        startMatchId: chipPlay.startMatchId,
-      }));
+      await this.logAction(
+        tx,
+        "chip.reverse",
+        "chipPlay",
+        chipPlayId,
+        dto.reason,
+        toAuditJson({
+          chipCode: chipPlay.chipType.code,
+          seasonUserId: chipPlay.seasonUserId,
+          startMatchId: chipPlay.startMatchId,
+        }),
+      );
 
       return updated;
     });
@@ -798,9 +902,16 @@ export class AdminService {
     const targetSeasonUserId = dto.seasonUserId ?? existing.seasonUserId;
     const targetChipCode = dto.chipCode ?? existing.chipType.code;
     const targetStartMatchId = dto.startMatchId ?? existing.startMatchId;
-    const targetSelectedTeamId = dto.selectedTeamId ?? existing.selectedTeam?.id ?? null;
+    const targetSelectedTeamId =
+      dto.selectedTeamId ?? existing.selectedTeam?.id ?? null;
 
-    const [targetSeasonUser, targetStartMatch, targetChipType, orderedMatches, otherScheduledPlays] = await Promise.all([
+    const [
+      targetSeasonUser,
+      targetStartMatch,
+      targetChipType,
+      orderedMatches,
+      otherScheduledPlays,
+    ] = await Promise.all([
       this.prisma.client.seasonUser.findUnique({
         where: { id: targetSeasonUserId },
         select: { id: true, seasonId: true },
@@ -824,11 +935,15 @@ export class AdminService {
     ]);
 
     if (!targetSeasonUser || targetSeasonUser.seasonId !== seasonId) {
-      throw new BadRequestException("Target season user is not part of this season");
+      throw new BadRequestException(
+        "Target season user is not part of this season",
+      );
     }
 
     if (!targetStartMatch || targetStartMatch.seasonId !== seasonId) {
-      throw new BadRequestException("Target start match is not part of this season");
+      throw new BadRequestException(
+        "Target start match is not part of this season",
+      );
     }
 
     if (!targetChipType) {
@@ -837,7 +952,9 @@ export class AdminService {
 
     if (targetChipCode === ChipCode.TEAM_FORM) {
       if (!targetSelectedTeamId) {
-        throw new BadRequestException("Team Form reassignment requires selectedTeamId");
+        throw new BadRequestException(
+          "Team Form reassignment requires selectedTeamId",
+        );
       }
 
       const selectedTeam = await this.prisma.client.team.findUnique({
@@ -899,13 +1016,38 @@ export class AdminService {
         },
       });
 
+      // Carry forward anchorFantasyPlayerId+anchorPlayerName from dto or original extraInfo
+      const existingExtraInfo =
+        (existing.extraInfo as Record<string, unknown> | null) ?? {};
+      const resolvedAnchorPlayerId =
+        dto.anchorFantasyPlayerId?.trim() ??
+        (targetChipCode === ChipCode.ANCHOR_PLAYER
+          ? (existingExtraInfo.anchorFantasyPlayerId as string | undefined)
+          : undefined);
+      const resolvedAnchorPlayerName =
+        dto.anchorPlayerName?.trim() ??
+        (targetChipCode === ChipCode.ANCHOR_PLAYER
+          ? (existingExtraInfo.anchorPlayerName as string | undefined)
+          : undefined);
+      const extraInfo =
+        targetChipCode === ChipCode.ANCHOR_PLAYER && resolvedAnchorPlayerId
+          ? ({
+              anchorFantasyPlayerId: resolvedAnchorPlayerId,
+              anchorPlayerName: resolvedAnchorPlayerName,
+            } as object)
+          : {};
+
       const replacement = existingTargetPlay
         ? await tx.chipPlay.update({
             where: { id: existingTargetPlay.id },
             data: {
               status: ChipPlayStatus.SCHEDULED,
               canceledAt: null,
-              selectedTeamId: targetChipCode === ChipCode.TEAM_FORM ? targetSelectedTeamId : null,
+              selectedTeamId:
+                targetChipCode === ChipCode.TEAM_FORM
+                  ? targetSelectedTeamId
+                  : null,
+              extraInfo,
             },
           })
         : await tx.chipPlay.create({
@@ -913,8 +1055,12 @@ export class AdminService {
               seasonUserId: targetSeasonUserId,
               chipTypeId: targetChipType.id,
               startMatchId: targetStartMatchId,
-              selectedTeamId: targetChipCode === ChipCode.TEAM_FORM ? targetSelectedTeamId : null,
+              selectedTeamId:
+                targetChipCode === ChipCode.TEAM_FORM
+                  ? targetSelectedTeamId
+                  : null,
               status: ChipPlayStatus.SCHEDULED,
+              extraInfo,
             },
           });
 
@@ -932,12 +1078,19 @@ export class AdminService {
         });
       }
 
-      await this.logAction(tx, "chip.reassign", "chipPlay", chipPlayId, dto.reason, toAuditJson({
-        replacementChipPlayId: replacement.id,
-        targetSeasonUserId,
-        targetChipCode,
-        targetStartMatchId,
-      }));
+      await this.logAction(
+        tx,
+        "chip.reassign",
+        "chipPlay",
+        chipPlayId,
+        dto.reason,
+        toAuditJson({
+          replacementChipPlayId: replacement.id,
+          targetSeasonUserId,
+          targetChipCode,
+          targetStartMatchId,
+        }),
+      );
 
       return {
         cancelledChipPlayId: chipPlayId,
@@ -976,16 +1129,25 @@ export class AdminService {
           },
         });
 
-        await this.logAction(tx, "season-user.add", "seasonUser", seasonUser.id, dto.reason, toAuditJson({
-          seasonId,
-          userId: dto.userId,
-        }));
+        await this.logAction(
+          tx,
+          "season-user.add",
+          "seasonUser",
+          seasonUser.id,
+          dto.reason,
+          toAuditJson({
+            seasonId,
+            userId: dto.userId,
+          }),
+        );
 
         return seasonUser;
       });
     } catch (error) {
       if (isPrismaUniqueConstraintError(error)) {
-        throw new BadRequestException("This user is already registered in the season");
+        throw new BadRequestException(
+          "This user is already registered in the season",
+        );
       }
 
       throw error;
@@ -1030,9 +1192,16 @@ export class AdminService {
 
       await tx.seasonUser.delete({ where: { id: seasonUserId } });
 
-      await this.logAction(tx, "season-user.remove", "seasonUser", seasonUserId, dto.reason, toAuditJson({
-        force: Boolean(dto.force),
-      }));
+      await this.logAction(
+        tx,
+        "season-user.remove",
+        "seasonUser",
+        seasonUserId,
+        dto.reason,
+        toAuditJson({
+          force: Boolean(dto.force),
+        }),
+      );
 
       return { id: seasonUserId, deleted: true };
     });
@@ -1051,14 +1220,23 @@ export class AdminService {
           isActive: dto.isActive ?? true,
           ...(dto.startDate ? { startDate: new Date(dto.startDate) } : {}),
           ...(dto.endDate ? { endDate: new Date(dto.endDate) } : {}),
-          ...(dto.winnerUserId !== undefined ? { winnerUserId: dto.winnerUserId } : {}),
+          ...(dto.winnerUserId !== undefined
+            ? { winnerUserId: dto.winnerUserId }
+            : {}),
         },
       });
 
-      await this.logAction(tx, "season.create", "season", String(season.id), dto.reason, toAuditJson({
-        year: dto.year,
-        isActive: season.isActive,
-      }));
+      await this.logAction(
+        tx,
+        "season.create",
+        "season",
+        String(season.id),
+        dto.reason,
+        toAuditJson({
+          year: dto.year,
+          isActive: season.isActive,
+        }),
+      );
 
       return season;
     });
@@ -1087,17 +1265,100 @@ export class AdminService {
           ...(dto.name !== undefined ? { name: dto.name } : {}),
           ...(dto.year !== undefined ? { year: dto.year } : {}),
           ...(dto.isActive !== undefined ? { isActive: dto.isActive } : {}),
-          ...(dto.startDate !== undefined ? { startDate: new Date(dto.startDate) } : {}),
-          ...(dto.endDate !== undefined ? { endDate: new Date(dto.endDate) } : {}),
-          ...(dto.winnerUserId !== undefined ? { winnerUserId: dto.winnerUserId } : {}),
+          ...(dto.startDate !== undefined
+            ? { startDate: new Date(dto.startDate) }
+            : {}),
+          ...(dto.endDate !== undefined
+            ? { endDate: new Date(dto.endDate) }
+            : {}),
+          ...(dto.winnerUserId !== undefined
+            ? { winnerUserId: dto.winnerUserId }
+            : {}),
         },
       });
 
-      await this.logAction(tx, "season.update", "season", String(seasonId), dto.reason, toAuditJson({
-        changes: dto,
-      }));
+      await this.logAction(
+        tx,
+        "season.update",
+        "season",
+        String(seasonId),
+        dto.reason,
+        toAuditJson({
+          changes: dto,
+        }),
+      );
 
       return updated;
+    });
+  }
+
+  // ─── Player catalog admin ─────────────────────────────────────────────────
+
+  async getAdminPlayers() {
+    return this.prisma.client.fantasyPlayer.findMany({
+      include: {
+        team: {
+          select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
+        },
+      },
+      orderBy: [{ displayName: "asc" }],
+    });
+  }
+
+  async createAdminPlayer(dto: CreateAdminPlayerDto) {
+    return this.prisma.client.fantasyPlayer.create({
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        displayName: dto.displayName,
+        role: dto.role,
+        teamId: dto.teamId ?? null,
+        photoUrl: dto.photoUrl ?? null,
+        isActive: dto.isActive ?? true,
+        shortName: dto.shortName ?? null,
+        battingHand: dto.battingHand ?? null,
+        bowlingHand: dto.bowlingHand ?? null,
+        teamWisdenId: dto.teamWisdenId ?? null,
+        wisdenPlayerId: dto.wisdenPlayerId ?? null,
+        bowlingTechnique: dto.bowlingTechnique ?? null,
+        bowlingStyle: dto.bowlingStyle ?? null,
+      },
+      include: {
+        team: {
+          select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
+        },
+      },
+    });
+  }
+
+  async updateAdminPlayer(playerId: string, dto: UpdateAdminPlayerDto) {
+    // Only set fields that were explicitly provided (not undefined)
+    const data: Record<string, unknown> = {};
+    if (dto.firstName !== undefined) data.firstName = dto.firstName;
+    if (dto.lastName !== undefined) data.lastName = dto.lastName;
+    if (dto.displayName !== undefined) data.displayName = dto.displayName;
+    if (dto.role !== undefined) data.role = dto.role;
+    if (dto.teamId !== undefined) data.teamId = dto.teamId;
+    if (dto.photoUrl !== undefined) data.photoUrl = dto.photoUrl;
+    if (dto.isActive !== undefined) data.isActive = dto.isActive;
+    if (dto.shortName !== undefined) data.shortName = dto.shortName;
+    if (dto.battingHand !== undefined) data.battingHand = dto.battingHand;
+    if (dto.bowlingHand !== undefined) data.bowlingHand = dto.bowlingHand;
+    if (dto.teamWisdenId !== undefined) data.teamWisdenId = dto.teamWisdenId;
+    if (dto.wisdenPlayerId !== undefined)
+      data.wisdenPlayerId = dto.wisdenPlayerId;
+    if (dto.bowlingTechnique !== undefined)
+      data.bowlingTechnique = dto.bowlingTechnique;
+    if (dto.bowlingStyle !== undefined) data.bowlingStyle = dto.bowlingStyle;
+
+    return this.prisma.client.fantasyPlayer.update({
+      where: { id: playerId },
+      data,
+      include: {
+        team: {
+          select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
+        },
+      },
     });
   }
 }

@@ -21,7 +21,7 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: "5mb" }));
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? "")
-    .split(",")
+    .split("|")
     .map((origin) => origin.trim())
     .filter(Boolean);
 
@@ -29,6 +29,15 @@ async function bootstrap() {
     origin: (origin, callback) => {
       // Allow non-browser clients and same-origin calls with no Origin header.
       if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      // Always allow localhost origins (Swagger UI, local dev UI)
+      if (
+        origin.startsWith("http://localhost") ||
+        origin.startsWith("http://127.0.0.1")
+      ) {
         callback(null, true);
         return;
       }
@@ -65,6 +74,7 @@ async function bootstrap() {
     .setTitle("D11 Dashboard API")
     .setDescription("Cricket Fantasy League - D11 Dashboard REST API")
     .setVersion("1.0.0")
+    .addBearerAuth()
     .addTag("health", "Health check endpoint")
     .addTag("auth", "Authentication and onboarding")
     .addTag("leaderboard", "Leaderboard endpoints")
@@ -73,6 +83,7 @@ async function bootstrap() {
     .addTag("chips", "Powerup/chip selection and management")
     .addTag("scores", "Score submission and retrieval")
     .addTag("admin", "Administrative correction and maintenance endpoints")
+    .addTag("admin/ingestion", "Match ID and squad ingestion")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

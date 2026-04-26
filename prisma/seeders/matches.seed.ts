@@ -8,6 +8,7 @@ type Fixture = {
   date: string;
   stadium?: string;
   venue?: string;
+  wisdenMatchGid?: string;
 };
 
 const unlockOneScheduledMatchForTesting = async (
@@ -70,7 +71,7 @@ const unlockOneScheduledMatchForTesting = async (
 export async function seedFixtures(
   prisma: PrismaClient,
   seasonId: number,
-  skipTestUnlock = false,
+  enableTestUnlock = false,
 ) {
   console.log("Seeding fixtures...");
 
@@ -101,8 +102,7 @@ export async function seedFixtures(
         awayTeamId,
         stadium: fixture.stadium,
         venue: fixture.venue,
-        status: "SCHEDULED",
-        matchResult: "PENDING",
+        wisdenMatchGid: fixture.wisdenMatchGid,
       },
       create: {
         seasonId,
@@ -114,14 +114,15 @@ export async function seedFixtures(
         venue: fixture.venue,
         status: "SCHEDULED",
         matchResult: "PENDING",
+        wisdenMatchGid: fixture.wisdenMatchGid,
       },
     });
   }
 
-  if (!skipTestUnlock) {
+  if (enableTestUnlock) {
     await unlockOneScheduledMatchForTesting(prisma, seasonId);
   } else {
-    console.log("Skipping test-unlock (prod mode)");
+    console.log("Skipping test-unlock");
   }
 
   console.log(`Seeded ${fixtures.length} fixtures`);

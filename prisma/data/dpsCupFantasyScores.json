@@ -1,0 +1,2350 @@
+[
+  {
+    "id": "0822321a-4e3b-4e65-a1fd-e25470588baf",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "2b40d60a-71a9-49f8-b7a3-1655e66bb58e",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "76204",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 100,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 360,
+    "createdAt": "2026-04-16T15:30:31.570Z",
+    "updatedAt": "2026-04-17T14:46:21.893Z",
+    "fantasyPlayer": {
+      "id": "2b40d60a-71a9-49f8-b7a3-1655e66bb58e",
+      "displayName": "Angkrish Raghuvanshi",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/88352.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "A Raghuvanshi",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 3,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 12,
+    "pointsBreakdown": {
+      "runs": 4,
+      "playing": 4,
+      "fourBonus": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "80594b5f-238a-4f3a-bb63-330e134f50a0",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "d80c2fac-d07a-46f1-ab22-c04042936398",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "26160",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 108,
+    "createdAt": "2026-04-16T15:30:31.656Z",
+    "updatedAt": "2026-04-17T14:46:20.501Z",
+    "fantasyPlayer": {
+      "id": "d80c2fac-d07a-46f1-ab22-c04042936398",
+      "displayName": "Glenn Phillips",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65295.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "GD Phillips",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 39,
+    "pointsBreakdown": {
+      "runs": 15,
+      "catches": 16,
+      "playing": 4,
+      "fourBonus": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "b3529310-6e9c-4a56-b545-12cf64a8e785",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "d351f500-ed62-40a4-a351-785f08ce84ca",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "19720",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 66.7,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 205,
+    "createdAt": "2026-04-16T15:30:31.659Z",
+    "updatedAt": "2026-04-17T14:46:21.726Z",
+    "fantasyPlayer": {
+      "id": "d351f500-ed62-40a4-a351-785f08ce84ca",
+      "displayName": "Kagiso Rabada",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/63611.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "KS Rabada",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 2,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 111,
+    "pointsBreakdown": {
+      "catches": 8,
+      "playing": 4,
+      "wickets": 90,
+      "economyRate": -2,
+      "dotBallBonus": 7,
+      "threeWicketHaulBonus": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "14f8e272-5b8d-4770-82a9-e47e935379aa",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "29b6bb10-9fe0-4790-ae0b-b70dc5531ffb",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "25242",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 260,
+    "createdAt": "2026-04-16T15:30:31.663Z",
+    "updatedAt": "2026-04-17T14:46:20.709Z",
+    "fantasyPlayer": {
+      "id": "29b6bb10-9fe0-4790-ae0b-b70dc5531ffb",
+      "displayName": "Rashid Khan",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65748.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "Rashid Khan",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 33,
+    "pointsBreakdown": {
+      "playing": 4,
+      "wickets": 30,
+      "economyRate": -6,
+      "dotBallBonus": 5
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "3760415f-c695-4668-8be9-e05ea063593f",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "5c9cddcc-e857-4bc9-a47a-233833ae4956",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "20009",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 33.3,
+    "playerIn": true,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.600Z",
+    "updatedAt": "2026-04-17T14:46:17.508Z",
+    "fantasyPlayer": {
+      "id": "5c9cddcc-e857-4bc9-a47a-233833ae4956",
+      "displayName": "Tim Seifert",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/63867.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "TL Seifert",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 33,
+    "pointsBreakdown": {
+      "runs": 15,
+      "playing": 4,
+      "sixBonus": 6,
+      "fourBonus": 4,
+      "strikeRate": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "d9ef7b9b-aeeb-4b09-a553-853aed83c710",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "1f440fde-c365-4a9e-8461-403c78f40f38",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "33718",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 176,
+    "createdAt": "2026-04-16T15:30:31.603Z",
+    "updatedAt": "2026-04-17T14:46:17.698Z",
+    "fantasyPlayer": {
+      "id": "1f440fde-c365-4a9e-8461-403c78f40f38",
+      "displayName": "Rinku Singh",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/64727.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "RK Singh",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 13,
+    "pointsBreakdown": {
+      "runs": 1,
+      "catches": 8,
+      "playing": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "aaf837b5-3efe-4c3d-b40d-d74e1e41778f",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "5078fe7d-c59e-4331-980f-5b9f8fdf3f91",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "74538",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 100,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 223,
+    "createdAt": "2026-04-16T15:30:31.680Z",
+    "updatedAt": "2026-04-17T14:46:22.007Z",
+    "fantasyPlayer": {
+      "id": "5078fe7d-c59e-4331-980f-5b9f8fdf3f91",
+      "displayName": "Sai Sudharsan",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/69500.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "B Sai Sudharsan",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 3,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 44,
+    "pointsBreakdown": {
+      "runs": 22,
+      "playing": 4,
+      "sixBonus": 12,
+      "fourBonus": 4,
+      "strikeRate": 2
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "23d47191-b042-4200-a9bf-5b674a890122",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "eabca44f-cbbb-419c-88e6-fb530e64353f",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "66831",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 66.7,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 196,
+    "createdAt": "2026-04-16T15:30:31.614Z",
+    "updatedAt": "2026-04-17T14:46:17.825Z",
+    "fantasyPlayer": {
+      "id": "eabca44f-cbbb-419c-88e6-fb530e64353f",
+      "displayName": "Kartik Tyagi",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/67735.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "K Tyagi",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 2,
+    "selectedByUsers": [
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 35,
+    "pointsBreakdown": {
+      "runs": 6,
+      "catches": 16,
+      "playing": 4,
+      "sixBonus": 6,
+      "economyRate": -4,
+      "dotBallBonus": 7
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "62a5ffdd-fc21-4190-a81c-dfdfdc7cd8dc",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "dc3bf61b-8df4-4b78-9db8-3a19aeb6b355",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "76540",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 163,
+    "createdAt": "2026-04-16T15:30:31.689Z",
+    "updatedAt": "2026-04-17T14:46:18.795Z",
+    "fantasyPlayer": {
+      "id": "dc3bf61b-8df4-4b78-9db8-3a19aeb6b355",
+      "displayName": "Ashok Sharma",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/91316.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "A Sharma",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 67,
+    "pointsBreakdown": {
+      "playing": 4,
+      "wickets": 60,
+      "economyRate": -6,
+      "dotBallBonus": 9
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "55cb7593-a9e8-4a8c-9028-239529ca09f5",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "eb9fc041-11a3-4fba-bfec-cadef0e9986f",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "12685",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 100,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 259,
+    "createdAt": "2026-04-16T15:30:31.574Z",
+    "updatedAt": "2026-04-17T14:46:18.528Z",
+    "fantasyPlayer": {
+      "id": "eb9fc041-11a3-4fba-bfec-cadef0e9986f",
+      "displayName": "Ajinkya Rahane",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/3991.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "AM Rahane",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 3,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 2,
+    "pointsBreakdown": {
+      "playing": 4,
+      "duckPenalty": -2
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "c56d8b8c-4447-4623-8998-a61160d8c8b5",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "b3b60b85-3e6d-4159-b90f-892c9820f3ec",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65478",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 116,
+    "createdAt": "2026-04-16T15:30:31.578Z",
+    "updatedAt": "2026-04-17T14:46:17.305Z",
+    "fantasyPlayer": {
+      "id": "b3b60b85-3e6d-4159-b90f-892c9820f3ec",
+      "displayName": "Ramandeep Singh",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66953.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "Ramandeep Singh",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 57,
+    "pointsBreakdown": {
+      "runs": 13,
+      "playing": 4,
+      "wickets": 30,
+      "sixBonus": 6,
+      "fourBonus": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "3af5b902-9ae5-424a-8e0e-89c0b9b945f6",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "8e56eae5-40e3-4b3d-aabe-d2ae190e02a8",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "44904",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 136,
+    "createdAt": "2026-04-16T15:30:31.702Z",
+    "updatedAt": "2026-04-17T14:46:20.993Z",
+    "fantasyPlayer": {
+      "id": "8e56eae5-40e3-4b3d-aabe-d2ae190e02a8",
+      "displayName": "Mohammed Siraj",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65799.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "M Siraj",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 90,
+    "pointsBreakdown": {
+      "catches": 16,
+      "playing": 4,
+      "wickets": 60,
+      "dotBallBonus": 10
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "40db92f4-3267-4408-952c-8b772effd2ec",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "a7be6ae9-51ac-4e6a-809f-a346b713373c",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65397",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 66.7,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 143,
+    "createdAt": "2026-04-16T15:30:31.539Z",
+    "updatedAt": "2026-04-17T14:46:21.702Z",
+    "fantasyPlayer": {
+      "id": "a7be6ae9-51ac-4e6a-809f-a346b713373c",
+      "displayName": "Cameron Green",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66870.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "CD Green",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 2,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 150,
+    "pointsBreakdown": {
+      "runs": 70,
+      "catches": 16,
+      "playing": 4,
+      "sixBonus": 24,
+      "fourBonus": 24,
+      "fiftyBonus": 8,
+      "strikeRate": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "a2921d3b-29c8-4baf-97e0-e8f3b2ff7c25",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "c5b532ac-0d8a-4b4a-a64c-fb6212f00717",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "50536",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 84,
+    "createdAt": "2026-04-16T15:30:31.712Z",
+    "updatedAt": "2026-04-17T14:46:21.802Z",
+    "fantasyPlayer": {
+      "id": "c5b532ac-0d8a-4b4a-a64c-fb6212f00717",
+      "displayName": "Rahul Tewatia",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/64440.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "R Tewatia",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 11,
+    "pointsBreakdown": {
+      "runs": 7,
+      "playing": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "712f3a7a-6306-4233-adde-416592681b0a",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "51530904-fb98-4dc8-b082-86393aed03a2",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "20226",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 100,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 245,
+    "createdAt": "2026-04-16T15:30:31.716Z",
+    "updatedAt": "2026-04-17T14:46:21.113Z",
+    "fantasyPlayer": {
+      "id": "51530904-fb98-4dc8-b082-86393aed03a2",
+      "displayName": "Washington Sundar",
+      "role": "ALL_ROUNDER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65859.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "MS Washington Sundar",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 3,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 21,
+    "pointsBreakdown": {
+      "runs": 13,
+      "playing": 4,
+      "fourBonus": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "2eeefe2c-e343-421c-ab2d-636c02cf84f8",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "7f8a405c-4db0-4df2-8e8a-877db5c14eb3",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "11658",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 66.7,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 225,
+    "createdAt": "2026-04-16T15:30:31.555Z",
+    "updatedAt": "2026-04-17T14:46:21.402Z",
+    "fantasyPlayer": {
+      "id": "7f8a405c-4db0-4df2-8e8a-877db5c14eb3",
+      "displayName": "Sunil Narine",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/11229.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "SP Narine",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 2,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 42,
+    "pointsBreakdown": {
+      "playing": 4,
+      "wickets": 30,
+      "duckPenalty": -2,
+      "dotBallBonus": 10
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "fbaebb76-23b4-40aa-8c2b-4629e680fb11",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "608fd182-7b3c-439f-9f41-c76d083a2799",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "16261",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 100,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 386,
+    "createdAt": "2026-04-16T15:30:31.633Z",
+    "updatedAt": "2026-04-17T14:46:19.716Z",
+    "fantasyPlayer": {
+      "id": "608fd182-7b3c-439f-9f41-c76d083a2799",
+      "displayName": "Jos Buttler",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/9782.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "JC Buttler",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 3,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 90,
+    "pointsBreakdown": {
+      "runs": 24,
+      "catches": 32,
+      "playing": 4,
+      "sixBonus": 12,
+      "fourBonus": 8,
+      "catchBonus": 4,
+      "strikeRate": 6
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "0c09560f-d582-4ec6-998a-9d6b504eebe3",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "599973d1-8de3-4d60-88a7-826f13fccf3d",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65345",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 100,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 345,
+    "createdAt": "2026-04-16T15:30:31.637Z",
+    "updatedAt": "2026-04-17T14:46:21.921Z",
+    "fantasyPlayer": {
+      "id": "599973d1-8de3-4d60-88a7-826f13fccf3d",
+      "displayName": "Shubman Gill",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66818.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "S Gill",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 3,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      },
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 145,
+    "pointsBreakdown": {
+      "runs": 77,
+      "playing": 4,
+      "sixBonus": 24,
+      "fourBonus": 24,
+      "strikeRate": 4,
+      "seventyFiveBonus": 12
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "9677adc6-37c6-45d2-9941-4c67198d7c8e",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "7c4344a9-0dce-476d-ac28-81f03ab5673a",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "20866",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 158,
+    "createdAt": "2026-04-16T15:30:31.566Z",
+    "updatedAt": "2026-04-17T14:46:18.398Z",
+    "fantasyPlayer": {
+      "id": "7c4344a9-0dce-476d-ac28-81f03ab5673a",
+      "displayName": "Rovman Powell",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65291.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "RJ Powell",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 45,
+    "pointsBreakdown": {
+      "runs": 23,
+      "playing": 4,
+      "sixBonus": 12,
+      "fourBonus": 4,
+      "strikeRate": 2
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "7ccdae9d-712b-4b89-8cbf-528040b9adcc",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "89e3f57e-c5e3-4cb1-977e-1fcf7db9c7c0",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "72965",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 221,
+    "createdAt": "2026-04-16T15:30:31.520Z",
+    "updatedAt": "2026-04-17T14:46:17.915Z",
+    "fantasyPlayer": {
+      "id": "89e3f57e-c5e3-4cb1-977e-1fcf7db9c7c0",
+      "displayName": "Vaibhav Arora",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/74298.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "VG Arora",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 39,
+    "pointsBreakdown": {
+      "playing": 4,
+      "wickets": 30,
+      "dotBallBonus": 5
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "32d81598-ddcb-4d86-9b23-b33350f00e37",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "d8d0e303-38b6-40ef-9047-c56276e3a362",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65841",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 179,
+    "createdAt": "2026-04-16T15:30:31.593Z",
+    "updatedAt": "2026-04-17T14:46:21.507Z",
+    "fantasyPlayer": {
+      "id": "d8d0e303-38b6-40ef-9047-c56276e3a362",
+      "displayName": "Anukul Roy",
+      "role": "ALL_ROUNDER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66983.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "AS Roy",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 14,
+    "pointsBreakdown": {
+      "runs": 9,
+      "playing": 4,
+      "fourBonus": 4,
+      "economyRate": -6,
+      "dotBallBonus": 3
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "a3b90e0d-8aca-48cd-9333-e5a0ed7bc351",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "bb9ce82c-05c8-4e88-bd8e-0db7191cacda",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "59553",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": true,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 362,
+    "createdAt": "2026-04-16T15:30:31.648Z",
+    "updatedAt": "2026-04-17T14:46:21.961Z",
+    "fantasyPlayer": {
+      "id": "bb9ce82c-05c8-4e88-bd8e-0db7191cacda",
+      "displayName": "Prasidh Krishna",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65702.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "PM Krishna",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 42,
+    "pointsBreakdown": {
+      "playing": 4,
+      "wickets": 30,
+      "dotBallBonus": 8
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "98d566a6-1f33-47f2-8a16-9f40187291c5",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "8ba1ea0f-c2a3-4827-b8f1-e7975d95e96d",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "27214",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": true,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 29,
+    "createdAt": "2026-04-16T15:30:31.684Z",
+    "updatedAt": "2026-04-17T14:46:20.912Z",
+    "fantasyPlayer": {
+      "id": "8ba1ea0f-c2a3-4827-b8f1-e7975d95e96d",
+      "displayName": "Shahrukh Khan",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/64721.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "M Shahrukh Khan",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 7,
+    "pointsBreakdown": {
+      "runs": 3,
+      "playing": 4
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "b872b687-c183-434f-8ce3-434f8215f2c5",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "6a7bfeb2-bb13-48bc-b7b3-9ac139b2effc",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "17701",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.693Z",
+    "updatedAt": "2026-04-17T14:46:21.153Z",
+    "fantasyPlayer": {
+      "id": "6a7bfeb2-bb13-48bc-b7b3-9ac139b2effc",
+      "displayName": "Ishant Sharma",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/3899.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "I Sharma",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "f881eb84-7806-4bc3-85af-c255d369a1fb",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "e6711678-6bc3-4e9f-8fdf-dbea194dab48",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "76212",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.697Z",
+    "updatedAt": "2026-04-17T14:46:22.022Z",
+    "fantasyPlayer": {
+      "id": "e6711678-6bc3-4e9f-8fdf-dbea194dab48",
+      "displayName": "Nishant Sindhu",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/88873.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "N Sindhu",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "6a052102-3563-4d3e-96fa-87428a1a1796",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "b54f27d1-0ae9-46ef-b11f-700e07941579",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "70453",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.706Z",
+    "updatedAt": "2026-04-17T14:46:21.100Z",
+    "fantasyPlayer": {
+      "id": "b54f27d1-0ae9-46ef-b11f-700e07941579",
+      "displayName": "Manav Suthar",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/71149.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "MJ Suthar",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "abb13767-8e28-4851-b1b0-2d127abc7bfd",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "fd0fa597-975d-4081-a5f0-59da89cce299",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "41054",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.720Z",
+    "updatedAt": "2026-04-17T14:46:18.799Z",
+    "fantasyPlayer": {
+      "id": "fd0fa597-975d-4081-a5f0-59da89cce299",
+      "displayName": "Luke Wood",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/64498.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "L Wood",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "f24bff35-ccc7-4bce-a6d5-962b6a05b47b",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "3b7a4d8d-5b4c-44a7-8e90-bd96ba6a5290",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "18001",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.724Z",
+    "updatedAt": "2026-04-17T14:46:19.205Z",
+    "fantasyPlayer": {
+      "id": "3b7a4d8d-5b4c-44a7-8e90-bd96ba6a5290",
+      "displayName": "Jayant Yadav",
+      "role": "ALL_ROUNDER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/59611.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "J Yadav",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "53f63d19-75f3-4a27-a8ee-bfc553e8156d",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "e81b9545-777a-49cc-b476-5e38417996be",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "66840",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.729Z",
+    "updatedAt": "2026-04-17T14:46:21.120Z",
+    "fantasyPlayer": {
+      "id": "e81b9545-777a-49cc-b476-5e38417996be",
+      "displayName": "Yarra Prithviraj",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/67706.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "Y Prithviraj",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "fb13164d-05e9-4b65-b019-aa2c4be84bfb",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "93834d72-dd82-433f-b17b-07e10e05afc8",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "26170",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": true,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 182,
+    "createdAt": "2026-04-16T15:30:31.515Z",
+    "updatedAt": "2026-04-17T14:46:21.630Z",
+    "fantasyPlayer": {
+      "id": "93834d72-dd82-433f-b17b-07e10e05afc8",
+      "displayName": "Finn Allen",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66046.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "FH Allen",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "113a1b51-db86-4cc1-8fd6-fe7b6b734b50",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "640ba619-9370-45bc-82d3-049895b4e4a0",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "22692",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.611Z",
+    "updatedAt": "2026-04-17T14:46:17.820Z",
+    "fantasyPlayer": {
+      "id": "640ba619-9370-45bc-82d3-049895b4e4a0",
+      "displayName": "Rahul Tripathi",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/41229.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "RA Tripathi",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "802ff0ab-4a8a-488f-b0bd-f09c95959576",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "0953eb3b-d50d-4340-be52-77fed1c261bd",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "68649",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 66.7,
+    "playerIn": false,
+    "playerOut": true,
+    "isLastMatchPlayed": true,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 31,
+    "createdAt": "2026-04-16T15:30:31.524Z",
+    "updatedAt": "2026-04-17T14:46:17.921Z",
+    "fantasyPlayer": {
+      "id": "0953eb3b-d50d-4340-be52-77fed1c261bd",
+      "displayName": "Varun Chakravarthy",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/67469.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "V Chakravarthy",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 2,
+    "selectedByUsers": [
+      {
+        "userId": 5,
+        "displayName": "Ujjwal",
+        "userName": "ujjwalagarwal_first",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-5/1774539561341-b9dcb969-320e-473d-a6e5-0637c30fb58b.png",
+        "teamNos": [1]
+      },
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 69,
+    "pointsBreakdown": {
+      "playing": 4,
+      "wickets": 60,
+      "dotBallBonus": 5
+    },
+    "isScoreFinalized": true
+  },
+  {
+    "id": "e8dec2d2-1b9b-4a5b-b86b-997686c310d6",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "3d6c5a8f-e0b4-4927-961f-64a79baaf472",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "74067",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.607Z",
+    "updatedAt": "2026-04-17T14:46:21.612Z",
+    "fantasyPlayer": {
+      "id": "3d6c5a8f-e0b4-4927-961f-64a79baaf472",
+      "displayName": "Prashant Solanki",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/72042.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "PH Solanki",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "80acb80f-af02-459b-8209-29a0ce1a511e",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "4fed1ebc-770a-4a1d-af0b-4bf991746877",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "86769",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.528Z",
+    "updatedAt": "2026-04-17T14:46:21.645Z",
+    "fantasyPlayer": {
+      "id": "4fed1ebc-770a-4a1d-af0b-4bf991746877",
+      "displayName": "Tejasvi Dahiya",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/126180.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "TS Dahiya",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "7ebee198-b09a-4504-b12a-4c1d564a0a3d",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "6a2d1658-1115-4c15-a509-0da8c0310384",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "70603",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.532Z",
+    "updatedAt": "2026-04-17T14:46:18.103Z",
+    "fantasyPlayer": {
+      "id": "6a2d1658-1115-4c15-a509-0da8c0310384",
+      "displayName": "Akash Deep",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/71447.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "A Deep",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "bc9ed241-8bda-4519-91d6-fbc2aeb18f67",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "c39d1f1f-4e64-4379-bd14-81c77545edac",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "72721",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.536Z",
+    "updatedAt": "2026-04-17T14:46:18.108Z",
+    "fantasyPlayer": {
+      "id": "c39d1f1f-4e64-4379-bd14-81c77545edac",
+      "displayName": "Saurabh Dubey",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/74123.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "SR Dubey",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "cb18aea9-464e-4d5f-ba1b-3dd3cc436532",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "c3727cb3-a9da-4017-b428-1d1644b5ee3b",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "95066",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.543Z",
+    "updatedAt": "2026-04-17T14:46:18.200Z",
+    "fantasyPlayer": {
+      "id": "c3727cb3-a9da-4017-b428-1d1644b5ee3b",
+      "displayName": "Daksh Kamra",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/137799.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "D Kamra",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 1,
+        "displayName": "Aryan",
+        "userName": "aryangoel0096",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-1/1774508734006-bd104e9c-b033-4fd2-9e7d-0e619b5dad64.jpg",
+        "teamNos": [1]
+      }
+    ],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "aae35497-698e-4884-970b-c080e79ce8ef",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "cac77181-41ed-45a0-973d-a8dcfe8df1c5",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "19402",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.547Z",
+    "updatedAt": "2026-04-17T14:46:18.204Z",
+    "fantasyPlayer": {
+      "id": "cac77181-41ed-45a0-973d-a8dcfe8df1c5",
+      "displayName": "Mustafizur Rahman",
+      "role": "BOWLER",
+      "photoUrl": null,
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "Mustafizur Rahman",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "8115e0cb-fcc2-421f-a4df-b5673bfdf2ba",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "afd068c6-bfe6-4cff-ae75-38a36d9d9189",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "66839",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 33.3,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 132,
+    "createdAt": "2026-04-16T15:30:31.551Z",
+    "updatedAt": "2026-04-17T14:46:18.208Z",
+    "fantasyPlayer": {
+      "id": "afd068c6-bfe6-4cff-ae75-38a36d9d9189",
+      "displayName": "Blessing Muzarabani",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/67784.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "B Muzarabani",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 1,
+    "selectedByUsers": [
+      {
+        "userId": 4,
+        "displayName": "Sarthak",
+        "userName": "sarthak_appsacc",
+        "photoUrl": "https://storage.googleapis.com/d11-dashboard-profile-photos-prod/profile-photos/user-4/1774686684729-e14797ae-b35b-4129-940e-886eb485a5d1.png",
+        "teamNos": [1]
+      }
+    ],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "bac58b0c-b8e9-44d9-96d9-1d886f2db4e0",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "801b5ede-f561-4784-9053-05e0ac098c65",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "16935",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.559Z",
+    "updatedAt": "2026-04-17T14:46:17.209Z",
+    "fantasyPlayer": {
+      "id": "801b5ede-f561-4784-9053-05e0ac098c65",
+      "displayName": "Manish Pandey",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/4276.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "MK Pandey",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "b34a1163-cb40-4747-b902-11ba7cbcf764",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "f4a25a38-d932-4e8a-b5e6-e9706d1c2b83",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "72580",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.563Z",
+    "updatedAt": "2026-04-17T14:46:18.308Z",
+    "fantasyPlayer": {
+      "id": "f4a25a38-d932-4e8a-b5e6-e9706d1c2b83",
+      "displayName": "Matheesha Pathirana",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/73830.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "HPMAV Pathirana",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "e1209172-e7ec-4c7e-8048-8fe898c1ea18",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "6e026455-f22f-40c7-a252-b49b54b6f422",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "77153",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.581Z",
+    "updatedAt": "2026-04-17T14:46:21.414Z",
+    "fantasyPlayer": {
+      "id": "6e026455-f22f-40c7-a252-b49b54b6f422",
+      "displayName": "Harshit Rana",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/93526.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "H Rana",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "0425fcc9-77a8-4fe8-9919-26ae9c95213b",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "4f74a0ef-1d8c-4244-9666-af00afc23e2f",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "60039",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.585Z",
+    "updatedAt": "2026-04-17T14:46:17.398Z",
+    "fantasyPlayer": {
+      "id": "4f74a0ef-1d8c-4244-9666-af00afc23e2f",
+      "displayName": "Sarthak Ranjan",
+      "role": "BATSMAN",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/65945.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "S Ranjan",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "c083a082-28e8-4f51-b84f-b03d0552a346",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "e26d11a6-8e4a-4fb0-ace4-8e7eb4280a75",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "26162",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.589Z",
+    "updatedAt": "2026-04-17T14:46:18.596Z",
+    "fantasyPlayer": {
+      "id": "e26d11a6-8e4a-4fb0-ace4-8e7eb4280a75",
+      "displayName": "Rachin Ravindra",
+      "role": "ALL_ROUNDER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66053.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "R Ravindra",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "b41bf171-8547-43fe-bafe-21e954ab4c48",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "f7a9bd61-aa84-43d7-a5f6-49b99c847d08",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "16790",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 12,
+    "createdAt": "2026-04-16T15:30:31.596Z",
+    "updatedAt": "2026-04-17T14:46:18.703Z",
+    "fantasyPlayer": {
+      "id": "f7a9bd61-aa84-43d7-a5f6-49b99c847d08",
+      "displayName": "Navdeep Saini",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/64448.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "NA Saini",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "cfde6e0b-79d9-4647-831c-56fe445a6477",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "9db5e08c-41ff-44b7-9890-0080f4ea8d54",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "73981",
+    "teamWisdenId": "1873",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.618Z",
+    "updatedAt": "2026-04-17T14:46:21.218Z",
+    "fantasyPlayer": {
+      "id": "9db5e08c-41ff-44b7-9890-0080f4ea8d54",
+      "displayName": "Umran Malik",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/82969.png",
+      "teamId": "4ddc9f30-cd6e-41dc-a73a-0948d35b6bab",
+      "shortName": "Umran Malik",
+      "team": {
+        "shortCode": "KKR"
+      }
+    },
+    "teamShortCode": "KKR",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "7dc34fc1-a553-4064-9ba2-c3b8d60e4651",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "0d2bb80c-43cd-4dfa-a2bf-21c5446693d1",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "74055",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.622Z",
+    "updatedAt": "2026-04-17T14:46:21.910Z",
+    "fantasyPlayer": {
+      "id": "0d2bb80c-43cd-4dfa-a2bf-21c5446693d1",
+      "displayName": "Arshad Khan",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/82839.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "Arshad Khan",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "a14a65de-1019-4b03-957c-db9d162b5f0d",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "101ad358-563a-4fd1-8af2-c9918518c35f",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65546",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.625Z",
+    "updatedAt": "2026-04-17T14:46:19.402Z",
+    "fantasyPlayer": {
+      "id": "101ad358-563a-4fd1-8af2-c9918518c35f",
+      "displayName": "Tom Banton",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66923.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "T Banton",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "04c94797-55f1-4b42-9182-f77735da7da6",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "63efd15c-c060-43e1-a33d-b8e487fbf1c7",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "76164",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.629Z",
+    "updatedAt": "2026-04-17T14:46:19.603Z",
+    "fantasyPlayer": {
+      "id": "63efd15c-c060-43e1-a33d-b8e487fbf1c7",
+      "displayName": "Gurnoor Brar",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/90572.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "G Brar",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "6d0d447a-b70e-4ace-9dc5-1b277d06d3eb",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "56ce1935-7eec-43c3-b485-e11ec2fe9665",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "12693",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.641Z",
+    "updatedAt": "2026-04-17T14:46:19.895Z",
+    "fantasyPlayer": {
+      "id": "56ce1935-7eec-43c3-b485-e11ec2fe9665",
+      "displayName": "Jason Holder",
+      "role": "ALL_ROUNDER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/10232.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "JO Holder",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "4c88a159-7d8d-4247-b059-f5754ab1fa45",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "86e846b6-e720-4068-889d-9ba6f9a1dace",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65727",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.644Z",
+    "updatedAt": "2026-04-17T14:46:20.006Z",
+    "fantasyPlayer": {
+      "id": "86e846b6-e720-4068-889d-9ba6f9a1dace",
+      "displayName": "Kulwant Khejroliya",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/67136.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "K Khejroliya",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "802aa620-a035-4bfe-bb98-2fa3bc2e8001",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "2661eeac-f0cf-436c-be82-adef2e30204a",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "72805",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 42,
+    "createdAt": "2026-04-16T15:30:31.652Z",
+    "updatedAt": "2026-04-17T14:46:20.293Z",
+    "fantasyPlayer": {
+      "id": "2661eeac-f0cf-436c-be82-adef2e30204a",
+      "displayName": "Kumar Kushagra",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/74097.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "K Kushagra",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "fbadbd7c-5387-454b-b4f4-18b22e7181a1",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "231844fe-43f3-4356-808c-97d033ebc43f",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "66837",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.668Z",
+    "updatedAt": "2026-04-17T14:46:20.796Z",
+    "fantasyPlayer": {
+      "id": "231844fe-43f3-4356-808c-97d033ebc43f",
+      "displayName": "Anuj Rawat",
+      "role": "WICKET_KEEPER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/67752.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "A Rawat",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": true,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  },
+  {
+    "id": "35e8a0ab-ec9f-4230-9183-cac8f81839c8",
+    "matchId": "41e0ef5b-d2a6-4941-9177-0f97aa9a56f9",
+    "fantasyPlayerId": "a3c0496e-d2b5-4b60-ad12-1984f6a0c9d3",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b",
+    "wisdenPlayerId": "65783",
+    "teamWisdenId": "2879",
+    "creditValue": 8,
+    "isInPlayingXI": false,
+    "selectionPct": 0,
+    "playerIn": false,
+    "playerOut": false,
+    "isLastMatchPlayed": false,
+    "inLastMatchBestXI": false,
+    "currentSeasonPoints": 0,
+    "createdAt": "2026-04-16T15:30:31.676Z",
+    "updatedAt": "2026-04-17T14:46:20.842Z",
+    "fantasyPlayer": {
+      "id": "a3c0496e-d2b5-4b60-ad12-1984f6a0c9d3",
+      "displayName": "Sai Kishore",
+      "role": "BOWLER",
+      "photoUrl": "https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/66438.png",
+      "teamId": "ee04cbe5-4561-481a-9468-18af2e375b0e",
+      "shortName": "R Sai Kishore",
+      "team": {
+        "shortCode": "GT"
+      }
+    },
+    "teamShortCode": "GT",
+    "isInAnnouncedSquad": false,
+    "selectedEntryCount": 0,
+    "selectedByUsers": [],
+    "points": 0,
+    "pointsBreakdown": {},
+    "isScoreFinalized": true
+  }
+]

@@ -33,7 +33,8 @@ export class ScoreController {
   @Get("match/:matchId")
   @ApiOperation({
     summary: "Get match scores",
-    description: "Retrieve all scores for a specific match with powerup/chip assignments",
+    description:
+      "Retrieve all scores for a specific match with powerup/chip assignments",
   })
   @ApiParam({
     name: "matchId",

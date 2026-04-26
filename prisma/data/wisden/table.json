@@ -1,0 +1,241 @@
+{
+  "class_id": "6",
+  "class_name": "List A Twenty20",
+  "columns": [
+    {
+      "key": "position",
+      "label": "Pos",
+      "long_label": "Position",
+      "type": "number"
+    },
+    {
+      "key": "team_name",
+      "label": "Team",
+      "long_label": "Team",
+      "type": "team"
+    },
+    {
+      "key": "matches",
+      "label": "P",
+      "long_label": "Played",
+      "type": "number"
+    },
+    {
+      "key": "won",
+      "label": "W",
+      "long_label": "Won",
+      "type": "number"
+    },
+    {
+      "key": "lost",
+      "label": "L",
+      "long_label": "Lost",
+      "type": "number"
+    },
+    {
+      "key": "no_result",
+      "label": "NR",
+      "long_label": "No Result",
+      "type": "number"
+    },
+    {
+      "key": "points",
+      "label": "Pts",
+      "long_label": "Points",
+      "type": "decimal"
+    },
+    {
+      "key": "net_run_rate",
+      "label": "NRR",
+      "long_label": "Net Run Rate",
+      "type": "decimal"
+    }
+  ],
+  "comp_gid": "33bdcbe4-0669-4073-b64a-a636f73f7cd3",
+  "comp_id": 8903,
+  "comp_name": "Tata Indian Premier League",
+  "competition_notes": {
+    "order": ["Points", "Highest net run rate"],
+    "points": ["Won - 2", "Draw - 0", "Lost - 0", "No Result - 1", "Tied - 1"]
+  },
+  "event_id": "1002",
+  "event_name": "Indian Premier League",
+  "groups": [
+    {
+      "group_name": "",
+      "team": [
+        {
+          "lost": 1,
+          "matches": 5,
+          "net_run_rate": 1.503,
+          "no_result": 0,
+          "points": 8,
+          "position": 1,
+          "team_abbreviation": "RCB",
+          "team_id": 2138,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/rcb-logo-new.png",
+          "team_name": "Royal Challengers Bengaluru",
+          "team_short_name": "Royal Chal Bengaluru",
+          "won": 4
+        },
+        {
+          "lost": 1,
+          "matches": 5,
+          "net_run_rate": 0.889,
+          "no_result": 0,
+          "points": 8,
+          "position": 2,
+          "team_abbreviation": "RR",
+          "team_id": 1558,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/This_is_the_logo_for_Rajasthan_Royals,_a_cricket_team_playing_in_the_Indian_Premier_League_(IPL).svg.png",
+          "team_name": "Rajasthan Royals",
+          "team_short_name": "Rajasthan Royals",
+          "won": 4
+        },
+        {
+          "lost": 0,
+          "matches": 4,
+          "net_run_rate": 0.72,
+          "no_result": 1,
+          "points": 7,
+          "position": 3,
+          "team_abbreviation": "PBKS",
+          "team_id": 2040,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/pk2021.jpg",
+          "team_name": "Punjab Kings",
+          "team_short_name": "Punjab Kings",
+          "won": 3
+        },
+        {
+          "lost": 3,
+          "matches": 5,
+          "net_run_rate": 0.576,
+          "no_result": 0,
+          "points": 4,
+          "position": 4,
+          "team_abbreviation": "SRH",
+          "team_id": 1153,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/Sunrisers_Hyderabad.svg.png",
+          "team_name": "Sunrisers Hyderabad",
+          "team_short_name": "Sunrisers Hyderabad",
+          "won": 2
+        },
+        {
+          "lost": 2,
+          "matches": 4,
+          "net_run_rate": 0.322,
+          "no_result": 0,
+          "points": 4,
+          "position": 5,
+          "team_abbreviation": "DC",
+          "team_id": 1396,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/800px-Delhi_Capitals_Logo.svg.png",
+          "team_name": "Delhi Capitals",
+          "team_short_name": "Delhi Capitals",
+          "won": 2
+        },
+        {
+          "lost": 2,
+          "matches": 4,
+          "net_run_rate": -0.029,
+          "no_result": 0,
+          "points": 4,
+          "position": 6,
+          "team_abbreviation": "GT",
+          "team_id": 2879,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/Gujarat_Titans_logo.png",
+          "team_name": "Gujarat Titans",
+          "team_short_name": "Gujarat Titans",
+          "won": 2
+        },
+        {
+          "lost": 3,
+          "matches": 5,
+          "net_run_rate": -0.804,
+          "no_result": 0,
+          "points": 4,
+          "position": 7,
+          "team_abbreviation": "LSG",
+          "team_id": 2880,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/Lucknow_Super_Giants_logo.png",
+          "team_name": "Lucknow Super Giants",
+          "team_short_name": "Lucknow Super Giants",
+          "won": 2
+        },
+        {
+          "lost": 3,
+          "matches": 5,
+          "net_run_rate": -0.846,
+          "no_result": 0,
+          "points": 4,
+          "position": 8,
+          "team_abbreviation": "CSK",
+          "team_id": 1622,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/1241px-Chennai_Super_Kings_Logo.svg.png",
+          "team_name": "Chennai Super Kings",
+          "team_short_name": "Chennai Super Kings",
+          "won": 2
+        },
+        {
+          "lost": 3,
+          "matches": 4,
+          "net_run_rate": -0.772,
+          "no_result": 0,
+          "points": 2,
+          "position": 9,
+          "team_abbreviation": "MI",
+          "team_id": 1854,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/1280px-Mumbai_Indians_Logo.svg.png",
+          "team_name": "Mumbai Indians",
+          "team_short_name": "Mumbai Indians",
+          "won": 1
+        },
+        {
+          "lost": 4,
+          "matches": 5,
+          "net_run_rate": -1.383,
+          "no_result": 1,
+          "points": 1,
+          "position": 10,
+          "team_abbreviation": "KKR",
+          "team_id": 1873,
+          "team_logo": "https://cv-general-images.s3.amazonaws.com/teams/800px-Kolkata_Knight_Riders_Logo.svg.png",
+          "team_name": "Kolkata Knight Riders",
+          "team_short_name": "Kolkata KR",
+          "won": 0
+        }
+      ]
+    }
+  ],
+  "season": "2026",
+  "team_stats": [
+    {
+      "match_gid": "dbc4fcf6-909d-4829-a550-e682c0e36135",
+      "match_id": 237151,
+      "team_name": "Royal Challengers Bengaluru",
+      "title": "Highest Score",
+      "value": "250/3"
+    },
+    {
+      "match_gid": "8bc5d918-2b18-44ab-9c5c-6fdc60496699",
+      "match_id": 237142,
+      "team_name": "Mumbai Indians",
+      "title": "Highest Chase",
+      "value": "224/4"
+    },
+    {
+      "match_gid": null,
+      "match_id": null,
+      "team_name": "Chennai Super Kings",
+      "title": "Most Batter 100s",
+      "value": "1"
+    },
+    {
+      "match_gid": null,
+      "match_id": null,
+      "team_name": "Royal Challengers Bengaluru",
+      "title": "Most Boundaries",
+      "value": "144"
+    }
+  ]
+}

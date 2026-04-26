@@ -1,0 +1,2230 @@
+{
+  "team1": {
+    "id": 2879,
+    "logo": "https://cv-general-images.s3.amazonaws.com/teams/Gujarat_Titans_logo.png",
+    "name": "Gujarat Titans",
+    "players": [
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 74538,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "B Sai Sudharsan",
+        "player_role": "batsman",
+        "batting_hand": "left",
+        "player_order": 1,
+        "player_known_as": "Sai Sudharsan"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 65345,
+        "is_captain": 1,
+        "player_img": null,
+        "player_name": "S Gill",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 2,
+        "player_known_as": "Shubman Gill"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 1,
+        "player_id": 16261,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "JC Buttler",
+        "player_role": "wicketkeeper batsman",
+        "batting_hand": "right",
+        "player_order": 3,
+        "player_known_as": "Jos Buttler"
+      },
+      {
+        "role": "all_rounder",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 20226,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "MS Washington Sundar",
+        "player_role": "bowling allrounder",
+        "batting_hand": "left",
+        "player_order": 4,
+        "player_known_as": "Washington Sundar"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 26160,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "GD Phillips",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 5,
+        "player_known_as": "Glenn Phillips"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 50536,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "R Tewatia",
+        "player_role": "batsman",
+        "batting_hand": "left",
+        "player_order": 6,
+        "player_known_as": "Rahul Tewatia"
+      },
+      {
+        "role": "batter",
+        "type": "substitute",
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 27214,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "M Shahrukh Khan",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 7,
+        "player_known_as": "Shahrukh Khan"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 25242,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "Rashid Khan",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 8,
+        "player_known_as": "Rashid Khan"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 76540,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "A Sharma",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 9,
+        "player_known_as": "Ashok Sharma"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 19720,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "KS Rabada",
+        "player_role": "bowler",
+        "batting_hand": "left",
+        "player_order": 10,
+        "player_known_as": "Kagiso Rabada"
+      },
+      {
+        "role": "bowler",
+        "type": "replaced",
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 59553,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "PM Krishna",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 11,
+        "player_known_as": "Prasidh Krishna"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 44904,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "M Siraj",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 12,
+        "player_known_as": "Mohammed Siraj"
+      },
+      {
+        "role": "all_rounder",
+        "type": "unused",
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 12693,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "JO Holder",
+        "player_role": "bowling allrounder",
+        "batting_hand": "right",
+        "player_order": 13,
+        "player_known_as": "Jason Holder"
+      },
+      {
+        "role": "bowler",
+        "type": "unused",
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 65727,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "K Khejroliya",
+        "player_role": "bowler",
+        "batting_hand": "left",
+        "player_order": 14,
+        "player_known_as": "Kulwant Khejroliya"
+      },
+      {
+        "role": "batter",
+        "type": "unused",
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 66837,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "A Rawat",
+        "player_role": "wicketkeeper batsman",
+        "batting_hand": "left",
+        "player_order": 15,
+        "player_known_as": "Anuj Rawat"
+      },
+      {
+        "role": "bowler",
+        "type": "unused",
+        "team_id": 2879,
+        "is_keeper": 0,
+        "player_id": 70453,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "MJ Suthar",
+        "player_role": "bowler",
+        "batting_hand": "left",
+        "player_order": 16,
+        "player_known_as": "Manav Suthar"
+      }
+    ],
+    "abbreviation": "GT",
+    "colour_primary": "022a5d",
+    "colour_secondary": "",
+    "colour_alternative": ""
+  },
+  "team2": {
+    "id": 1873,
+    "logo": "https://cv-general-images.s3.amazonaws.com/teams/800px-Kolkata_Knight_Riders_Logo.svg.png",
+    "name": "Kolkata Knight Riders",
+    "players": [
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 1,
+        "player_id": 20009,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "TL Seifert",
+        "player_role": "wicketkeeper batsman",
+        "batting_hand": "right",
+        "player_order": 1,
+        "player_known_as": "Tim Seifert"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 12685,
+        "is_captain": 1,
+        "player_img": null,
+        "player_name": "AM Rahane",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 2,
+        "player_known_as": "Ajinkya Rahane"
+      },
+      {
+        "role": "batter",
+        "type": "replaced",
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 76204,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "A Raghuvanshi",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 3,
+        "player_known_as": "Angkrish Raghuvanshi"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 65397,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "CD Green",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 4,
+        "player_known_as": "Cameron Green"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 20866,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "RJ Powell",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 5,
+        "player_known_as": "Rovman Powell"
+      },
+      {
+        "role": "all_rounder",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 65841,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "AS Roy",
+        "player_role": "bowling allrounder",
+        "batting_hand": "left",
+        "player_order": 6,
+        "player_known_as": "Anukul Roy"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 33718,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "RK Singh",
+        "player_role": "batsman",
+        "batting_hand": "left",
+        "player_order": 7,
+        "player_known_as": "Rinku Singh"
+      },
+      {
+        "role": "batter",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 65478,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "Ramandeep Singh",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 8,
+        "player_known_as": "Ramandeep Singh"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 11658,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "SP Narine",
+        "player_role": "bowler",
+        "batting_hand": "left",
+        "player_order": 9,
+        "player_known_as": "Sunil Narine"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 66831,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "K Tyagi",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 10,
+        "player_known_as": "Kartik Tyagi"
+      },
+      {
+        "role": "bowler",
+        "type": null,
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 72965,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "VG Arora",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 11,
+        "player_known_as": "Vaibhav Arora"
+      },
+      {
+        "role": "batter",
+        "type": "unused",
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 26170,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "FH Allen",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 12,
+        "player_known_as": "Finn Allen"
+      },
+      {
+        "role": "bowler",
+        "type": "substitute",
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 68649,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "V Chakravarthy",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 13,
+        "player_known_as": "Varun Chakravarthy"
+      },
+      {
+        "role": "batter",
+        "type": "unused",
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 86769,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "TS Dahiya",
+        "player_role": "wicketkeeper batsman",
+        "batting_hand": "right",
+        "player_order": 14,
+        "player_known_as": "Tejasvi Dahiya"
+      },
+      {
+        "role": "batter",
+        "type": "unused",
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 16935,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "MK Pandey",
+        "player_role": "batsman",
+        "batting_hand": "right",
+        "player_order": 15,
+        "player_known_as": "Manish Pandey"
+      },
+      {
+        "role": "bowler",
+        "type": "unused",
+        "team_id": 1873,
+        "is_keeper": 0,
+        "player_id": 16790,
+        "is_captain": 0,
+        "player_img": null,
+        "player_name": "NA Saini",
+        "player_role": "bowler",
+        "batting_hand": "right",
+        "player_order": 16,
+        "player_known_as": "Navdeep Saini"
+      }
+    ],
+    "abbreviation": "KKR",
+    "colour_primary": "2E0855",
+    "colour_secondary": "B3A123",
+    "colour_alternative": "B3A123"
+  },
+  "video": true,
+  "innings": [
+    {
+      "fow": [
+        {
+          "fow_runs": 5,
+          "fow_type": "out",
+          "fow_overs": "0.4",
+          "fow_number": 1,
+          "fow_batter_id": 12685,
+          "fow_batter_name": "AM Rahane",
+          "fow_nonstriker_id": 20009,
+          "fow_batter_known_as": "Ajinkya Rahane",
+          "fow_nonstriker_name": "TL Seifert",
+          "fow_nonstriker_known_as": "Tim Seifert"
+        },
+        {
+          "fow_runs": 21,
+          "fow_type": "out",
+          "fow_overs": "1.6",
+          "fow_number": 2,
+          "fow_batter_id": 76204,
+          "fow_batter_name": "A Raghuvanshi",
+          "fow_nonstriker_id": 20009,
+          "fow_batter_known_as": "Angkrish Raghuvanshi",
+          "fow_nonstriker_name": "TL Seifert",
+          "fow_nonstriker_known_as": "Tim Seifert"
+        },
+        {
+          "fow_runs": 32,
+          "fow_type": "out",
+          "fow_overs": "3.6",
+          "fow_number": 3,
+          "fow_batter_id": 20009,
+          "fow_batter_name": "TL Seifert",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Tim Seifert",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 87,
+          "fow_type": "out",
+          "fow_overs": "10.6",
+          "fow_number": 4,
+          "fow_batter_id": 20866,
+          "fow_batter_name": "RJ Powell",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Rovman Powell",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 147,
+          "fow_type": "out",
+          "fow_overs": "14.5",
+          "fow_number": 5,
+          "fow_batter_id": 65841,
+          "fow_batter_name": "AS Roy",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Anukul Roy",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 148,
+          "fow_type": "out",
+          "fow_overs": "15.1",
+          "fow_number": 6,
+          "fow_batter_id": 33718,
+          "fow_batter_name": "RK Singh",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Rinku Singh",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 165,
+          "fow_type": "out",
+          "fow_overs": "16.3",
+          "fow_number": 7,
+          "fow_batter_id": 65478,
+          "fow_batter_name": "Ramandeep Singh",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Ramandeep Singh",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 166,
+          "fow_type": "out",
+          "fow_overs": "17.3",
+          "fow_number": 8,
+          "fow_batter_id": 11658,
+          "fow_batter_name": "SP Narine",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Sunil Narine",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 173,
+          "fow_type": "out",
+          "fow_overs": "18.2",
+          "fow_number": 9,
+          "fow_batter_id": 66831,
+          "fow_batter_name": "K Tyagi",
+          "fow_nonstriker_id": 65397,
+          "fow_batter_known_as": "Kartik Tyagi",
+          "fow_nonstriker_name": "CD Green",
+          "fow_nonstriker_known_as": "Cameron Green"
+        },
+        {
+          "fow_runs": 180,
+          "fow_type": "out",
+          "fow_overs": "19.6",
+          "fow_number": 10,
+          "fow_batter_id": 65397,
+          "fow_batter_name": "CD Green",
+          "fow_nonstriker_id": 72965,
+          "fow_batter_known_as": "Cameron Green",
+          "fow_nonstriker_name": "VG Arora",
+          "fow_nonstriker_known_as": "Vaibhav Arora"
+        }
+      ],
+      "notes": [
+        {
+          "id": 90868,
+          "text": "Kolkata Knight Riders wins the toss and elects to bat"
+        },
+        {
+          "id": 90886,
+          "text": "Review taken by Kolkata Knight Riders for Cameron Green - caught, on field decision - out by on-field umpire, Review Decision - not out - review retained (Review successful), reviews remaining: Gujarat Titans: 2, Kolkata Knight Riders: 2"
+        },
+        {
+          "id": 90890,
+          "text": "Powerplay 1: Overs 1 - 6, 37 runs, 3 wickets"
+        },
+        {
+          "id": 90893,
+          "text": "Kolkata Knight Riders: 50 runs in 7.4 overs, 38 minutes, 3 extras"
+        },
+        {
+          "id": 90894,
+          "text": "Strategic timeout (20:11 to 20:13): Kolkata Knight Riders - 59/3 in 8.0 overs, Rovman Powell 21 (15), Cameron Green 8 (14)"
+        },
+        {
+          "id": 90901,
+          "text": "Partnership: 50 runs for 4th wicket in 40 balls, Cameron Green 26 (26), Rovman Powell 27 (19), Extras 4"
+        },
+        {
+          "id": 90903,
+          "text": "Review taken by Gujarat Titans for Cameron Green - lbw, on field decision - not out by on-field umpire, Review Decision - not out - review lost (Review unsuccessful), reviews remaining: Gujarat Titans: 1, Kolkata Knight Riders: 2"
+        },
+        {
+          "id": 90904,
+          "text": "Kolkata Knight Riders: 100 runs in 12.0 overs, 60 minutes, 7 extras"
+        },
+        {
+          "id": 90907,
+          "text": "Cameron Green: 51 in 34 balls, 60 minutes, (4*4 , 3*6)"
+        },
+        {
+          "id": 90910,
+          "text": "Partnership: 50 runs for 5th wicket in 17 balls, Cameron Green 68 (40), Anukul Roy 8 (5), Extras 2"
+        },
+        {
+          "id": 90913,
+          "text": "Strategic timeout (20:50 to 20:53): Kolkata Knight Riders - 147/5 in 14.5 overs, Anukul Roy 9 (7), Cameron Green 75 (44)"
+        },
+        {
+          "id": 90914,
+          "text": "Kagiso Rabada: 3 wickets (3.1-0-20-3)"
+        },
+        {
+          "id": 90915,
+          "text": "Kolkata Knight Riders: 150 runs in 15.3 overs, 82 minutes, 9 extras"
+        },
+        {
+          "id": 90919,
+          "text": "Injury / concussion check (21:01 to 21:02): Kolkata Knight Riders - 165/6 in 16.2 overs, Ramandeep Singh 17 (7), Cameron Green 75 (44)"
+        },
+        {
+          "id": 90928,
+          "text": "Innings break (21:20 to 21:34): Kolkata Knight Riders - 180/10 in 20.0 overs, Cameron Green 79 (55), Vaibhav Arora 0 (1)"
+        }
+      ],
+      "overs": "20.0",
+      "score": {
+        "byes": 4,
+        "runs": 180,
+        "wides": 6,
+        "legbyes": 3,
+        "noballs": 1,
+        "wickets": 10,
+        "run_rate": "9.00",
+        "penalties": 0,
+        "total_fours": 16,
+        "total_sixes": 9,
+        "total_maidens": 0
+      },
+      "batted": "yes",
+      "batting": [
+        {
+          "role": "batter",
+          "runs": 19,
+          "type": null,
+          "fours": 2,
+          "sixes": 1,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 21,
+          "dismissal": [
+            {
+              "details": "c GD Phillips"
+            },
+            {
+              "details": "b KS Rabada"
+            }
+          ],
+          "is_keeper": 1,
+          "player_id": 20009,
+          "dots_faced": 6,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 14,
+          "player_name": "TL Seifert",
+          "strike_rate": 136,
+          "batting_hand": "right",
+          "dismissal_str": "c GD Phillips b KS Rabada",
+          "player_known_as": "Tim Seifert",
+          "batting_position": 1,
+          "boundary_percentage": "21.4"
+        },
+        {
+          "role": "batter",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 3,
+          "dismissal": [
+            {
+              "details": "c KS Rabada"
+            },
+            {
+              "details": "b M Siraj"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 12685,
+          "dots_faced": 1,
+          "is_captain": 1,
+          "player_img": null,
+          "balls_faced": 1,
+          "player_name": "AM Rahane",
+          "strike_rate": 0,
+          "batting_hand": "right",
+          "dismissal_str": "c KS Rabada b M Siraj",
+          "player_known_as": "Ajinkya Rahane",
+          "batting_position": 2,
+          "boundary_percentage": "0.0"
+        },
+        {
+          "role": "batter",
+          "runs": 8,
+          "type": "replaced",
+          "fours": 2,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 7,
+          "dismissal": [
+            {
+              "details": "c †JC Buttler"
+            },
+            {
+              "details": "b KS Rabada"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 76204,
+          "dots_faced": 2,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 4,
+          "player_name": "A Raghuvanshi",
+          "strike_rate": 200,
+          "batting_hand": "right",
+          "dismissal_str": "c †JC Buttler b KS Rabada",
+          "player_known_as": "Angkrish Raghuvanshi",
+          "batting_position": 3,
+          "boundary_percentage": "50.0"
+        },
+        {
+          "role": "batter",
+          "runs": 79,
+          "type": null,
+          "fours": 7,
+          "sixes": 4,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 97,
+          "dismissal": [
+            {
+              "details": "c †JC Buttler"
+            },
+            {
+              "details": "b Rashid Khan"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 65397,
+          "dots_faced": 23,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 55,
+          "player_name": "CD Green",
+          "strike_rate": 144,
+          "batting_hand": "right",
+          "dismissal_str": "c †JC Buttler b Rashid Khan",
+          "player_known_as": "Cameron Green",
+          "batting_position": 4,
+          "boundary_percentage": "20.0"
+        },
+        {
+          "role": "batter",
+          "runs": 27,
+          "type": null,
+          "fours": 2,
+          "sixes": 2,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 36,
+          "dismissal": [
+            {
+              "details": "c M Siraj"
+            },
+            {
+              "details": "b A Sharma"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 20866,
+          "dots_faced": 10,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 20,
+          "player_name": "RJ Powell",
+          "strike_rate": 135,
+          "batting_hand": "right",
+          "dismissal_str": "c M Siraj b A Sharma",
+          "player_known_as": "Rovman Powell",
+          "batting_position": 5,
+          "boundary_percentage": "20.0"
+        },
+        {
+          "role": "all_rounder",
+          "runs": 9,
+          "type": null,
+          "fours": 1,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 22,
+          "dismissal": [
+            {
+              "details": "c †JC Buttler"
+            },
+            {
+              "details": "b PM Krishna"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 65841,
+          "dots_faced": 2,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 7,
+          "player_name": "AS Roy",
+          "strike_rate": 129,
+          "batting_hand": "left",
+          "dismissal_str": "c †JC Buttler b PM Krishna",
+          "player_known_as": "Anukul Roy",
+          "batting_position": 6,
+          "boundary_percentage": "14.3"
+        },
+        {
+          "role": "batter",
+          "runs": 1,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 2,
+          "dismissal": [
+            {
+              "details": "c †JC Buttler"
+            },
+            {
+              "details": "b KS Rabada"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 33718,
+          "dots_faced": 1,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 2,
+          "player_name": "RK Singh",
+          "strike_rate": 50,
+          "batting_hand": "left",
+          "dismissal_str": "c †JC Buttler b KS Rabada",
+          "player_known_as": "Rinku Singh",
+          "batting_position": 7,
+          "boundary_percentage": "0.0"
+        },
+        {
+          "role": "batter",
+          "runs": 17,
+          "type": null,
+          "fours": 2,
+          "sixes": 1,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 6,
+          "dismissal": [
+            {
+              "details": "c M Siraj"
+            },
+            {
+              "details": "b A Sharma"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 65478,
+          "dots_faced": 3,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 8,
+          "player_name": "Ramandeep Singh",
+          "strike_rate": 213,
+          "batting_hand": "right",
+          "dismissal_str": "c M Siraj b A Sharma",
+          "player_known_as": "Ramandeep Singh",
+          "batting_position": 8,
+          "boundary_percentage": "37.5"
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 5,
+          "dismissal": [
+            {
+              "details": "c GD Phillips"
+            },
+            {
+              "details": "b M Siraj"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 11658,
+          "dots_faced": 5,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 5,
+          "player_name": "SP Narine",
+          "strike_rate": 0,
+          "batting_hand": "left",
+          "dismissal_str": "c GD Phillips b M Siraj",
+          "player_known_as": "Sunil Narine",
+          "batting_position": 9,
+          "boundary_percentage": "0.0"
+        },
+        {
+          "role": "bowler",
+          "runs": 6,
+          "type": null,
+          "fours": 0,
+          "sixes": 1,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 4,
+          "dismissal": [
+            {
+              "details": "run out"
+            },
+            {
+              "details": "(PM Krishna)"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 66831,
+          "dots_faced": 3,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 4,
+          "player_name": "K Tyagi",
+          "strike_rate": 150,
+          "batting_hand": "right",
+          "dismissal_str": "run out (PM Krishna)",
+          "player_known_as": "Kartik Tyagi",
+          "batting_position": 10,
+          "boundary_percentage": "25.0"
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 0,
+          "minutes": 7,
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 72965,
+          "dots_faced": 1,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 1,
+          "player_name": "VG Arora",
+          "strike_rate": 0,
+          "batting_hand": "right",
+          "dismissal_str": "not out",
+          "player_known_as": "Vaibhav Arora",
+          "batting_position": 11,
+          "boundary_percentage": "0.0"
+        }
+      ],
+      "bowling": [
+        {
+          "runs": 23,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 0,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 2,
+          "bowler_id": 44904,
+          "bowler_img": null,
+          "bowler_name": "M Siraj",
+          "bowling_type": "pace",
+          "economy_rate": "5.75",
+          "bowler_known_as": "Mohammed Siraj",
+          "bowling_position": 1,
+          "bowler_desc_abbreviation": "RF"
+        },
+        {
+          "runs": 29,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 1,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 3,
+          "bowler_id": 19720,
+          "bowler_img": null,
+          "bowler_name": "KS Rabada",
+          "bowling_type": "pace",
+          "economy_rate": "7.25",
+          "bowler_known_as": "Kagiso Rabada",
+          "bowling_position": 2,
+          "bowler_desc_abbreviation": "RF"
+        },
+        {
+          "runs": 32,
+          "type": "replaced",
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 2,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 1,
+          "bowler_id": 59553,
+          "bowler_img": null,
+          "bowler_name": "PM Krishna",
+          "bowling_type": "pace",
+          "economy_rate": "8.00",
+          "bowler_known_as": "Prasidh Krishna",
+          "bowling_position": 3,
+          "bowler_desc_abbreviation": "RFM"
+        },
+        {
+          "runs": 45,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 2,
+          "maidens": 0,
+          "noballs": 1,
+          "wickets": 2,
+          "bowler_id": 76540,
+          "bowler_img": null,
+          "bowler_name": "A Sharma",
+          "bowling_type": "pace",
+          "economy_rate": "11.25",
+          "bowler_known_as": "Ashok Sharma",
+          "bowling_position": 4,
+          "bowler_desc_abbreviation": "RFM"
+        },
+        {
+          "runs": 44,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 1,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 1,
+          "bowler_id": 25242,
+          "bowler_img": null,
+          "bowler_name": "Rashid Khan",
+          "bowling_type": "spin",
+          "economy_rate": "11.00",
+          "bowler_known_as": "Rashid Khan",
+          "bowling_position": 5,
+          "bowler_desc_abbreviation": "LB"
+        }
+      ],
+      "minutes": 109,
+      "reviews": {
+        "batting": {
+          "count": 1,
+          "allowed": 2,
+          "success": 1,
+          "retained": 0,
+          "remaining": 2,
+          "unsuccessful": 0
+        },
+        "bowling": {
+          "count": 1,
+          "allowed": 2,
+          "success": 0,
+          "retained": 0,
+          "remaining": 1,
+          "unsuccessful": 1
+        }
+      },
+      "closure_id": 1,
+      "milestones": [],
+      "balls_bowled": 120,
+      "closure_name": "all out",
+      "partnerships": [
+        {
+          "p1": {
+            "name": "TL Seifert",
+            "runs": 5,
+            "known_as": "Tim Seifert",
+            "balls_faced": 3
+          },
+          "p2": {
+            "name": "AM Rahane",
+            "runs": 0,
+            "known_as": "Ajinkya Rahane",
+            "balls_faced": 1
+          },
+          "runs": 5,
+          "balls": 4,
+          "score": {
+            "runs": 5,
+            "overs": "0.4",
+            "wickets": 1
+          },
+          "extras": 0,
+          "wicket": 1,
+          "out_batter": {
+            "name": "AM Rahane",
+            "runs": 0,
+            "known_as": "Ajinkya Rahane",
+            "balls_faced": 1
+          }
+        },
+        {
+          "p1": {
+            "name": "TL Seifert",
+            "runs": 7,
+            "known_as": "Tim Seifert",
+            "balls_faced": 4
+          },
+          "p2": {
+            "name": "A Raghuvanshi",
+            "runs": 8,
+            "known_as": "Angkrish Raghuvanshi",
+            "balls_faced": 4
+          },
+          "runs": 16,
+          "balls": 8,
+          "score": {
+            "runs": 21,
+            "overs": "1.6",
+            "wickets": 2
+          },
+          "extras": 1,
+          "wicket": 2,
+          "out_batter": {
+            "name": "A Raghuvanshi",
+            "runs": 8,
+            "known_as": "Angkrish Raghuvanshi",
+            "balls_faced": 4
+          }
+        },
+        {
+          "p1": {
+            "name": "TL Seifert",
+            "runs": 7,
+            "known_as": "Tim Seifert",
+            "balls_faced": 7
+          },
+          "p2": {
+            "name": "CD Green",
+            "runs": 3,
+            "known_as": "Cameron Green",
+            "balls_faced": 5
+          },
+          "runs": 11,
+          "balls": 12,
+          "score": {
+            "runs": 32,
+            "overs": "3.6",
+            "wickets": 3
+          },
+          "extras": 1,
+          "wicket": 3,
+          "out_batter": {
+            "name": "TL Seifert",
+            "runs": 19,
+            "known_as": "Tim Seifert",
+            "balls_faced": 14
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 24,
+            "known_as": "Cameron Green",
+            "balls_faced": 23
+          },
+          "p2": {
+            "name": "RJ Powell",
+            "runs": 27,
+            "known_as": "Rovman Powell",
+            "balls_faced": 20
+          },
+          "runs": 55,
+          "balls": 43,
+          "score": {
+            "runs": 87,
+            "overs": "10.6",
+            "wickets": 4
+          },
+          "extras": 4,
+          "wicket": 4,
+          "out_batter": {
+            "name": "RJ Powell",
+            "runs": 27,
+            "known_as": "Rovman Powell",
+            "balls_faced": 20
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 48,
+            "known_as": "Cameron Green",
+            "balls_faced": 16
+          },
+          "p2": {
+            "name": "AS Roy",
+            "runs": 9,
+            "known_as": "Anukul Roy",
+            "balls_faced": 7
+          },
+          "runs": 60,
+          "balls": 23,
+          "score": {
+            "runs": 147,
+            "overs": "14.5",
+            "wickets": 5
+          },
+          "extras": 3,
+          "wicket": 5,
+          "out_batter": {
+            "name": "AS Roy",
+            "runs": 9,
+            "known_as": "Anukul Roy",
+            "balls_faced": 7
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 0,
+            "known_as": "Cameron Green",
+            "balls_faced": 0
+          },
+          "p2": {
+            "name": "RK Singh",
+            "runs": 1,
+            "known_as": "Rinku Singh",
+            "balls_faced": 2
+          },
+          "runs": 1,
+          "balls": 2,
+          "score": {
+            "runs": 148,
+            "overs": "15.1",
+            "wickets": 6
+          },
+          "extras": 0,
+          "wicket": 6,
+          "out_batter": {
+            "name": "RK Singh",
+            "runs": 1,
+            "known_as": "Rinku Singh",
+            "balls_faced": 2
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 0,
+            "known_as": "Cameron Green",
+            "balls_faced": 0
+          },
+          "p2": {
+            "name": "Ramandeep Singh",
+            "runs": 17,
+            "known_as": "Ramandeep Singh",
+            "balls_faced": 8
+          },
+          "runs": 17,
+          "balls": 8,
+          "score": {
+            "runs": 165,
+            "overs": "16.3",
+            "wickets": 7
+          },
+          "extras": 0,
+          "wicket": 7,
+          "out_batter": {
+            "name": "Ramandeep Singh",
+            "runs": 17,
+            "known_as": "Ramandeep Singh",
+            "balls_faced": 8
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 1,
+            "known_as": "Cameron Green",
+            "balls_faced": 1
+          },
+          "p2": {
+            "name": "SP Narine",
+            "runs": 0,
+            "known_as": "Sunil Narine",
+            "balls_faced": 5
+          },
+          "runs": 1,
+          "balls": 6,
+          "score": {
+            "runs": 166,
+            "overs": "17.3",
+            "wickets": 8
+          },
+          "extras": 0,
+          "wicket": 8,
+          "out_batter": {
+            "name": "SP Narine",
+            "runs": 0,
+            "known_as": "Sunil Narine",
+            "balls_faced": 5
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 1,
+            "known_as": "Cameron Green",
+            "balls_faced": 1
+          },
+          "p2": {
+            "name": "K Tyagi",
+            "runs": 6,
+            "known_as": "Kartik Tyagi",
+            "balls_faced": 4
+          },
+          "runs": 7,
+          "balls": 5,
+          "score": {
+            "runs": 173,
+            "overs": "18.2",
+            "wickets": 9
+          },
+          "extras": 0,
+          "wicket": 9,
+          "out_batter": {
+            "name": "K Tyagi",
+            "runs": 6,
+            "known_as": "Kartik Tyagi",
+            "balls_faced": 4
+          }
+        },
+        {
+          "p1": {
+            "name": "CD Green",
+            "runs": 2,
+            "known_as": "Cameron Green",
+            "balls_faced": 9
+          },
+          "p2": {
+            "name": "VG Arora",
+            "runs": 0,
+            "known_as": "Vaibhav Arora",
+            "balls_faced": 1
+          },
+          "runs": 7,
+          "balls": 10,
+          "score": {
+            "runs": 180,
+            "overs": "19.6",
+            "wickets": 10
+          },
+          "extras": 5,
+          "wicket": 10,
+          "out_batter": {
+            "name": "CD Green",
+            "runs": 79,
+            "known_as": "Cameron Green",
+            "balls_faced": 55
+          }
+        }
+      ],
+      "innings_number": 1,
+      "batting_team_id": 1873,
+      "bowling_team_id": 2879,
+      "total_ball_count": 127,
+      "batting_team_logo": "https://cv-general-images.s3.amazonaws.com/teams/800px-Kolkata_Knight_Riders_Logo.svg.png",
+      "batting_team_name": "Kolkata Knight Riders",
+      "bowling_team_name": "Gujarat Titans"
+    },
+    {
+      "fow": [
+        {
+          "fow_runs": 57,
+          "fow_type": "out",
+          "fow_overs": "5.1",
+          "fow_number": 1,
+          "fow_batter_id": 74538,
+          "fow_batter_name": "B Sai Sudharsan",
+          "fow_nonstriker_id": 65345,
+          "fow_batter_known_as": "Sai Sudharsan",
+          "fow_nonstriker_name": "S Gill",
+          "fow_nonstriker_known_as": "Shubman Gill"
+        },
+        {
+          "fow_runs": 95,
+          "fow_type": "out",
+          "fow_overs": "9.1",
+          "fow_number": 2,
+          "fow_batter_id": 16261,
+          "fow_batter_name": "JC Buttler",
+          "fow_nonstriker_id": 65345,
+          "fow_batter_known_as": "Jos Buttler",
+          "fow_nonstriker_name": "S Gill",
+          "fow_nonstriker_known_as": "Shubman Gill"
+        },
+        {
+          "fow_runs": 141,
+          "fow_type": "out",
+          "fow_overs": "14.3",
+          "fow_number": 3,
+          "fow_batter_id": 20226,
+          "fow_batter_name": "MS Washington Sundar",
+          "fow_nonstriker_id": 65345,
+          "fow_batter_known_as": "Washington Sundar",
+          "fow_nonstriker_name": "S Gill",
+          "fow_nonstriker_known_as": "Shubman Gill"
+        },
+        {
+          "fow_runs": 158,
+          "fow_type": "out",
+          "fow_overs": "16.6",
+          "fow_number": 4,
+          "fow_batter_id": 65345,
+          "fow_batter_name": "S Gill",
+          "fow_nonstriker_id": 26160,
+          "fow_batter_known_as": "Shubman Gill",
+          "fow_nonstriker_name": "GD Phillips",
+          "fow_nonstriker_known_as": "Glenn Phillips"
+        },
+        {
+          "fow_runs": 177,
+          "fow_type": "out",
+          "fow_overs": "19.1",
+          "fow_number": 5,
+          "fow_batter_id": 26160,
+          "fow_batter_name": "GD Phillips",
+          "fow_nonstriker_id": 50536,
+          "fow_batter_known_as": "Glenn Phillips",
+          "fow_nonstriker_name": "R Tewatia",
+          "fow_nonstriker_known_as": "Rahul Tewatia"
+        }
+      ],
+      "notes": [
+        {
+          "id": 90935,
+          "text": "Partnership: 50 runs for 1st wicket in 26 balls, Shubman Gill 29 (12), Sai Sudharsan 21 (14), Extras 1"
+        },
+        {
+          "id": 90936,
+          "text": "Gujarat Titans: 50 runs in 4.2 overs, 17 minutes, 1 extras"
+        },
+        {
+          "id": 90941,
+          "text": "Strategic timeout (22:01 to 22:04): Gujarat Titans - 71/1 in 6.0 overs, Jos Buttler 14 (5), Shubman Gill 34 (15)"
+        },
+        {
+          "id": 90943,
+          "text": "Powerplay 1: Overs 1 - 6, 71 runs, 1 wickets"
+        },
+        {
+          "id": 90948,
+          "text": "Shubman Gill: 50 in 27 balls, 50 minutes, (6*4 , 2*6)"
+        },
+        {
+          "id": 90949,
+          "text": "Gujarat Titans: 100 runs in 10.1 overs, 43 minutes, 1 extras"
+        },
+        {
+          "id": 90956,
+          "text": "Ball Replaced: Gujarat Titans - 123/2 after 13.0 overs, Shubman Gill 70 (40), Washington Sundar 5 (7)"
+        },
+        {
+          "id": 90964,
+          "text": "Strategic timeout (22:50 to 22:53): Gujarat Titans - 149/3 in 16.0 overs, Shubman Gill 81 (46), Glenn Phillips 4 (6)"
+        },
+        {
+          "id": 90965,
+          "text": "Gujarat Titans: 150 runs in 16.2 overs, 74 minutes, 4 extras"
+        },
+        {
+          "id": 90973,
+          "text": "End of match (23:20): Gujarat Titans - 181/5 in 19.4 overs, Shahrukh Khan 3 (2), Rahul Tewatia 7 (6)"
+        }
+      ],
+      "overs": "19.4",
+      "score": {
+        "byes": 0,
+        "runs": 181,
+        "wides": 4,
+        "legbyes": 2,
+        "noballs": 0,
+        "wickets": 5,
+        "run_rate": "9.20",
+        "penalties": 0,
+        "total_fours": 14,
+        "total_sixes": 8,
+        "total_maidens": 0
+      },
+      "batted": "yes",
+      "batting": [
+        {
+          "role": "batter",
+          "runs": 22,
+          "type": null,
+          "fours": 1,
+          "sixes": 2,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 22,
+          "dismissal": [
+            {
+              "details": "c K Tyagi"
+            },
+            {
+              "details": "b SP Narine"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 74538,
+          "dots_faced": 9,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 16,
+          "player_name": "B Sai Sudharsan",
+          "strike_rate": 138,
+          "batting_hand": "left",
+          "dismissal_str": "c K Tyagi b SP Narine",
+          "player_known_as": "Sai Sudharsan",
+          "batting_position": 1,
+          "boundary_percentage": "18.8"
+        },
+        {
+          "role": "batter",
+          "runs": 86,
+          "type": null,
+          "fours": 8,
+          "sixes": 4,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 83,
+          "dismissal": [
+            {
+              "details": "c CD Green"
+            },
+            {
+              "details": "b VG Arora"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 65345,
+          "dots_faced": 12,
+          "is_captain": 1,
+          "player_img": null,
+          "balls_faced": 50,
+          "player_name": "S Gill",
+          "strike_rate": 172,
+          "batting_hand": "right",
+          "dismissal_str": "c CD Green b VG Arora",
+          "player_known_as": "Shubman Gill",
+          "batting_position": 2,
+          "boundary_percentage": "24.0"
+        },
+        {
+          "role": "batter",
+          "runs": 25,
+          "type": null,
+          "fours": 2,
+          "sixes": 2,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 19,
+          "dismissal": [
+            {
+              "details": "c CD Green"
+            },
+            {
+              "details": "b V Chakravarthy"
+            }
+          ],
+          "is_keeper": 1,
+          "player_id": 16261,
+          "dots_faced": 6,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 15,
+          "player_name": "JC Buttler",
+          "strike_rate": 167,
+          "batting_hand": "right",
+          "dismissal_str": "c CD Green b V Chakravarthy",
+          "player_known_as": "Jos Buttler",
+          "batting_position": 3,
+          "boundary_percentage": "26.7"
+        },
+        {
+          "role": "all_rounder",
+          "runs": 13,
+          "type": null,
+          "fours": 1,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 25,
+          "dismissal": [
+            {
+              "details": "c K Tyagi"
+            },
+            {
+              "details": "b V Chakravarthy"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 20226,
+          "dots_faced": 4,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 13,
+          "player_name": "MS Washington Sundar",
+          "strike_rate": 100,
+          "batting_hand": "left",
+          "dismissal_str": "c K Tyagi b V Chakravarthy",
+          "player_known_as": "Washington Sundar",
+          "batting_position": 4,
+          "boundary_percentage": "7.7"
+        },
+        {
+          "role": "batter",
+          "runs": 19,
+          "type": null,
+          "fours": 2,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 1,
+          "minutes": 32,
+          "dismissal": [
+            {
+              "details": "c RK Singh"
+            },
+            {
+              "details": "b Ramandeep Singh"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 26160,
+          "dots_faced": 4,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 16,
+          "player_name": "GD Phillips",
+          "strike_rate": 119,
+          "batting_hand": "right",
+          "dismissal_str": "c RK Singh b Ramandeep Singh",
+          "player_known_as": "Glenn Phillips",
+          "batting_position": 5,
+          "boundary_percentage": "12.5"
+        },
+        {
+          "role": "batter",
+          "runs": 7,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 0,
+          "minutes": 20,
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 50536,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 6,
+          "player_name": "R Tewatia",
+          "strike_rate": 117,
+          "batting_hand": "left",
+          "dismissal_str": "not out",
+          "player_known_as": "Rahul Tewatia",
+          "batting_position": 6,
+          "boundary_percentage": "0.0"
+        },
+        {
+          "role": "batter",
+          "runs": 3,
+          "type": "substitute",
+          "fours": 0,
+          "sixes": 0,
+          "batted": "yes",
+          "is_out": 0,
+          "minutes": 3,
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 27214,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 2,
+          "player_name": "M Shahrukh Khan",
+          "strike_rate": 150,
+          "batting_hand": "right",
+          "dismissal_str": "not out",
+          "player_known_as": "Shahrukh Khan",
+          "batting_position": 7,
+          "boundary_percentage": "0.0"
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "DNB",
+          "is_out": 0,
+          "minutes": 0,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 25242,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 0,
+          "player_name": "Rashid Khan",
+          "strike_rate": 0,
+          "batting_hand": "right",
+          "dismissal_str": null,
+          "player_known_as": "Rashid Khan",
+          "batting_position": 8,
+          "boundary_percentage": null
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "DNB",
+          "is_out": 0,
+          "minutes": 0,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 76540,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 0,
+          "player_name": "A Sharma",
+          "strike_rate": 0,
+          "batting_hand": "right",
+          "dismissal_str": null,
+          "player_known_as": "Ashok Sharma",
+          "batting_position": 9,
+          "boundary_percentage": null
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "DNB",
+          "is_out": 0,
+          "minutes": 0,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 19720,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 0,
+          "player_name": "KS Rabada",
+          "strike_rate": 0,
+          "batting_hand": "left",
+          "dismissal_str": null,
+          "player_known_as": "Kagiso Rabada",
+          "batting_position": 10,
+          "boundary_percentage": null
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": "replaced",
+          "fours": 0,
+          "sixes": 0,
+          "batted": "DNB",
+          "is_out": 0,
+          "minutes": 0,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 59553,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 0,
+          "player_name": "PM Krishna",
+          "strike_rate": 0,
+          "batting_hand": "right",
+          "dismissal_str": null,
+          "player_known_as": "Prasidh Krishna",
+          "batting_position": 11,
+          "boundary_percentage": null
+        },
+        {
+          "role": "bowler",
+          "runs": 0,
+          "type": null,
+          "fours": 0,
+          "sixes": 0,
+          "batted": "DNB",
+          "is_out": 0,
+          "minutes": 0,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "is_keeper": 0,
+          "player_id": 44904,
+          "dots_faced": 0,
+          "is_captain": 0,
+          "player_img": null,
+          "balls_faced": 0,
+          "player_name": "M Siraj",
+          "strike_rate": 0,
+          "batting_hand": "right",
+          "dismissal_str": null,
+          "player_known_as": "Mohammed Siraj",
+          "batting_position": 12,
+          "boundary_percentage": null
+        }
+      ],
+      "bowling": [
+        {
+          "runs": 35,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 1,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 1,
+          "bowler_id": 72965,
+          "bowler_img": null,
+          "bowler_name": "VG Arora",
+          "bowling_type": "pace",
+          "economy_rate": "8.75",
+          "bowler_known_as": "Vaibhav Arora",
+          "bowling_position": 1,
+          "bowler_desc_abbreviation": "RFM"
+        },
+        {
+          "runs": 40,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 1,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 0,
+          "bowler_id": 66831,
+          "bowler_img": null,
+          "bowler_name": "K Tyagi",
+          "bowling_type": "pace",
+          "economy_rate": "10.00",
+          "bowler_known_as": "Kartik Tyagi",
+          "bowling_position": 2,
+          "bowler_desc_abbreviation": "RF"
+        },
+        {
+          "runs": 37,
+          "type": null,
+          "balls": 18,
+          "overs": "3.0",
+          "wides": 1,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 0,
+          "bowler_id": 65841,
+          "bowler_img": null,
+          "bowler_name": "AS Roy",
+          "bowling_type": "spin",
+          "economy_rate": "12.33",
+          "bowler_known_as": "Anukul Roy",
+          "bowling_position": 3,
+          "bowler_desc_abbreviation": "SLA"
+        },
+        {
+          "runs": 28,
+          "type": null,
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 0,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 1,
+          "bowler_id": 11658,
+          "bowler_img": null,
+          "bowler_name": "SP Narine",
+          "bowling_type": "spin",
+          "economy_rate": "7.00",
+          "bowler_known_as": "Sunil Narine",
+          "bowling_position": 4,
+          "bowler_desc_abbreviation": "OB"
+        },
+        {
+          "runs": 34,
+          "type": "substitute",
+          "balls": 24,
+          "overs": "4.0",
+          "wides": 0,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 2,
+          "bowler_id": 68649,
+          "bowler_img": null,
+          "bowler_name": "V Chakravarthy",
+          "bowling_type": "spin",
+          "economy_rate": "8.50",
+          "bowler_known_as": "Varun Chakravarthy",
+          "bowling_position": 5,
+          "bowler_desc_abbreviation": "LB"
+        },
+        {
+          "runs": 5,
+          "type": null,
+          "balls": 4,
+          "overs": "0.4",
+          "wides": 1,
+          "maidens": 0,
+          "noballs": 0,
+          "wickets": 1,
+          "bowler_id": 65478,
+          "bowler_img": null,
+          "bowler_name": "Ramandeep Singh",
+          "bowling_type": "pace",
+          "economy_rate": "7.50",
+          "bowler_known_as": "Ramandeep Singh",
+          "bowling_position": 6,
+          "bowler_desc_abbreviation": "RMF"
+        }
+      ],
+      "minutes": 104,
+      "reviews": {
+        "batting": {
+          "count": 0,
+          "allowed": 2,
+          "success": 0,
+          "retained": 0,
+          "remaining": 2,
+          "unsuccessful": 0
+        },
+        "bowling": {
+          "count": 0,
+          "allowed": 2,
+          "success": 0,
+          "retained": 0,
+          "remaining": 2,
+          "unsuccessful": 0
+        }
+      },
+      "closure_id": 3,
+      "milestones": [],
+      "balls_bowled": 118,
+      "closure_name": "target reached",
+      "partnerships": [
+        {
+          "p1": {
+            "name": "B Sai Sudharsan",
+            "runs": 22,
+            "known_as": "Sai Sudharsan",
+            "balls_faced": 16
+          },
+          "p2": {
+            "name": "S Gill",
+            "runs": 34,
+            "known_as": "Shubman Gill",
+            "balls_faced": 15
+          },
+          "runs": 57,
+          "balls": 31,
+          "score": {
+            "runs": 57,
+            "overs": "5.1",
+            "wickets": 1
+          },
+          "extras": 1,
+          "wicket": 1,
+          "out_batter": {
+            "name": "B Sai Sudharsan",
+            "runs": 22,
+            "known_as": "Sai Sudharsan",
+            "balls_faced": 16
+          }
+        },
+        {
+          "p1": {
+            "name": "S Gill",
+            "runs": 13,
+            "known_as": "Shubman Gill",
+            "balls_faced": 9
+          },
+          "p2": {
+            "name": "JC Buttler",
+            "runs": 25,
+            "known_as": "Jos Buttler",
+            "balls_faced": 15
+          },
+          "runs": 38,
+          "balls": 24,
+          "score": {
+            "runs": 95,
+            "overs": "9.1",
+            "wickets": 2
+          },
+          "extras": 0,
+          "wicket": 2,
+          "out_batter": {
+            "name": "JC Buttler",
+            "runs": 25,
+            "known_as": "Jos Buttler",
+            "balls_faced": 15
+          }
+        },
+        {
+          "p1": {
+            "name": "S Gill",
+            "runs": 31,
+            "known_as": "Shubman Gill",
+            "balls_faced": 19
+          },
+          "p2": {
+            "name": "MS Washington Sundar",
+            "runs": 13,
+            "known_as": "Washington Sundar",
+            "balls_faced": 13
+          },
+          "runs": 46,
+          "balls": 32,
+          "score": {
+            "runs": 141,
+            "overs": "14.3",
+            "wickets": 3
+          },
+          "extras": 2,
+          "wicket": 3,
+          "out_batter": {
+            "name": "MS Washington Sundar",
+            "runs": 13,
+            "known_as": "Washington Sundar",
+            "balls_faced": 13
+          }
+        },
+        {
+          "p1": {
+            "name": "S Gill",
+            "runs": 8,
+            "known_as": "Shubman Gill",
+            "balls_faced": 7
+          },
+          "p2": {
+            "name": "GD Phillips",
+            "runs": 7,
+            "known_as": "Glenn Phillips",
+            "balls_faced": 8
+          },
+          "runs": 17,
+          "balls": 15,
+          "score": {
+            "runs": 158,
+            "overs": "16.6",
+            "wickets": 4
+          },
+          "extras": 2,
+          "wicket": 4,
+          "out_batter": {
+            "name": "S Gill",
+            "runs": 86,
+            "known_as": "Shubman Gill",
+            "balls_faced": 50
+          }
+        },
+        {
+          "p1": {
+            "name": "GD Phillips",
+            "runs": 12,
+            "known_as": "Glenn Phillips",
+            "balls_faced": 8
+          },
+          "p2": {
+            "name": "R Tewatia",
+            "runs": 6,
+            "known_as": "Rahul Tewatia",
+            "balls_faced": 5
+          },
+          "runs": 19,
+          "balls": 13,
+          "score": {
+            "runs": 177,
+            "overs": "19.1",
+            "wickets": 5
+          },
+          "extras": 1,
+          "wicket": 5,
+          "out_batter": {
+            "name": "GD Phillips",
+            "runs": 19,
+            "known_as": "Glenn Phillips",
+            "balls_faced": 16
+          }
+        },
+        {
+          "p1": {
+            "name": "M Shahrukh Khan",
+            "runs": 3,
+            "known_as": "Shahrukh Khan",
+            "balls_faced": 2
+          },
+          "p2": {
+            "name": "R Tewatia",
+            "runs": 1,
+            "known_as": "Rahul Tewatia",
+            "balls_faced": 1
+          },
+          "runs": 4,
+          "balls": 3,
+          "score": {
+            "runs": 181,
+            "overs": "19.4",
+            "wickets": 5
+          },
+          "extras": 0,
+          "wicket": 6,
+          "out_batter": {
+            "name": null,
+            "runs": null,
+            "balls_faced": null
+          }
+        }
+      ],
+      "innings_number": 2,
+      "batting_team_id": 2879,
+      "bowling_team_id": 1873,
+      "total_ball_count": 122,
+      "batting_team_logo": "https://cv-general-images.s3.amazonaws.com/teams/Gujarat_Titans_logo.png",
+      "batting_team_name": "Gujarat Titans",
+      "bowling_team_name": "Kolkata Knight Riders"
+    }
+  ],
+  "class_id": 6,
+  "class_name": "List A Twenty20",
+  "start_time": "2026-04-17T14:00:00Z",
+  "match_result": "Gujarat Titans won by 5 wickets",
+  "match_status": "complete",
+  "toss_comment": "Kolkata Knight Riders won the toss and elected to bat",
+  "live_status_id": 9,
+  "epoch_timestamp": 1776448272.8032358,
+  "scheduled_overs": 20,
+  "start_datetime_utc": "2026-04-17 14:00:00",
+  "team_batting_first": 1873
+}

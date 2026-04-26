@@ -9,9 +9,7 @@ export class UpdateTeamNameDto {
     minLength: 1,
     maxLength: 80,
   })
-  @Transform(({ value }) =>
-    typeof value === "string" ? value.trim() : value,
-  )
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   @IsString()
   @MinLength(1)
   @MaxLength(80)

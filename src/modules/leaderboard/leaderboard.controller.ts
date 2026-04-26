@@ -49,7 +49,8 @@ export class LeaderboardController {
   @Get("season/:seasonId")
   @ApiOperation({
     summary: "Get season leaderboard",
-    description: "Retrieve the leaderboard for a specific season with player rankings",
+    description:
+      "Retrieve the leaderboard for a specific season with player rankings",
   })
   @ApiParam({
     name: "seasonId",
@@ -61,14 +62,17 @@ export class LeaderboardController {
     status: 200,
     description: "Season leaderboard retrieved successfully",
   })
-  async getSeasonLeaderboard(@Param("seasonId", ParseIntPipe) seasonId: number) {
+  async getSeasonLeaderboard(
+    @Param("seasonId", ParseIntPipe) seasonId: number,
+  ) {
     return this.leaderboardService.getSeasonLeaderboard(seasonId);
   }
 
   @Get("match/:matchId")
   @ApiOperation({
     summary: "Get match leaderboard",
-    description: "Retrieve the leaderboard for a specific match with player rankings",
+    description:
+      "Retrieve the leaderboard for a specific match with player rankings",
   })
   @ApiParam({
     name: "matchId",
@@ -81,7 +85,8 @@ export class LeaderboardController {
     description: "Match leaderboard retrieved successfully",
   })
   async getMatchLeaderboard(@Param("matchId", ParseUUIDPipe) matchId: string) {
-    const leaderboard = await this.leaderboardService.getMatchLeaderboard(matchId);
+    const leaderboard =
+      await this.leaderboardService.getMatchLeaderboard(matchId);
 
     return {
       matchId,

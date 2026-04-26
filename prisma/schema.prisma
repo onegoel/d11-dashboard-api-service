@@ -58,6 +58,12 @@ model User {
   seasonsPlayed SeasonUser[]
   wonSeasons    Season[]     @relation("SeasonWinner")
   updatedMatches Match[]     @relation("MatchUpdatedBy")
+
+  fantasyEntries FantasyContestEntry[]
+
+  fantasySeasonLeaderboards FantasySeasonLeaderboard[]
+
+  customScoringSystems CustomScoringSystem[]
 }
 
 model Season {
@@ -70,7 +76,6 @@ model Season {
   endDate   DateTime?
 
   winnerUserId Int?
-  cricApiSeriesId String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,6 +84,9 @@ model Season {
 
   seasonUsers SeasonUser[]
   matches     Match[]
+
+  fantasySeasonLeaderboards FantasySeasonLeaderboard[]
+  fantasyPlayerSeasonStats  FantasyPlayerSeasonStats[]
 }
 
 model SeasonUser {
@@ -107,6 +115,7 @@ model Team {
   id        String @id @default(uuid())
   name      String
   shortCode String @unique
+  wisdenTeamId String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -114,33 +123,38 @@ model Team {
   homeMatches Match[] @relation("HomeTeam")
   awayMatches Match[] @relation("AwayTeam")
   chipPlaysTeamForm ChipPlay[] @relation("TeamFormSelection")
+  fantasyPlayers FantasyPlayer[]
 }
 
 model Match {
   id        String   @id @default(uuid())
-  seasonId  Int
+  seasonId  Int?
   matchNo   Int
   matchDate DateTime
   status    MatchStatus @default(SCHEDULED)
   matchResult MatchResult @default(PENDING)
+  matchResultText String?
 
   homeTeamId String
   awayTeamId String
   updatedByUserId Int?
+
   
   stadium String?
   venue String?
 
-  cricApiMatchId String? @unique
+  wisdenMatchGid String? @unique
 
-  cricApiScore  Json?
-  cricApiStatus String?
-  cricApiLastSyncedAt DateTime?
+  wisdenScore Json?
+  wisdenCommentary Json?
+  wisdenStatus String?
+  wisdenLastSyncedAt DateTime?
+  wisdenScoringFinalizedAt DateTime? // set when scoring is finalized; blobs can be pruned after this
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  season Season @relation(fields: [seasonId], references: [id])
+  season Season? @relation(fields: [seasonId], references: [id])
 
   homeTeam Team @relation("HomeTeam", fields: [homeTeamId], references: [id])
   awayTeam Team @relation("AwayTeam", fields: [awayTeamId], references: [id])
@@ -150,10 +164,15 @@ model Match {
   chipPlays ChipPlay[]
   picks     PlayerPick[]
 
+  fantasyMatchPlayers FantasyMatchPlayer[]
+  fantasyContests     FantasyContest[]
+  fantasyPlayerScores FantasyPlayerScore[]
+
   @@unique([seasonId, matchNo])
   @@index([seasonId])
   @@index([matchDate])
   @@index([updatedByUserId])
+  @@index([wisdenMatchGid])
 }
 
 model ChipType {
@@ -181,6 +200,7 @@ model ChipPlay {
   status       ChipPlayStatus @default(SCHEDULED)
   canceledAt   DateTime?
   selectedTeamId String?
+  extraInfo    Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -202,7 +222,7 @@ model Score {
   seasonUserId String
   matchId      String
 
-  points Int
+  points Float
   rank   Int
 
   rawScore       Float?
@@ -232,8 +252,9 @@ model PlayerPick {
   seasonUserId String
   matchId      String
 
-  playerName String
+  fantasyPlayerId String
   isCaptain  Boolean @default(false)
+  isViceCaptain Boolean @default(false)
 
   points Int?
 
@@ -242,9 +263,369 @@ model PlayerPick {
 
   seasonUser SeasonUser @relation(fields: [seasonUserId], references: [id])
   match      Match      @relation(fields: [matchId], references: [id])
+  fantasyPlayer FantasyPlayer @relation(fields: [fantasyPlayerId], references: [id])
 
   @@index([seasonUserId])
   @@index([matchId])
+}
+
+// ─── Fantasy (per-match DFS) ────────────────────────────────────────────────
+
+enum FantasyPlayerRole {
+  BATSMAN
+  BOWLER
+  ALL_ROUNDER
+  WICKET_KEEPER
+}
+
+enum FantasyContestStatus {
+  OPEN
+  LOCKED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum BowlingStyle {
+  PACE
+  SPIN
+}
+
+enum BowlingTechnique {
+  OFF_BREAK
+  LEFT_ORTHODOX
+  RIGHT_PACE
+  LEFT_PACE
+  LEG_BREAK
+  LEFT_UNORTHODOX
+}
+
+// Player catalog — synced from Wisden sources
+model FantasyPlayer {
+  id          String @id @default(uuid())
+  wisdenPlayerId String? @unique
+
+  firstName   String
+  lastName    String
+  displayName String
+
+  shortName   String?
+  
+  role        FantasyPlayerRole
+  teamId      String?
+  teamWisdenId String?
+  photoUrl    String?
+  battingHand String?
+  bowlingHand      String?
+  bowlingStyle     BowlingStyle?
+  bowlingTechnique BowlingTechnique?
+  isActive    Boolean @default(true)
+  isStatsAvailable Boolean @default(false) // will be used to determine if we need to fetch player stats
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  team              Team?                @relation(fields: [teamId], references: [id])
+  matchAppearances  FantasyMatchPlayer[]
+  contestPicks      FantasyEntryPlayer[]
+  scores            FantasyPlayerScore[]
+  seasonStats       FantasyPlayerSeasonStats[]
+
+  @@index([teamId])
+  @@index([teamWisdenId])
+  playerPicks PlayerPick[]
+}
+
+// Per-match player pool: credit value, announced XI status
+model FantasyMatchPlayer {
+  id                  String  @id @default(uuid())
+  matchId             String
+  fantasyPlayerId     String
+
+  wisdenMatchGid      String?
+  wisdenPlayerId      String?
+  teamWisdenId        String?
+
+  creditValue         Float   // e.g. 9.5
+  isInPlayingXI       Boolean @default(false)
+  isInAnnouncedSquad  Boolean?                 // null = not yet announced, true/false = announced status
+  selectionPct        Float?  // % of contest entries that include this player
+
+  playerIn            Boolean @default(false)  // announced as new addition
+  playerOut           Boolean @default(false)  // announced as dropped
+  subbedIn            Boolean @default(false)  // came in as substitute during match
+  subbedOut           Boolean @default(false)  // taken out as substitute during match
+  isLastMatchPlayed   Boolean @default(false)  // played in previous match
+  inLastMatchBestXI   Boolean @default(false)  // was in best XI last match
+  currentSeasonPoints Float?                   // cumulative fantasy pts this season
+  battingPosition     Int? 
+  isKeeper            Boolean @default(false)
+  isCaptain           Boolean @default(false)
+  isViceCaptain       Boolean? @default(false)
+  playerOrder         Int?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  match         Match         @relation(fields: [matchId], references: [id])
+  fantasyPlayer FantasyPlayer @relation(fields: [fantasyPlayerId], references: [id])
+
+  @@unique([matchId, fantasyPlayerId])
+  @@index([matchId])
+  @@index([wisdenMatchGid])
+  @@index([wisdenPlayerId])
+}
+
+// One contest per match — auto-created when match is ingested
+model FantasyContest {
+  id       String               @id @default(uuid())
+  matchId  String               @unique
+  status   FantasyContestStatus @default(OPEN)
+
+  lockedAt DateTime?            // closes at match start; enforced by scoring service
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  match   Match                @relation(fields: [matchId], references: [id])
+  entries FantasyContestEntry[]
+
+  @@index([status])
+}
+
+// A user's squad submitted to a contest — max 2 per user (teamNo 1 or 2)
+model FantasyContestEntry {
+  id          String    @id @default(uuid())
+  contestId   String
+  userId      Int
+  teamNo      Int       @default(1) // 1 or 2
+
+  chipCode    ChipCode? // chip applied to this team for this match
+
+  totalPoints Float?
+  rank        Int?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contest FantasyContest       @relation(fields: [contestId], references: [id])
+  user    User                 @relation(fields: [userId], references: [id])
+  players FantasyEntryPlayer[]
+
+  @@unique([contestId, userId, teamNo])
+  @@index([contestId])
+  @@index([userId])
+}
+
+// The 11 players + 4 bench players (prioritized) in a contest entry, with captain/VC designation
+model FantasyEntryPlayer {
+  id              String  @id @default(uuid())
+  entryId         String
+  fantasyPlayerId String
+
+  wisdenPlayerId  String?
+
+  isCaptain       Boolean @default(false)
+  isViceCaptain   Boolean @default(false)
+  points          Float?  // computed after match
+
+  isBench          Boolean @default(false) // top 11 picks have isBench=false, next 4 have isBench=true
+  benchPriority    Int?    // if isBench=true, this indicates the order in which bench players are subbed in (1-4)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  entry         FantasyContestEntry @relation(fields: [entryId], references: [id])
+  fantasyPlayer FantasyPlayer       @relation(fields: [fantasyPlayerId], references: [id])
+
+  @@unique([entryId, fantasyPlayerId])
+  @@index([entryId])
+  @@index([wisdenPlayerId])
+}
+
+// Live-updated fantasy points per player per match (scoring engine output)
+model FantasyPlayerScore {
+  id              String  @id @default(uuid())
+  fantasyPlayerId String
+  matchId         String
+
+  wisdenPlayerId  String?
+  wisdenMatchGid  String?
+
+  points          Float
+  breakdown       Json?   // { runs: 30, boundaries: 4, wickets: 0, ... }
+  isFinalized     Boolean @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  fantasyPlayer FantasyPlayer @relation(fields: [fantasyPlayerId], references: [id])
+  match         Match         @relation(fields: [matchId], references: [id])
+
+  @@unique([fantasyPlayerId, matchId])
+  @@index([matchId])
+  @@index([wisdenPlayerId])
+  @@index([wisdenMatchGid])
+}
+
+model FantasyPlayerMatchStats {
+  fantasyPlayerId String
+  matchId         String
+
+  // batting
+  runs            Int @default(0)
+  ballsFaced      Int @default(0)
+  fours           Int @default(0)  
+  sixes           Int @default(0)
+  battingPosition Int?   // solves the other pending feature too
+
+  // bowling
+  wickets         Int @default(0)
+  ballsBowled     Int @default(0)
+  runsConceded    Int @default(0)
+  maidens         Int @default(0)
+  dotBalls        Int @default(0)
+
+  // fielding
+  catches         Int @default(0)
+  stumpings       Int @default(0)
+  runOutDirect    Int @default(0)
+  runOutAssist    Int @default(0)
+
+  // advanced (CricViz)
+  battingImpact    Float? @default(0) 
+  boundaryScoredPct         Float? @default(0)
+  dotsPlayedPct         Float? @default(0)
+  bowlingImpact    Float? @default(0)
+
+  played          Boolean @default(false)
+
+  @@id([fantasyPlayerId, matchId])
+  @@index([matchId])
+  @@index([fantasyPlayerId])
+}
+
+// Per-match batter shot distribution aggregated from wagon wheel data
+// Enables pace/spin matchup analysis and shot zone profiling across matches
+model FantasyPlayerShotData {
+  fantasyPlayerId String
+  matchId         String
+
+  // vs pace splits (bowling_type_simple = "pace")
+  paceRuns       Int @default(0)
+  paceBalls      Int @default(0)
+  paceBoundaries Int @default(0) // 4s + 6s off pace
+
+  // vs spin splits (bowling_type_simple = "spin")
+  spinRuns       Int @default(0)
+  spinBalls      Int @default(0)
+  spinBoundaries Int @default(0) // 4s + 6s off spin
+
+  // Shot zone distribution (field_zone 1–8 from wagon wheel)
+  // Zones are relative to batter handedness — cross-reference battingHand at query time to map to off/leg side
+  zone1Balls  Int @default(0)
+  zone1Runs   Int @default(0)
+  zone2Balls  Int @default(0)
+  zone2Runs   Int @default(0)
+  zone3Balls  Int @default(0)
+  zone3Runs   Int @default(0)
+  zone4Balls  Int @default(0)
+  zone4Runs   Int @default(0)
+  zone5Balls  Int @default(0)
+  zone5Runs   Int @default(0)
+  zone6Balls  Int @default(0)
+  zone6Runs   Int @default(0)
+  zone7Balls  Int @default(0)
+  zone7Runs   Int @default(0)
+  zone8Balls  Int @default(0)
+  zone8Runs   Int @default(0)
+
+  // Catch map — where this batter was dismissed caught (as batter perspective)
+  // One record per dismissal type (pace/spin) × zone; aggregated per match
+  caughtVsPaceCount    Int @default(0)
+  caughtVsSpinCount    Int @default(0)
+  caughtZone1Count     Int @default(0)
+  caughtZone2Count     Int @default(0)
+  caughtZone3Count     Int @default(0)
+  caughtZone4Count     Int @default(0)
+  caughtZone5Count     Int @default(0)
+  caughtZone6Count     Int @default(0)
+  caughtZone7Count     Int @default(0)
+  caughtZone8Count     Int @default(0)
+
+  @@id([fantasyPlayerId, matchId])
+  @@index([matchId])
+  @@index([fantasyPlayerId])
+}
+
+model FantasySeasonLeaderboard {
+  seasonId Int
+  userId   Int
+
+  totalPoints    Float
+  rank           Int
+  adjustedPoints Float?
+  gamesPlayed    Int
+  wins           Int
+  top3Finishes   Int @default(0)
+  avgRank        Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  season Season @relation(fields: [seasonId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@id([seasonId, userId])
+  @@index([seasonId])
+}
+
+// Aggregated real cricket stats per player per season — materialized from FantasyPlayerMatchStats on each scoring run
+model FantasyPlayerSeasonStats {
+  fantasyPlayerId String
+  seasonId        Int
+
+  matchesPlayed   Int @default(0)
+
+  // batting
+  runsTotal         Int @default(0)
+  ballsFacedTotal   Int @default(0)
+  foursTotal        Int @default(0)
+  sixesTotal        Int @default(0)
+  highScore         Int @default(0)
+
+  // bowling
+  wicketsTotal      Int @default(0)
+  ballsBowledTotal  Int @default(0)
+  runsConcededTotal Int @default(0)
+  maidensTotal      Int @default(0)
+  dotBallsTotal     Int @default(0)
+  bestBowlingWickets Int @default(0)  // wickets in best bowling spell
+  bestBowlingRuns    Int @default(0)  // runs conceded in best bowling spell
+
+  // batting milestones (non-overlapping: 30-49, 50-99, 100+)
+  thirtiesTotal    Int @default(0)
+  fiftiesTotal     Int @default(0)
+  centuriesTotal   Int @default(0)
+
+  // fielding
+  catchesTotal      Int @default(0)
+  stumpingsTotal    Int @default(0)
+  runOutsTotal      Int @default(0)   // direct + assist combined
+
+  // fantasy points (from FantasyPlayerScore)
+  fantasyPointsTotal Float @default(0)
+  fantasyPointsAvg   Float @default(0)
+  fantasyPointsBest  Float @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  fantasyPlayer FantasyPlayer @relation(fields: [fantasyPlayerId], references: [id])
+  season        Season        @relation(fields: [seasonId], references: [id])
+
+  @@id([fantasyPlayerId, seasonId])
+  @@index([seasonId])
+  @@index([fantasyPlayerId])
 }
 
 model AdminAuditLog {
@@ -260,4 +641,24 @@ model AdminAuditLog {
   @@index([entityType])
   @@index([entityId])
   @@index([createdAt])
+}
+
+// Scoring Lab (alpha): user-defined variants of the fantasy points system
+// for experimentation. Not tied to real contests/leaderboards.
+model CustomScoringSystem {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  createdById Int
+  createdBy   User @relation(fields: [createdById], references: [id])
+
+  // JSON matches the FantasyPointSystem shape in pointsSystem.json
+  config Json
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdById])
 }

@@ -29,16 +29,37 @@ const POWER_MISSED_MATCH_PENALTY = 4;
 const POWER_WIN_BONUS = 2;
 const POWER_PODIUM_BONUS = 1;
 
-const calcFinalPoints = (playedPoints: number[]): number => {
-  if (playedPoints.length === 0) return 0;
-  if (playedPoints.length <= DROP_COUNT) return playedPoints.reduce((sum, p) => sum + p, 0);
-  const keep = playedPoints.length - DROP_COUNT;
-  return [...playedPoints]
-    .sort((a, b) => b - a)
-    .slice(0, keep)
-    .reduce((sum, p) => sum + p, 0);
-};
+// const calcFinalPoints = (playedPoints: number[]): number => {
+//   if (playedPoints.length === 0) return 0;
+//   if (playedPoints.length <= DROP_COUNT) return playedPoints.reduce((sum, p) => sum + p, 0);
+//   const keep = playedPoints.length - DROP_COUNT;
+//   return [...playedPoints]
+//     .sort((a, b) => b - a)
+//     .slice(0, keep)
+//     .reduce((sum, p) => sum + p, 0);
+// };
 
+const calcFinalPoints = (
+  playedPoints: number[],
+  totalMatchesSoFar: number,
+): { finalPoints: number; effectiveDrop: number } => {
+  if (playedPoints.length === 0) {
+    return { finalPoints: 0, effectiveDrop: 0 };
+  }
+
+  let effectiveDrop = 0;
+
+  if (totalMatchesSoFar > DROP_COUNT) {
+    effectiveDrop = Math.min(DROP_COUNT, totalMatchesSoFar - DROP_COUNT);
+  }
+
+  const sorted = [...playedPoints].sort((a, b) => a - b);
+  const remaining = sorted.slice(effectiveDrop);
+
+  const finalPoints = remaining.reduce((sum, p) => sum + p, 0);
+
+  return { finalPoints, effectiveDrop };
+};
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
@@ -178,8 +199,13 @@ export class LeaderboardService {
         const podiumBonus =
           Math.max(podiumCount - winCount, 0) * POWER_PODIUM_BONUS;
 
-        const firstSlice = recentWindow.slice(0, Math.min(2, recentWindow.length));
-        const lastSlice = recentWindow.slice(Math.max(recentWindow.length - 2, 0));
+        const firstSlice = recentWindow.slice(
+          0,
+          Math.min(2, recentWindow.length),
+        );
+        const lastSlice = recentWindow.slice(
+          Math.max(recentWindow.length - 2, 0),
+        );
 
         const firstSliceAverage =
           firstSlice.length === 0
@@ -198,7 +224,11 @@ export class LeaderboardService {
         );
 
         const powerScoreRaw =
-          baseScore - participationPenalty + winBonus + podiumBonus + trendBonus;
+          baseScore -
+          participationPenalty +
+          winBonus +
+          podiumBonus +
+          trendBonus;
         const powerScore = roundToTwo(clamp(powerScoreRaw, 0, 100));
 
         return {
@@ -369,10 +399,13 @@ export class LeaderboardService {
         });
 
         const playedHistory = history.filter((point) => point.didPlay);
-        const averageRank = playedHistory.length > 0
-          ? playedHistory.reduce((total, point) => total + (point.rank ?? 0), 0) /
-            playedHistory.length
-          : null;
+        const averageRank =
+          playedHistory.length > 0
+            ? playedHistory.reduce(
+                (total, point) => total + (point.rank ?? 0),
+                0,
+              ) / playedHistory.length
+            : null;
 
         const recentForm = history
           .slice(Math.max(history.length - 5, 0))
@@ -402,8 +435,13 @@ export class LeaderboardService {
 
         const displayName = player.user.display_name;
         const totalPoints =
-          history.length > 0 ? history[history.length - 1]!.cumulativePoints : 0;
-        const finalPoints = calcFinalPoints(playedHistory.map((point) => point.points));
+          history.length > 0
+            ? history[history.length - 1]!.cumulativePoints
+            : 0;
+        const { finalPoints, effectiveDrop } = calcFinalPoints(
+          history.map((point) => (point.didPlay ? point.points : 0)),
+          completedMatches.length,
+        );
 
         return {
           id: player.id,
@@ -417,6 +455,7 @@ export class LeaderboardService {
           points: totalPoints,
           gamesDropCount: DROP_COUNT,
           finalPoints,
+          effectiveDrop,
           played: playedHistory.length,
           wins: playedHistory.filter((point) => point.rank === 1).length,
           averageRank,

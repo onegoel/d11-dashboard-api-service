@@ -142,7 +142,9 @@ export async function seedScores(prisma: PrismaClient, seasonId: number) {
       continue;
     }
 
-    console.log(`  Seeding scores for match ${match.matchNo} (id=${match.id})...`);
+    console.log(
+      `  Seeding scores for match ${match.matchNo} (id=${match.id})...`,
+    );
 
     await prisma.$transaction(async (tx) => {
       // Delete any existing scores for this match so upsert is clean

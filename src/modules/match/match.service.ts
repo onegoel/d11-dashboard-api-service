@@ -1,153 +1,249 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import type { InputJsonValue } from "@prisma/client/runtime/client";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
-import { CRICAPI_POLLING } from "../cricapi/cricapi.polling-config.js";
-import {
-  CRICAPI_ENABLE_MOCK_SCORE_FALLBACK,
-  CRICAPI_USE_MOCK_SCORE,
-} from "../cricapi/cricapi.source-config.js";
-import { CricapiService } from "../cricapi/cricapi.service.js";
-import type { GetMatchScoreResponseDto } from "./dto/get-match-score-response.dto.js";
+import type {
+  WisdenScorecardResponse,
+  WisdenTableResponse,
+} from "../../common/types/wisden.types.js";
+import { withDerivedMatchResult } from "../liveScore/wisden-match-result.util.js";
+import { WisdenService } from "../wisden/wisden.service.js";
 
 type GetSeasonMatchesOptions = {
   status?: MatchStatus;
-};
-
-type MatchScoreSnapshotRow = {
-  id: string;
-  status: MatchStatus;
-  matchResult: MatchResult;
-  cricApiMatchId: string | null;
-  cricApiStatus: string | null;
-  cricApiScore: unknown;
-  cricApiLastSyncedAt: Date | null;
 };
 
 @Injectable()
 export class MatchService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cricapiService: CricapiService,
+    private readonly wisden: WisdenService,
   ) {}
 
-  async syncMatchScore(matchId: string): Promise<GetMatchScoreResponseDto> {
-    const match = await this.prisma.client.match.findUnique({
-      where: { id: matchId },
-      include: {
-        homeTeam: { select: { name: true } },
-        awayTeam: { select: { name: true } },
-      },
-    });
-
-    if (!match) {
-      throw new NotFoundException("Match not found");
+  private async getStandings(): Promise<Awaited<
+    ReturnType<WisdenService["getTable"]>
+  > | null> {
+    try {
+      return await this.wisden.getTable();
+    } catch {
+      return null;
     }
-
-    if (!match.cricApiMatchId) {
-      throw new BadRequestException(
-        "Match is not linked to CricAPI. Missing cricApiMatchId.",
-      );
-    }
-
-    const matchInfo = await this.cricapiService.getMatchInfo(
-      match.cricApiMatchId,
-    );
-    const score = (matchInfo.data.score ?? []).map((inning) => ({
-      r: inning.r,
-      w: inning.w,
-      o: inning.o,
-      inning: inning.inning,
-    })) as InputJsonValue;
-
-    const nextStatus: MatchStatus = matchInfo.data.matchEnded
-      ? MatchStatus.COMPLETED
-      : matchInfo.data.matchStarted
-        ? MatchStatus.LIVE
-        : MatchStatus.SCHEDULED;
-
-    const nextResult = this.deriveMatchResult(
-      matchInfo.data.matchWinner,
-      match.homeTeam.name,
-      match.awayTeam.name,
-      matchInfo.data.matchEnded,
-    );
-
-    await this.prisma.client.match.update({
-      where: { id: matchId },
-      data: {
-        cricApiScore: score,
-        cricApiStatus: matchInfo.data.status || null,
-        cricApiLastSyncedAt: new Date(),
-        status: nextStatus,
-        matchResult: nextResult,
-      },
-    });
-
-    return this.getMatchScore(matchId);
   }
 
-  async getMatchScore(matchId: string): Promise<GetMatchScoreResponseDto> {
-    const match = (await this.prisma.client.match.findUnique({
-      where: { id: matchId },
-      select: {
-        id: true,
-        status: true,
-        matchResult: true,
-        cricApiMatchId: true,
-        cricApiStatus: true,
-        cricApiScore: true,
-        cricApiLastSyncedAt: true,
-      },
-    })) as MatchScoreSnapshotRow | null;
+  createIplSeriesStandingsPayload = (standings: WisdenTableResponse | null) => {
+    return {
+      teams: standings?.groups.flatMap((group) =>
+        group.team.map((team) => ({
+          matchesLost: team.lost,
+          matchesPlayed: team.matches,
+          matchesWon: team.won,
+          matchesTied: team.matches - team.won - team.lost - team.no_result,
+          points: team.points,
+          teamName: team.team_name,
+          netRunRate: team.net_run_rate,
+          teamShortName: team.team_short_name || team.team_abbreviation,
+          position: team.position,
+          noResults: team.no_result,
+          teamId: String(team.team_id),
+          seriesForm: [], // This would require additional data to populate
+          nextMatches: [], // This would require additional data to populate
+        })),
+      ),
+    };
+  };
 
-    if (!match) {
-      throw new NotFoundException("Match not found");
-    }
-
-    if (
-      CRICAPI_USE_MOCK_SCORE &&
-      CRICAPI_ENABLE_MOCK_SCORE_FALLBACK &&
-      !match.cricApiLastSyncedAt &&
-      !match.cricApiStatus &&
-      !match.cricApiScore
-    ) {
-      const mockMatchInfo = await this.cricapiService.getMatchInfo(
-        match.cricApiMatchId ?? match.id,
-      );
-
-      return {
-        matchId: match.id,
-        status: match.status,
-        matchResult: match.matchResult,
-        cricApiStatus: mockMatchInfo.data.status || null,
-        cricApiScore: mockMatchInfo.data.score ?? null,
-        lastSyncedAt: new Date().toISOString(),
-        isStale: false,
-      };
-    }
-
-    const staleThresholdMs = CRICAPI_POLLING.POLL_INTERVAL_MS * 3;
-    const ageMs = match.cricApiLastSyncedAt
-      ? Date.now() - match.cricApiLastSyncedAt.getTime()
-      : Number.POSITIVE_INFINITY;
+  async getSeasonRecords(seasonId: number) {
+    const [standings, battingRows, bowlingRows, fieldingRows] =
+      await Promise.all([
+        this.getStandings(),
+        this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            seasonId,
+            runsTotal: { gt: 0 },
+          },
+          orderBy: [{ runsTotal: "desc" }, { ballsFacedTotal: "asc" }],
+          take: 12,
+          select: {
+            matchesPlayed: true,
+            runsTotal: true,
+            ballsFacedTotal: true,
+            foursTotal: true,
+            sixesTotal: true,
+            highScore: true,
+            fantasyPlayer: {
+              select: {
+                displayName: true,
+                photoUrl: true,
+                team: { select: { shortCode: true } },
+              },
+            },
+          },
+        }),
+        this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            seasonId,
+            OR: [{ wicketsTotal: { gt: 0 } }, { ballsBowledTotal: { gt: 0 } }],
+          },
+          orderBy: [
+            { wicketsTotal: "desc" },
+            { runsConcededTotal: "asc" },
+            { ballsBowledTotal: "asc" },
+          ],
+          take: 12,
+          select: {
+            matchesPlayed: true,
+            wicketsTotal: true,
+            ballsBowledTotal: true,
+            runsConcededTotal: true,
+            maidensTotal: true,
+            bestBowlingWickets: true,
+            bestBowlingRuns: true,
+            fantasyPlayer: {
+              select: {
+                displayName: true,
+                photoUrl: true,
+                team: { select: { shortCode: true } },
+              },
+            },
+          },
+        }),
+        this.prisma.client.fantasyPlayerSeasonStats.findMany({
+          where: {
+            seasonId,
+            OR: [
+              { catchesTotal: { gt: 0 } },
+              { stumpingsTotal: { gt: 0 } },
+              { runOutsTotal: { gt: 0 } },
+            ],
+          },
+          orderBy: [
+            { catchesTotal: "desc" },
+            { stumpingsTotal: "desc" },
+            { runOutsTotal: "desc" },
+          ],
+          take: 12,
+          select: {
+            matchesPlayed: true,
+            catchesTotal: true,
+            stumpingsTotal: true,
+            runOutsTotal: true,
+            fantasyPlayer: {
+              select: {
+                displayName: true,
+                photoUrl: true,
+                team: { select: { shortCode: true } },
+              },
+            },
+          },
+        }),
+      ]);
 
     return {
-      matchId: match.id,
-      status: match.status,
-      matchResult: match.matchResult,
-      cricApiStatus: match.cricApiStatus,
-      cricApiScore:
-        (match.cricApiScore as GetMatchScoreResponseDto["cricApiScore"]) ??
-        null,
-      lastSyncedAt: match.cricApiLastSyncedAt?.toISOString() ?? null,
-      isStale: Boolean(match.cricApiLastSyncedAt) && ageMs > staleThresholdMs,
+      seasonId,
+      standings: this.createIplSeriesStandingsPayload(standings ?? null),
+      batting: battingRows.map((row) => ({
+        playerName: row.fantasyPlayer.displayName,
+        playerPhotoUrl: row.fantasyPlayer.photoUrl,
+        teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+        matches: row.matchesPlayed,
+        runs: row.runsTotal,
+        average:
+          row.matchesPlayed > 0
+            ? Math.round((row.runsTotal / row.matchesPlayed) * 10) / 10
+            : 0,
+        strikeRate:
+          row.ballsFacedTotal > 0
+            ? Math.round((row.runsTotal / row.ballsFacedTotal) * 1000) / 10
+            : 0,
+        fours: row.foursTotal,
+        sixes: row.sixesTotal,
+        highScore: row.highScore,
+      })),
+      bowling: bowlingRows.map((row) => ({
+        playerName: row.fantasyPlayer.displayName,
+        playerPhotoUrl: row.fantasyPlayer.photoUrl,
+        teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+        matches: row.matchesPlayed,
+        wickets: row.wicketsTotal,
+        average:
+          row.wicketsTotal > 0
+            ? Math.round((row.runsConcededTotal / row.wicketsTotal) * 10) / 10
+            : null,
+        strikeRate:
+          row.wicketsTotal > 0
+            ? Math.round((row.ballsBowledTotal / row.wicketsTotal) * 10) / 10
+            : null,
+        economy:
+          row.ballsBowledTotal > 0
+            ? Math.round(
+                (row.runsConcededTotal / (row.ballsBowledTotal / 6)) * 100,
+              ) / 100
+            : null,
+        maidens: row.maidensTotal,
+        best:
+          row.bestBowlingWickets > 0
+            ? `${row.bestBowlingWickets}/${row.bestBowlingRuns}`
+            : "-",
+      })),
+      fielding: fieldingRows
+        .map((row) => ({
+          playerName: row.fantasyPlayer.displayName,
+          playerPhotoUrl: row.fantasyPlayer.photoUrl,
+          teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+          matches: row.matchesPlayed,
+          catches: row.catchesTotal,
+          stumpings: row.stumpingsTotal,
+          runOuts: row.runOutsTotal,
+          dismissals: row.catchesTotal + row.stumpingsTotal + row.runOutsTotal,
+        }))
+        .sort((a, b) => b.dismissals - a.dismissals || b.catches - a.catches),
     };
+  }
+
+  async getMatchById(matchId: string) {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      include: { homeTeam: true, awayTeam: true },
+    });
+
+    if (!match) {
+      throw new NotFoundException(`No match found for id ${matchId}`);
+    }
+
+    if (match.status === MatchStatus.COMPLETED && match.wisdenScore) {
+      const derived = withDerivedMatchResult(
+        match.wisdenScore as WisdenScorecardResponse,
+      );
+      const resultText = derived.scorecard.match_result ?? null;
+      const shouldUpdateResultText =
+        resultText !== null && resultText !== match.matchResultText;
+      const shouldUpdateOutcome =
+        match.matchResult === MatchResult.PENDING &&
+        derived.outcome !== MatchResult.PENDING;
+      const shouldUpdateStatus = match.wisdenStatus === null;
+
+      if (shouldUpdateResultText || shouldUpdateOutcome || shouldUpdateStatus) {
+        return this.prisma.client.match.update({
+          where: { id: matchId },
+          data: {
+            ...(shouldUpdateResultText ? { matchResultText: resultText } : {}),
+            ...(shouldUpdateStatus
+              ? {
+                  wisdenStatus:
+                    match.wisdenStatus ??
+                    derived.scorecard.match_status ??
+                    "complete",
+                  wisdenLastSyncedAt: new Date(),
+                }
+              : {}),
+            ...(shouldUpdateOutcome ? { matchResult: derived.outcome } : {}),
+          },
+          include: { homeTeam: true, awayTeam: true },
+        });
+      }
+    }
+
+    return match;
   }
 
   async getSeasonMatches(
@@ -198,44 +294,16 @@ export class MatchService {
     }
   }
 
-  private deriveMatchResult(
-    matchWinner: string,
-    homeTeamName: string,
-    awayTeamName: string,
-    matchEnded: boolean,
-  ): MatchResult {
-    if (!matchEnded) {
-      return MatchResult.PENDING;
+  async getMatchByWisdenGid(wisdenMatchGid: string) {
+    const match = await this.prisma.client.match.findFirst({
+      where: { wisdenMatchGid },
+      include: { homeTeam: true, awayTeam: true },
+    });
+    if (!match) {
+      throw new NotFoundException(
+        `No match found for Wisden gid ${wisdenMatchGid}`,
+      );
     }
-
-    const winner = this.normalizeTeamName(matchWinner);
-    if (!winner) {
-      return MatchResult.PENDING;
-    }
-
-    if (winner.includes("abandon") || winner.includes("no result")) {
-      return MatchResult.ABANDONED;
-    }
-
-    const home = this.normalizeTeamName(homeTeamName);
-    const away = this.normalizeTeamName(awayTeamName);
-
-    if (winner.includes(home) || home.includes(winner)) {
-      return MatchResult.HOME_WIN;
-    }
-
-    if (winner.includes(away) || away.includes(winner)) {
-      return MatchResult.AWAY_WIN;
-    }
-
-    return MatchResult.PENDING;
-  }
-
-  private normalizeTeamName(name: string): string {
-    return (name || "")
-      .toLowerCase()
-      .replace(/[^a-z0-9 ]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+    return match;
   }
 }

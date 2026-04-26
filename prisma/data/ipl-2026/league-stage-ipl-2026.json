@@ -5,7 +5,8 @@
     "home": "RCB",
     "away": "SRH",
     "stadium": "M Chinnaswamy Stadium",
-    "venue": "Bengaluru"
+    "venue": "Bengaluru",
+    "wisdenMatchGid": "c4137317-1a7f-48ed-9d89-bebadd7925ee"
   },
   {
     "matchNo": 2,
@@ -13,7 +14,8 @@
     "home": "MI",
     "away": "KKR",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "8bc5d918-2b18-44ab-9c5c-6fdc60496699"
   },
   {
     "matchNo": 3,
@@ -21,7 +23,8 @@
     "home": "RR",
     "away": "CSK",
     "stadium": "Barsapara Stadium",
-    "venue": "Guwahati"
+    "venue": "Guwahati",
+    "wisdenMatchGid": "12cefbbc-20ba-4be9-8d6a-6c12625e025c"
   },
   {
     "matchNo": 4,
@@ -29,7 +32,8 @@
     "home": "PBKS",
     "away": "GT",
     "stadium": "IS Bindra Stadium",
-    "venue": "New Chandigarh"
+    "venue": "New Chandigarh",
+    "wisdenMatchGid": "ac99f892-ee29-4b65-a47c-cc355e8615b3"
   },
   {
     "matchNo": 5,
@@ -37,7 +41,8 @@
     "home": "LSG",
     "away": "DC",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "c8446425-cd41-49c1-bf16-8bafe49df02a"
   },
   {
     "matchNo": 6,
@@ -45,7 +50,8 @@
     "home": "KKR",
     "away": "SRH",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "9bd89527-da1a-464c-b8d4-5368b49ae5b8"
   },
   {
     "matchNo": 7,
@@ -53,7 +59,8 @@
     "home": "CSK",
     "away": "PBKS",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "9cdb7483-d3f8-4120-a9bc-37c779f6878f"
   },
   {
     "matchNo": 8,
@@ -61,7 +68,8 @@
     "home": "DC",
     "away": "MI",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "469419e3-fbdc-4003-8bce-e2b706c82138"
   },
   {
     "matchNo": 9,
@@ -69,7 +77,8 @@
     "home": "GT",
     "away": "RR",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "e41c7c5e-67f4-4793-9975-0bc1e3f86f5f"
   },
   {
     "matchNo": 10,
@@ -77,16 +86,17 @@
     "home": "SRH",
     "away": "LSG",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "123be63d-6a9e-4f47-8264-2195208c9355"
   },
-
   {
     "matchNo": 11,
     "date": "2026-04-05T19:30:00+05:30",
     "home": "RCB",
     "away": "CSK",
     "stadium": "M Chinnaswamy Stadium",
-    "venue": "Bengaluru"
+    "venue": "Bengaluru",
+    "wisdenMatchGid": "dbc4fcf6-909d-4829-a550-e682c0e36135"
   },
   {
     "matchNo": 12,
@@ -94,7 +104,8 @@
     "home": "KKR",
     "away": "PBKS",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "e7171c19-1858-4b72-81f7-da0bfe408fed"
   },
   {
     "matchNo": 13,
@@ -102,7 +113,8 @@
     "home": "RR",
     "away": "MI",
     "stadium": "Barsapara Stadium",
-    "venue": "Guwahati"
+    "venue": "Guwahati",
+    "wisdenMatchGid": "ff35ae9d-2a74-4dea-94fa-793d45d09347"
   },
   {
     "matchNo": 14,
@@ -110,7 +122,8 @@
     "home": "DC",
     "away": "GT",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "affb5c13-c1e9-465a-8426-b55dc43fa845"
   },
   {
     "matchNo": 15,
@@ -118,7 +131,8 @@
     "home": "KKR",
     "away": "LSG",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "05c30bef-aa39-41c1-9e88-7f3753101fd6"
   },
   {
     "matchNo": 16,
@@ -126,7 +140,8 @@
     "home": "RR",
     "away": "RCB",
     "stadium": "Barsapara Stadium",
-    "venue": "Guwahati"
+    "venue": "Guwahati",
+    "wisdenMatchGid": "457288f8-44ee-417a-8051-90d96fe4b33f"
   },
   {
     "matchNo": 17,
@@ -134,7 +149,8 @@
     "home": "PBKS",
     "away": "SRH",
     "stadium": "IS Bindra Stadium",
-    "venue": "New Chandigarh"
+    "venue": "New Chandigarh",
+    "wisdenMatchGid": "0b43f3d6-21d8-4069-95ac-84964fcbf28d"
   },
   {
     "matchNo": 18,
@@ -142,7 +158,8 @@
     "home": "CSK",
     "away": "DC",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "85946b61-a9ee-46fa-8061-bc03219a0198"
   },
   {
     "matchNo": 19,
@@ -150,7 +167,8 @@
     "home": "LSG",
     "away": "GT",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "1f66bd51-db6c-4271-acde-deb004740049"
   },
   {
     "matchNo": 20,
@@ -158,16 +176,17 @@
     "home": "MI",
     "away": "RCB",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "f37d5c96-bf47-4b11-9e75-1605120a895f"
   },
-
   {
     "matchNo": 21,
     "date": "2026-04-13T19:30:00+05:30",
     "home": "SRH",
     "away": "RR",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "39794075-7866-4ce7-b807-3eb8d6d57dc1"
   },
   {
     "matchNo": 22,
@@ -175,7 +194,8 @@
     "home": "CSK",
     "away": "KKR",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "2298dd77-c48e-4eb7-8a4e-1c91700cef7b"
   },
   {
     "matchNo": 23,
@@ -183,7 +203,8 @@
     "home": "RCB",
     "away": "LSG",
     "stadium": "M Chinnaswamy Stadium",
-    "venue": "Bengaluru"
+    "venue": "Bengaluru",
+    "wisdenMatchGid": "966fe077-7c97-4ff2-91bc-bde47ac7c572"
   },
   {
     "matchNo": 24,
@@ -191,7 +212,8 @@
     "home": "MI",
     "away": "PBKS",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "3722ea10-a216-4d3e-9da1-f6fdd84836a5"
   },
   {
     "matchNo": 25,
@@ -199,7 +221,8 @@
     "home": "GT",
     "away": "KKR",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "b0b422f7-1514-45ae-9842-1d4ea499832b"
   },
   {
     "matchNo": 26,
@@ -207,7 +230,8 @@
     "home": "RCB",
     "away": "DC",
     "stadium": "M Chinnaswamy Stadium",
-    "venue": "Bengaluru"
+    "venue": "Bengaluru",
+    "wisdenMatchGid": "af628868-01ec-4666-b94c-593ffc1d9780"
   },
   {
     "matchNo": 27,
@@ -215,7 +239,8 @@
     "home": "SRH",
     "away": "CSK",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "312c7680-1b8f-45e0-988c-70bcdc093a26"
   },
   {
     "matchNo": 28,
@@ -223,7 +248,8 @@
     "home": "KKR",
     "away": "RR",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "f15fb1ea-a9b8-4735-8b34-674530f5b9e3"
   },
   {
     "matchNo": 29,
@@ -231,7 +257,8 @@
     "home": "PBKS",
     "away": "LSG",
     "stadium": "IS Bindra Stadium",
-    "venue": "New Chandigarh"
+    "venue": "New Chandigarh",
+    "wisdenMatchGid": "2a0b9553-8e5d-4863-80c7-80e4755a0ec8"
   },
   {
     "matchNo": 30,
@@ -239,16 +266,17 @@
     "home": "GT",
     "away": "MI",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "841e8ee9-de0e-4e5d-b0f1-8503ce5a9d31"
   },
-
   {
     "matchNo": 31,
     "date": "2026-04-21T19:30:00+05:30",
     "home": "SRH",
     "away": "DC",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "98161fe2-4f6d-46e4-acf9-95fde1fbbdc2"
   },
   {
     "matchNo": 32,
@@ -256,7 +284,8 @@
     "home": "LSG",
     "away": "RR",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "2627327c-758a-4c96-a379-e6f4ce6a5ec7"
   },
   {
     "matchNo": 33,
@@ -264,7 +293,8 @@
     "home": "MI",
     "away": "CSK",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "3bf1659e-2a36-4c1b-a667-36cfe36c3e1e"
   },
   {
     "matchNo": 34,
@@ -272,7 +302,8 @@
     "home": "RCB",
     "away": "GT",
     "stadium": "M Chinnaswamy Stadium",
-    "venue": "Bengaluru"
+    "venue": "Bengaluru",
+    "wisdenMatchGid": "8b5f0cd6-7b54-477f-bdaa-e56871ca0dd9"
   },
   {
     "matchNo": 35,
@@ -280,7 +311,8 @@
     "home": "DC",
     "away": "PBKS",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "698fa044-fc1f-4e50-8d48-0f02c3c7112f"
   },
   {
     "matchNo": 36,
@@ -288,7 +320,8 @@
     "home": "RR",
     "away": "SRH",
     "stadium": "Sawai Mansingh Stadium",
-    "venue": "Jaipur"
+    "venue": "Jaipur",
+    "wisdenMatchGid": "08912b31-2b32-4d43-aee7-c8dcae561a11"
   },
   {
     "matchNo": 37,
@@ -296,7 +329,8 @@
     "home": "GT",
     "away": "CSK",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "b9870d82-97d9-4cd4-99c7-b46f6f255c5b"
   },
   {
     "matchNo": 38,
@@ -304,7 +338,8 @@
     "home": "LSG",
     "away": "KKR",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "ad981643-438a-4f84-946d-e7beeea2f3eb"
   },
   {
     "matchNo": 39,
@@ -312,7 +347,8 @@
     "home": "DC",
     "away": "RCB",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "36d2b823-4a29-42b4-adcf-1f16480e11d7"
   },
   {
     "matchNo": 40,
@@ -320,7 +356,8 @@
     "home": "PBKS",
     "away": "RR",
     "stadium": "IS Bindra Stadium",
-    "venue": "New Chandigarh"
+    "venue": "New Chandigarh",
+    "wisdenMatchGid": "cc445499-8dbd-4d6f-a486-471c341f4116"
   },
   {
     "matchNo": 41,
@@ -328,7 +365,8 @@
     "home": "MI",
     "away": "SRH",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "4a24dbd1-e67f-40db-be9d-82e896edc0ab"
   },
   {
     "matchNo": 42,
@@ -336,7 +374,8 @@
     "home": "GT",
     "away": "RCB",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "56a48878-4308-4e3a-bf6d-4acbebd36103"
   },
   {
     "matchNo": 43,
@@ -344,7 +383,8 @@
     "home": "RR",
     "away": "DC",
     "stadium": "Sawai Mansingh Stadium",
-    "venue": "Jaipur"
+    "venue": "Jaipur",
+    "wisdenMatchGid": "8fb3901c-74d4-4e7d-ae06-4d56cb5e9e1e"
   },
   {
     "matchNo": 44,
@@ -352,7 +392,8 @@
     "home": "CSK",
     "away": "MI",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "b3f0454c-8870-4d01-a75b-3c400374875b"
   },
   {
     "matchNo": 45,
@@ -360,16 +401,17 @@
     "home": "SRH",
     "away": "KKR",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "218920f5-0986-4377-b824-7795a9cad457"
   },
-
   {
     "matchNo": 46,
     "date": "2026-05-03T19:30:00+05:30",
     "home": "GT",
     "away": "PBKS",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "c8efb4d1-68f5-4827-b98d-297f01e088e5"
   },
   {
     "matchNo": 47,
@@ -377,7 +419,8 @@
     "home": "MI",
     "away": "LSG",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "015dced8-14b3-496a-8ff7-3d1f3cb99815"
   },
   {
     "matchNo": 48,
@@ -385,7 +428,8 @@
     "home": "DC",
     "away": "CSK",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "53221952-4912-4ba8-a8c9-7db069aef132"
   },
   {
     "matchNo": 49,
@@ -393,7 +437,8 @@
     "home": "SRH",
     "away": "PBKS",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "00ab3f97-0184-41c3-94a3-cc867cd7d772"
   },
   {
     "matchNo": 50,
@@ -401,7 +446,8 @@
     "home": "LSG",
     "away": "RCB",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "fad46a8a-29dc-40bf-bc09-bbe753af7118"
   },
   {
     "matchNo": 51,
@@ -409,7 +455,8 @@
     "home": "DC",
     "away": "KKR",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "d180378e-a7e7-40e7-a5ef-fedf0f95fbd1"
   },
   {
     "matchNo": 52,
@@ -417,7 +464,8 @@
     "home": "RR",
     "away": "GT",
     "stadium": "Sawai Mansingh Stadium",
-    "venue": "Jaipur"
+    "venue": "Jaipur",
+    "wisdenMatchGid": "b5ed0abb-f4e0-42f7-89c7-1292436e6272"
   },
   {
     "matchNo": 53,
@@ -425,7 +473,8 @@
     "home": "CSK",
     "away": "LSG",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "4554fd45-3a60-4e5c-8a26-d67244ecec3f"
   },
   {
     "matchNo": 54,
@@ -433,7 +482,8 @@
     "home": "RCB",
     "away": "MI",
     "stadium": "Shaheed Veer Narayan Singh Stadium",
-    "venue": "Raipur"
+    "venue": "Raipur",
+    "wisdenMatchGid": "9e131f2f-d6ad-4978-ad21-f15025b149a5"
   },
   {
     "matchNo": 55,
@@ -441,16 +491,17 @@
     "home": "PBKS",
     "away": "DC",
     "stadium": "HPCA Stadium",
-    "venue": "Dharamshala"
+    "venue": "Dharamshala",
+    "wisdenMatchGid": "c01c865e-93fa-4a46-a9fc-96ff906431b5"
   },
-
   {
     "matchNo": 56,
     "date": "2026-05-12T19:30:00+05:30",
     "home": "GT",
     "away": "SRH",
     "stadium": "Narendra Modi Stadium",
-    "venue": "Ahmedabad"
+    "venue": "Ahmedabad",
+    "wisdenMatchGid": "2a2edbde-9bdd-43c6-a886-c0c0432104ac"
   },
   {
     "matchNo": 57,
@@ -458,7 +509,8 @@
     "home": "RCB",
     "away": "KKR",
     "stadium": "Shaheed Veer Narayan Singh Stadium",
-    "venue": "Raipur"
+    "venue": "Raipur",
+    "wisdenMatchGid": "157147e2-43e1-4e52-b99a-ef4ecc130794"
   },
   {
     "matchNo": 58,
@@ -466,7 +518,8 @@
     "home": "PBKS",
     "away": "MI",
     "stadium": "HPCA Stadium",
-    "venue": "Dharamshala"
+    "venue": "Dharamshala",
+    "wisdenMatchGid": "10e8f8e5-9cde-4c14-b790-972d7d70794c"
   },
   {
     "matchNo": 59,
@@ -474,7 +527,8 @@
     "home": "LSG",
     "away": "CSK",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "2fab66ad-aed6-49aa-90a0-299067c22ac5"
   },
   {
     "matchNo": 60,
@@ -482,7 +536,8 @@
     "home": "KKR",
     "away": "GT",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "dfec94ad-9b8d-4951-82b7-c611db494112"
   },
   {
     "matchNo": 61,
@@ -490,7 +545,8 @@
     "home": "PBKS",
     "away": "RCB",
     "stadium": "HPCA Stadium",
-    "venue": "Dharamshala"
+    "venue": "Dharamshala",
+    "wisdenMatchGid": "8cce967d-7c12-4f59-b261-7e3d05ac4b3f"
   },
   {
     "matchNo": 62,
@@ -498,7 +554,8 @@
     "home": "DC",
     "away": "RR",
     "stadium": "Arun Jaitley Stadium",
-    "venue": "Delhi"
+    "venue": "Delhi",
+    "wisdenMatchGid": "3a1f7f6f-47ac-488f-af6a-f3badba158b8"
   },
   {
     "matchNo": 63,
@@ -506,7 +563,8 @@
     "home": "CSK",
     "away": "SRH",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "5a58e786-6caf-4ab1-8c37-fd7dcac32237"
   },
   {
     "matchNo": 64,
@@ -514,7 +572,8 @@
     "home": "RR",
     "away": "LSG",
     "stadium": "Sawai Mansingh Stadium",
-    "venue": "Jaipur"
+    "venue": "Jaipur",
+    "wisdenMatchGid": "8310864b-56aa-4d40-97a2-ffc035119848"
   },
   {
     "matchNo": 65,
@@ -522,16 +581,17 @@
     "home": "KKR",
     "away": "MI",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "e80c0df7-7105-473d-ba46-1c9ffe398918"
   },
-
   {
     "matchNo": 66,
     "date": "2026-05-21T19:30:00+05:30",
     "home": "CSK",
     "away": "GT",
     "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai"
+    "venue": "Chennai",
+    "wisdenMatchGid": "b862c40e-5873-406c-9158-8dc824e2e0e6"
   },
   {
     "matchNo": 67,
@@ -539,7 +599,8 @@
     "home": "SRH",
     "away": "RCB",
     "stadium": "Rajiv Gandhi Stadium",
-    "venue": "Hyderabad"
+    "venue": "Hyderabad",
+    "wisdenMatchGid": "7f01eaad-d7d0-4f72-bdf8-15dd27dbd349"
   },
   {
     "matchNo": 68,
@@ -547,7 +608,8 @@
     "home": "LSG",
     "away": "PBKS",
     "stadium": "Ekana Stadium",
-    "venue": "Lucknow"
+    "venue": "Lucknow",
+    "wisdenMatchGid": "179c6be2-f054-4fbc-95f0-2ab0be1e9d07"
   },
   {
     "matchNo": 69,
@@ -555,7 +617,8 @@
     "home": "MI",
     "away": "RR",
     "stadium": "Wankhede Stadium",
-    "venue": "Mumbai"
+    "venue": "Mumbai",
+    "wisdenMatchGid": "e84565a5-4651-474c-b58c-fbbeb9bf1644"
   },
   {
     "matchNo": 70,
@@ -563,6 +626,7 @@
     "home": "KKR",
     "away": "DC",
     "stadium": "Eden Gardens",
-    "venue": "Kolkata"
+    "venue": "Kolkata",
+    "wisdenMatchGid": "b44c6bed-941c-4cb9-a68b-cda79f6f247c"
   }
 ]

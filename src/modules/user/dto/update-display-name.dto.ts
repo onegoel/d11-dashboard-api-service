@@ -1,6 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import {
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from "class-validator";
 
 export class UpdateDisplayNameDto {
   @ApiProperty({
@@ -9,9 +15,7 @@ export class UpdateDisplayNameDto {
     minLength: 1,
     maxLength: 80,
   })
-  @Transform(({ value }) =>
-    typeof value === "string" ? value.trim() : value,
-  )
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   @IsString()
   @MinLength(1)
   @MaxLength(80)
@@ -20,7 +24,8 @@ export class UpdateDisplayNameDto {
   @ApiProperty({
     required: false,
     example: "https://lh3.googleusercontent.com/a/default-user=s96-c",
-    description: "Optional profile photo URL override (must be a hosted https URL)",
+    description:
+      "Optional profile photo URL override (must be a hosted https URL)",
   })
   @IsOptional()
   @IsString()
