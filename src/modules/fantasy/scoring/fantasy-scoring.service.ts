@@ -1339,7 +1339,10 @@ export class FantasyScoringService {
 
     this.logger.log(
       markCompleted
-        ? `[AUDIT] recomputeContestEntries FINALIZED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length} top3=${entryTotals.slice(0, 3).map((e) => `${e.id.slice(0, 8)}:${e.totalPoints}pts`).join(",")}`
+        ? `[AUDIT] recomputeContestEntries FINALIZED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length} top3=${entryTotals
+            .slice(0, 3)
+            .map((e) => `${e.id.slice(0, 8)}:${e.totalPoints}pts`)
+            .join(",")}`
         : `[AUDIT] recomputeContestEntries LIVE-UPDATED matchId=${matchId} contestId=${contest.id} entries=${entryTotals.length}`,
     );
     return entryTotals.length;
@@ -1519,7 +1522,9 @@ export class FantasyScoringService {
               .map(
                 (s) =>
                   `[su=${s.seasonUserId.slice(0, 8)} rank=${s.rank} eff=${s.effectiveScore} raw=${s.rawScore}${
-                    s.secondaryRawScore != null ? ` raw2=${s.secondaryRawScore}` : ""
+                    s.secondaryRawScore != null
+                      ? ` raw2=${s.secondaryRawScore}`
+                      : ""
                   }]`,
               )
               .join(" "),

@@ -76,14 +76,26 @@ export function deriveWisdenMatchResult(scorecard: WisdenScorecardResponse): {
       const superOverFirst = superOverInnings[superOverInnings.length - 2];
       const superOverSecond = superOverInnings[superOverInnings.length - 1];
       if (superOverFirst && superOverSecond) {
-        const superOverFirstRuns = toFiniteNumber(superOverFirst.runs ?? superOverFirst.score?.runs, 0);
-        const superOverSecondRuns = toFiniteNumber(superOverSecond.runs ?? superOverSecond.score?.runs, 0);
+        const superOverFirstRuns = toFiniteNumber(
+          superOverFirst.runs ?? superOverFirst.score?.runs,
+          0,
+        );
+        const superOverSecondRuns = toFiniteNumber(
+          superOverSecond.runs ?? superOverSecond.score?.runs,
+          0,
+        );
 
         let superOverWinnerId: number | null = null;
         if (superOverSecondRuns > superOverFirstRuns) {
-          superOverWinnerId = toFiniteNumber(superOverSecond.batting_team_id, NaN);
+          superOverWinnerId = toFiniteNumber(
+            superOverSecond.batting_team_id,
+            NaN,
+          );
         } else if (superOverFirstRuns > superOverSecondRuns) {
-          superOverWinnerId = toFiniteNumber(superOverFirst.batting_team_id, NaN);
+          superOverWinnerId = toFiniteNumber(
+            superOverFirst.batting_team_id,
+            NaN,
+          );
         }
 
         if (superOverWinnerId !== null) {
