@@ -98,12 +98,11 @@ function isWicket(scoring: string): boolean {
 function buildEmptyInnings(
   innings_number: number,
   batting_team_id: number | null,
-  batting_team_name?: string,
+  batting_team_name: string | undefined,
 ): InningsScoringBreakdown {
-  return {
+  const base: InningsScoringBreakdown = {
     innings_number,
     batting_team_id,
-    batting_team_name,
     powerPlay: emptyPhase(),
     middleOvers: emptyPhase(),
     finalOvers: emptyPhase(),
@@ -117,6 +116,8 @@ function buildEmptyInnings(
     totalRuns: 0,
     totalWickets: 0,
   };
+  if (batting_team_name !== undefined) base.batting_team_name = batting_team_name;
+  return base;
 }
 
 function applyScorecardTotals(
@@ -208,9 +209,9 @@ export function computeScoringBreakdown(
     );
 
     if (out.batting_team_id != null) {
-      if (out.batting_team_id === scorecard?.team1?.id)
+      if (out.batting_team_id === scorecard?.team1?.id && team1Short !== undefined)
         out.batting_team_short = team1Short;
-      else if (out.batting_team_id === scorecard?.team2?.id)
+      else if (out.batting_team_id === scorecard?.team2?.id && team2Short !== undefined)
         out.batting_team_short = team2Short;
     }
 
@@ -222,22 +223,20 @@ export function computeScoringBreakdown(
     return out;
   });
 
-  return {
-    match_status: scorecard?.match_status,
-    team1: scorecard?.team1
-      ? {
-          id: scorecard.team1.id,
-          name: scorecard.team1.name,
-          abbreviation: scorecard.team1.abbreviation,
-        }
-      : undefined,
-    team2: scorecard?.team2
-      ? {
-          id: scorecard.team2.id,
-          name: scorecard.team2.name,
-          abbreviation: scorecard.team2.abbreviation,
-        }
-      : undefined,
-    innings: result,
-  };
+  const response: ScoringBreakdownResponse = { innings: result };
+  if (scorecard?.match_status !== undefined)
+    response.match_status = scorecard.match_status;
+  if (scorecard?.team1) {
+    const t = scorecard.team1;
+    response.team1 = { id: t.id };
+    if (t.name !== undefined) response.team1.name = t.name;
+    if (t.abbreviation !== undefined) response.team1.abbreviation = t.abbreviation;
+  }
+  if (scorecard?.team2) {
+    const t = scorecard.team2;
+    response.team2 = { id: t.id };
+    if (t.name !== undefined) response.team2.name = t.name;
+    if (t.abbreviation !== undefined) response.team2.abbreviation = t.abbreviation;
+  }
+  return response;
 }
