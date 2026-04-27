@@ -3,6 +3,7 @@ import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { LiveScoreService } from "./live-score.service.js";
 import { FantasyScoringService } from "../fantasy/scoring/fantasy-scoring.service.js";
+import { FantasySquadsService } from "../fantasy/squads/fantasy-squads.service.js";
 import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
 import { withDerivedMatchResult } from "./wisden-match-result.util.js";
 import type {
@@ -74,6 +75,7 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
     private readonly liveScoreService: LiveScoreService,
     private readonly prisma: PrismaService,
     private readonly scoringService: FantasyScoringService,
+    private readonly squadsService: FantasySquadsService,
   ) {}
 
   async onModuleInit() {
@@ -363,6 +365,18 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
         this.logger.warn(
           `[${matchId}] Fantasy scoring failed (non-fatal): ${String(scoringErr)}`,
         );
+      }
+
+      if (match.wisdenMatchGid) {
+        try {
+          await this.squadsService.enrichPlayersFromPitchmap(
+            match.wisdenMatchGid,
+          );
+        } catch (enrichErr) {
+          this.logger.warn(
+            `[${matchId}] Player profile enrich failed (non-fatal): ${String(enrichErr)}`,
+          );
+        }
       }
     } catch (err) {
       this.logger.error(

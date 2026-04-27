@@ -37,17 +37,17 @@ export class FantasySquadsController {
     return this.squads.getMatchSquad(matchId);
   }
 
-  @Post("ingest")
+  @Post("sync-players")
   @HttpCode(200)
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiOperation({
-    summary: "Ingest Wisden squads from committed JSON",
+    summary: "Sync fantasy players from Wisden squads API",
     description:
-      "Upserts fantasy player catalog from prisma/data/wisden/squads.json.",
+      "Fetches the live Wisden squads endpoint and inserts only players that do not yet exist. Existing players are never overwritten.",
   })
-  @ApiResponse({ status: 200, description: "Wisden squads ingest result" })
-  ingestWisdenSquads() {
-    return this.squads.ingestWisdenSquadsFromFile();
+  @ApiResponse({ status: 200, description: "Wisden squads sync result" })
+  syncPlayers() {
+    return this.squads.syncPlayersFromWisdenApi();
   }
 }

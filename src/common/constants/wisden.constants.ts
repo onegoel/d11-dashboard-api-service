@@ -61,4 +61,6 @@ export const WISDEN_ENDPOINTS = {
     `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/pitchmap`,
   standings: (compId = WISDEN_COMP_ID) =>
     `https://epr.ellipsedata.com/redirect/1/comp/${compId}/table`,
+  squads: (compId = WISDEN_COMP_ID) =>
+    `https://epr.ellipsedata.com/redirect/1/comp/${compId}/squads`,
 } as const;

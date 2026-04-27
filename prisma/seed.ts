@@ -5,7 +5,6 @@ import { seedTeams } from "./seeders/teams.seed.js";
 import { seedSeason } from "./seeders/seasons.seed.js";
 import { seedSeasonUsers } from "./seeders/seasonUsers.seed.js";
 import { seedFixtures } from "./seeders/matches.seed.js";
-import { seedSquads } from "./seeders/squads.seed.js";
 import { seedChipTypes } from "./seeders/chips.seed.js";
 import { seedScores } from "./seeders/scores.seed.js";
 
@@ -21,7 +20,6 @@ async function main() {
   await seedChipTypes(prisma);
   const season = await seedSeason(prisma);
   await seedFixtures(prisma, season.id, enableTestUnlock);
-  await seedSquads(prisma);
 
   if (!isProd) {
     // Dev/test data only

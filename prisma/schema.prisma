@@ -330,6 +330,7 @@ model FantasyPlayer {
   contestPicks      FantasyEntryPlayer[]
   scores            FantasyPlayerScore[]
   seasonStats       FantasyPlayerSeasonStats[]
+  matchStats        FantasyPlayerMatchStats[]
 
   @@index([teamId])
   @@index([teamWisdenId])
@@ -499,6 +500,8 @@ model FantasyPlayerMatchStats {
   bowlingImpact    Float? @default(0)
 
   played          Boolean @default(false)
+
+  fantasyPlayer FantasyPlayer @relation(fields: [fantasyPlayerId], references: [id])
 
   @@id([fantasyPlayerId, matchId])
   @@index([matchId])

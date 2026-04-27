@@ -21,6 +21,7 @@ import type {
   WisdenTableResponse,
   WisdenWagonWheelResponse,
   WisdenPitchmapResponse,
+  WisdenSquadsResponse,
 } from "../../common/types/wisden.types.js";
 
 const execFileAsync = promisify(execFile);
@@ -92,6 +93,13 @@ export class WisdenService {
     return this.getJson<WisdenPitchmapResponse>(
       WISDEN_ENDPOINTS.pitchmap(matchGid),
       `pitchmap:${matchGid}`,
+    );
+  }
+
+  async getSquads(compId = WISDEN_COMP_ID): Promise<WisdenSquadsResponse> {
+    return this.getJson<WisdenSquadsResponse>(
+      WISDEN_ENDPOINTS.squads(compId),
+      `squads:${compId}`,
     );
   }
 

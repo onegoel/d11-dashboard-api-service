@@ -13,6 +13,19 @@ export type WisdenTableTeam = {
   no_result: number;
 };
 
+export type WisdenTableCompetitionNotes = {
+  order?: string[];
+  points?: string[];
+};
+
+export type WisdenTableTeamStat = {
+  match_gid: string | null;
+  match_id: number | null;
+  team_name: string;
+  title: string;
+  value: string;
+};
+
 export type WisdenTableResponse = {
   comp_gid: string;
   comp_id: number;
@@ -22,6 +35,8 @@ export type WisdenTableResponse = {
     group_name: string;
     team: WisdenTableTeam[];
   }>;
+  competition_notes?: WisdenTableCompetitionNotes;
+  team_stats?: WisdenTableTeamStat[];
 };
 
 export type WisdenScorecardTeamPlayer = {
@@ -186,4 +201,25 @@ export type WisdenPitchmapPlayer = {
 export type WisdenPitchmapResponse = {
   teams: Array<{ id: number; players: WisdenPitchmapPlayer[] }>;
   tracking_data: unknown[];
+};
+
+// Player entry from /comp/{id}/squads response
+export type WisdenSquadsPlayer = {
+  batting_hand: string | null;
+  bowling_hand: string | null;
+  is_keeper: number;
+  player_id: number;
+  player_image: string | null;
+  photo_url?: string | null;
+  player_known_as: string;
+  player_name: string;
+  player_role: string;
+};
+
+export type WisdenSquadsResponse = {
+  teams: Array<{
+    team_id: number;
+    team_name: string;
+    players: WisdenSquadsPlayer[];
+  }>;
 };

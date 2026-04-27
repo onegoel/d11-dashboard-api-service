@@ -442,44 +442,6 @@ export class LiveScoreService {
     return { processed, errors };
   }
 
-  async backfillPlayerProfiles(): Promise<{
-    processed: number;
-    errors: number;
-  }> {
-    const matches = await this.prisma.client.match.findMany({
-      where: {
-        status: MatchStatus.COMPLETED,
-        wisdenMatchGid: { not: null },
-      },
-      orderBy: { matchDate: "asc" },
-      select: { id: true, wisdenMatchGid: true },
-    });
-
-    let processed = 0;
-    let errors = 0;
-
-    for (const match of matches) {
-      try {
-        await this.squadsService.enrichPlayersFromPitchmap(
-          match.wisdenMatchGid!,
-        );
-        processed++;
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        this.logger.error(
-          `backfillPlayerProfiles failed for matchId=${match.id}: ${msg}`,
-        );
-        errors++;
-      }
-      await new Promise((r) => setTimeout(r, 300));
-    }
-
-    this.logger.log(
-      `backfillPlayerProfiles complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
-    );
-    return { processed, errors };
-  }
-
   async pollAndCacheWisdenMatch(matchGid: string): Promise<{
     scorecard: WisdenScorecardResponse | null;
     commentary: WisdenCommentaryResponse | null;
