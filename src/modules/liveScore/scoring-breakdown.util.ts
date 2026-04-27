@@ -116,7 +116,8 @@ function buildEmptyInnings(
     totalRuns: 0,
     totalWickets: 0,
   };
-  if (batting_team_name !== undefined) base.batting_team_name = batting_team_name;
+  if (batting_team_name !== undefined)
+    base.batting_team_name = batting_team_name;
   return base;
 }
 
@@ -209,9 +210,15 @@ export function computeScoringBreakdown(
     );
 
     if (out.batting_team_id != null) {
-      if (out.batting_team_id === scorecard?.team1?.id && team1Short !== undefined)
+      if (
+        out.batting_team_id === scorecard?.team1?.id &&
+        team1Short !== undefined
+      )
         out.batting_team_short = team1Short;
-      else if (out.batting_team_id === scorecard?.team2?.id && team2Short !== undefined)
+      else if (
+        out.batting_team_id === scorecard?.team2?.id &&
+        team2Short !== undefined
+      )
         out.batting_team_short = team2Short;
     }
 
@@ -230,13 +237,15 @@ export function computeScoringBreakdown(
     const t = scorecard.team1;
     response.team1 = { id: t.id };
     if (t.name !== undefined) response.team1.name = t.name;
-    if (t.abbreviation !== undefined) response.team1.abbreviation = t.abbreviation;
+    if (t.abbreviation !== undefined)
+      response.team1.abbreviation = t.abbreviation;
   }
   if (scorecard?.team2) {
     const t = scorecard.team2;
     response.team2 = { id: t.id };
     if (t.name !== undefined) response.team2.name = t.name;
-    if (t.abbreviation !== undefined) response.team2.abbreviation = t.abbreviation;
+    if (t.abbreviation !== undefined)
+      response.team2.abbreviation = t.abbreviation;
   }
   return response;
 }

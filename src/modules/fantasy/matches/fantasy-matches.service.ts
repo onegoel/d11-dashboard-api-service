@@ -11,6 +11,7 @@ import {
   MatchStatus,
 } from "../../../../generated/prisma/client.js";
 import { PrismaService } from "../../../common/database/prisma.service.js";
+import { ChipService } from "../../chip/chip.service.js";
 import { FantasyLineupService } from "../lineup/fantasy-lineup.service.js";
 import { FantasySquadsService } from "../squads/fantasy-squads.service.js";
 import type {
@@ -55,6 +56,7 @@ export class FantasyMatchesService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly chipService: ChipService,
     private readonly squads: FantasySquadsService,
     private readonly lineup: FantasyLineupService,
   ) {}
@@ -971,7 +973,7 @@ export class FantasyMatchesService {
   async getLeaderboard(matchId: string) {
     const match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
-      select: { id: true, matchDate: true },
+      select: { id: true, matchDate: true, seasonId: true },
     });
 
     if (!match) throw new NotFoundException(`Match ${matchId} not found`);
@@ -1005,21 +1007,37 @@ export class FantasyMatchesService {
     // chip status advances beyond SCHEDULED.
     const chipByUserId = new Map<number, string>();
     const entriesWithNullChip = entries.filter((e) => !e.chipCode);
-    if (entriesWithNullChip.length > 0) {
+    if (entriesWithNullChip.length > 0 && match.seasonId != null) {
       const userIds = entriesWithNullChip.map((e) => e.userId);
-      const chipPlays = await this.prisma.client.chipPlay.findMany({
+      const seasonUsers = await this.prisma.client.seasonUser.findMany({
         where: {
-          status: { not: ChipPlayStatus.CANCELLED },
-          startMatchId: matchId,
-          seasonUser: { userId: { in: userIds } },
+          seasonId: match.seasonId,
+          userId: { in: userIds },
         },
         select: {
-          seasonUser: { select: { userId: true } },
-          chipType: { select: { code: true } },
+          id: true,
+          userId: true,
         },
       });
-      for (const cp of chipPlays) {
-        chipByUserId.set(cp.seasonUser.userId, cp.chipType.code);
+
+      if (seasonUsers.length > 0) {
+        const seasonUserIdToUserId = new Map(
+          seasonUsers.map((seasonUser) => [seasonUser.id, seasonUser.userId]),
+        );
+        const activeAssignments =
+          await this.chipService.resolveActiveChipAssignmentsForMatchTx(
+            this.prisma.client,
+            match.seasonId,
+            matchId,
+            seasonUsers.map((seasonUser) => seasonUser.id),
+          );
+
+        for (const [seasonUserId, assignment] of activeAssignments) {
+          const userId = seasonUserIdToUserId.get(seasonUserId);
+          if (userId != null) {
+            chipByUserId.set(userId, assignment.chipCode);
+          }
+        }
       }
     }
 

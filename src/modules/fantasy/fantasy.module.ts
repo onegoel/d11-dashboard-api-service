@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module.js";
+import { ChipModule } from "../chip/chip.module.js";
 import { WisdenModule } from "../wisden/wisden.module.js";
 import { ScoreModule } from "../score/score.module.js";
 import { FantasyMatchesController } from "./matches/fantasy-matches.controller.js";
@@ -12,7 +13,7 @@ import { CustomScoringController } from "./customScoring/custom-scoring.controll
 import { CustomScoringService } from "./customScoring/custom-scoring.service.js";
 
 @Module({
-  imports: [AuthModule, WisdenModule, ScoreModule],
+  imports: [AuthModule, ChipModule, WisdenModule, ScoreModule],
   controllers: [
     FantasySquadsController,
     FantasyMatchesController,
