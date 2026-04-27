@@ -28,6 +28,11 @@ export class LiveScoreController {
     return this.liveScoreService.getWisdenCommentary(matchId);
   }
 
+  @Get("matches/:matchId/scoring-breakdown")
+  getScoringBreakdown(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.liveScoreService.getScoringBreakdown(matchId);
+  }
+
   @Post("backfill")
   @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)

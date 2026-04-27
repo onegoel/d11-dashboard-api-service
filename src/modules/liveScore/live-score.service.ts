@@ -12,6 +12,10 @@ import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
 import { FantasyScoringService } from "../fantasy/scoring/fantasy-scoring.service.js";
 import { FantasySquadsService } from "../fantasy/squads/fantasy-squads.service.js";
 import { withDerivedMatchResult } from "./wisden-match-result.util.js";
+import {
+  computeScoringBreakdown,
+  type ScoringBreakdownResponse,
+} from "./scoring-breakdown.util.js";
 
 interface CacheEntry {
   data: unknown;
@@ -256,6 +260,22 @@ export class LiveScoreService {
       }
       throw error;
     }
+  }
+
+  async getScoringBreakdown(
+    matchId: string,
+  ): Promise<ScoringBreakdownResponse | null> {
+    const [scorecard, commentary] = await Promise.all([
+      this.getWisdenScorecard(
+        matchId,
+      ) as Promise<WisdenScorecardResponse | null>,
+      this.getWisdenCommentary(
+        matchId,
+      ) as Promise<WisdenCommentaryResponse | null>,
+    ]);
+
+    if (!scorecard) return null;
+    return computeScoringBreakdown(scorecard, commentary);
   }
 
   async backfillHistoricalMatches(): Promise<{
