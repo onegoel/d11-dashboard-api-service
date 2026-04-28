@@ -111,7 +111,6 @@ export class RecordsService {
         this.prisma.client.fantasyPlayerSeasonStats.findMany({
           where: { seasonId, runsTotal: { gt: 0 } },
           orderBy: [{ runsTotal: "desc" }, { ballsFacedTotal: "asc" }],
-          take: 20,
           select: {
             matchesPlayed: true,
             runsTotal: true,
@@ -122,6 +121,9 @@ export class RecordsService {
             fantasyPlayer: {
               select: {
                 id: true,
+                firstName: true,
+                lastName: true,
+                shortName: true,
                 displayName: true,
                 photoUrl: true,
                 role: true,
@@ -144,7 +146,6 @@ export class RecordsService {
             { runsConcededTotal: "asc" },
             { ballsBowledTotal: "asc" },
           ],
-          take: 20,
           select: {
             matchesPlayed: true,
             wicketsTotal: true,
@@ -156,6 +157,9 @@ export class RecordsService {
             fantasyPlayer: {
               select: {
                 id: true,
+                firstName: true,
+                lastName: true,
+                shortName: true,
                 displayName: true,
                 photoUrl: true,
                 role: true,
@@ -182,7 +186,6 @@ export class RecordsService {
             { stumpingsTotal: "desc" },
             { runOutsTotal: "desc" },
           ],
-          take: 20,
           select: {
             matchesPlayed: true,
             catchesTotal: true,
@@ -190,6 +193,9 @@ export class RecordsService {
             runOutsTotal: true,
             fantasyPlayer: {
               select: {
+                firstName: true,
+                lastName: true,
+                shortName: true,
                 displayName: true,
                 photoUrl: true,
                 role: true,
@@ -204,6 +210,9 @@ export class RecordsService {
         this.prisma.client.$queryRaw<
           Array<{
             fantasyPlayerId: string;
+            firstName: string;
+            lastName: string;
+            shortName: string | null;
             displayName: string;
             photoUrl: string | null;
             shortCode: string | null;
@@ -238,6 +247,9 @@ export class RecordsService {
         >`
           SELECT
             fp.id                                    AS "fantasyPlayerId",
+            fp."firstName",
+            fp."lastName",
+            fp."shortName",
             fp."displayName",
             fp."photoUrl",
             fp.role::text                            AS "role",
@@ -278,11 +290,13 @@ export class RecordsService {
             AND s.played = true
             AND (COALESCE(s."battingImpact", 0) + COALESCE(s."bowlingImpact", 0)) > 0
           ORDER BY (COALESCE(s."battingImpact", 0) + COALESCE(s."bowlingImpact", 0)) DESC
-          LIMIT 50
         `,
         this.prisma.client.$queryRaw<
           Array<{
             fantasyPlayerId: string;
+            firstName: string;
+            lastName: string;
+            shortName: string | null;
             displayName: string;
             photoUrl: string | null;
             shortCode: string | null;
@@ -297,6 +311,9 @@ export class RecordsService {
         >`
           SELECT
             fp.id                                                          AS "fantasyPlayerId",
+            fp."firstName",
+            fp."lastName",
+            fp."shortName",
             fp."displayName",
             fp."photoUrl",
             fp.role::text                                                  AS "role",
@@ -314,10 +331,9 @@ export class RecordsService {
           WHERE m."seasonId" = ${seasonId}
             AND s.played = true
             AND (COALESCE(s."battingImpact", 0) + COALESCE(s."bowlingImpact", 0)) <> 0
-          GROUP BY fp.id, fp."displayName", fp."photoUrl", fp.role, fp."battingHand", fp."bowlingStyle", fp."bowlingTechnique", t."shortCode"
+          GROUP BY fp.id, fp."firstName", fp."lastName", fp."shortName", fp."displayName", fp."photoUrl", fp.role, fp."battingHand", fp."bowlingStyle", fp."bowlingTechnique", t."shortCode"
           HAVING (SUM(COALESCE(s."battingImpact", 0)) + SUM(COALESCE(s."bowlingImpact", 0))) > 0
           ORDER BY (SUM(COALESCE(s."battingImpact", 0)) + SUM(COALESCE(s."bowlingImpact", 0))) DESC
-          LIMIT 50
         `,
       ]);
 
@@ -410,6 +426,10 @@ export class RecordsService {
     );
 
     const mapBatting = (row: (typeof battingRows)[number]) => ({
+      firstName: row.fantasyPlayer.firstName,
+      lastName: row.fantasyPlayer.lastName,
+      shortName: row.fantasyPlayer.shortName ?? null,
+      displayName: row.fantasyPlayer.displayName,
       playerName: row.fantasyPlayer.displayName,
       playerPhotoUrl: row.fantasyPlayer.photoUrl,
       teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
@@ -434,6 +454,10 @@ export class RecordsService {
     });
 
     const mapBowling = (row: (typeof bowlingRows)[number]) => ({
+      firstName: row.fantasyPlayer.firstName,
+      lastName: row.fantasyPlayer.lastName,
+      shortName: row.fantasyPlayer.shortName ?? null,
+      displayName: row.fantasyPlayer.displayName,
       playerName: row.fantasyPlayer.displayName,
       playerPhotoUrl: row.fantasyPlayer.photoUrl,
       teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
@@ -467,6 +491,10 @@ export class RecordsService {
     });
 
     const mapFielding = (row: (typeof fieldingRows)[number]) => ({
+      firstName: row.fantasyPlayer.firstName,
+      lastName: row.fantasyPlayer.lastName,
+      shortName: row.fantasyPlayer.shortName ?? null,
+      displayName: row.fantasyPlayer.displayName,
       playerName: row.fantasyPlayer.displayName,
       playerPhotoUrl: row.fantasyPlayer.photoUrl,
       teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
@@ -488,6 +516,10 @@ export class RecordsService {
       .sort((a, b) => b.dismissals - a.dismissals || b.catches - a.catches);
 
     const mapMvp = (row: (typeof mvpRaw)[number]) => ({
+      firstName: row.firstName,
+      lastName: row.lastName,
+      shortName: row.shortName,
+      displayName: row.displayName,
       playerName: row.displayName,
       playerPhotoUrl: row.photoUrl,
       teamShortCode: row.shortCode,
@@ -506,6 +538,10 @@ export class RecordsService {
     const mvp = mvpRaw.map(mapMvp);
 
     const mapPerformance = (row: (typeof perfRaw)[number]) => ({
+      firstName: row.firstName,
+      lastName: row.lastName,
+      shortName: row.shortName,
+      displayName: row.displayName,
       playerName: row.displayName,
       playerPhotoUrl: row.photoUrl,
       teamShortCode: row.shortCode,
@@ -546,12 +582,12 @@ export class RecordsService {
 
     // Derive leaderboard leaders for the preview cards
     const byStrikeRate = [...batting]
-      .filter((p) => p.matches >= 3)
+      .filter((p) => p.matches >= 1)
       .sort((a, b) => b.strikeRate - a.strikeRate);
     const byHighScore = [...batting].sort((a, b) => b.highScore - a.highScore);
 
     const byEconomy = [...bowling]
-      .filter((p) => p.economy !== null && p.matches >= 2)
+      .filter((p) => p.economy !== null && p.matches >= 1)
       .sort((a, b) => (a.economy ?? Infinity) - (b.economy ?? Infinity));
     const bowlingByStrikeRate = [...bowling]
       .filter((p) => p.strikeRate !== null && p.wickets > 0)

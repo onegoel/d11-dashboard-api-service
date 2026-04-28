@@ -5,6 +5,9 @@ import type {
   WisdenScorecardResponse,
   WisdenScorecardBattingEntry,
   WisdenScorecardBowlingEntry,
+  WisdenWinVizResponse,
+  WisdenManhattanResponse,
+  WisdenWagonWheelResponse,
 } from "../../common/types/wisden.types.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { WisdenService } from "../wisden/wisden.service.js";
@@ -31,6 +34,9 @@ export class LiveScoreService {
 
   private readonly scorecardCache = new Map<string, CacheEntry>();
   private readonly commentaryCache = new Map<string, CacheEntry>();
+  private readonly winvizCache = new Map<string, CacheEntry>();
+  private readonly manhattanCache = new Map<string, CacheEntry>();
+  private readonly wagonCache = new Map<string, CacheEntry>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -276,6 +282,78 @@ export class LiveScoreService {
 
     if (!scorecard) return null;
     return computeScoringBreakdown(scorecard, commentary);
+  }
+
+  async getWinViz(matchId: string): Promise<WisdenWinVizResponse | null> {
+    return this.fetchWisdenAuxiliary<WisdenWinVizResponse>({
+      matchId,
+      cache: this.winvizCache,
+      keyPrefix: "wisden:winviz",
+      label: "winviz",
+      fetcher: (gid) => this.wisden.getWinVizHistory(gid),
+    });
+  }
+
+  async getManhattan(matchId: string): Promise<WisdenManhattanResponse | null> {
+    return this.fetchWisdenAuxiliary<WisdenManhattanResponse>({
+      matchId,
+      cache: this.manhattanCache,
+      keyPrefix: "wisden:manhattan",
+      label: "manhattan",
+      fetcher: (gid) => this.wisden.getManhattan(gid),
+    });
+  }
+
+  async getWagonWheel(
+    matchId: string,
+  ): Promise<WisdenWagonWheelResponse | null> {
+    return this.fetchWisdenAuxiliary<WisdenWagonWheelResponse>({
+      matchId,
+      cache: this.wagonCache,
+      keyPrefix: "wisden:wagon",
+      label: "wagon",
+      fetcher: (gid) => this.wisden.getWagonWheel(gid),
+    });
+  }
+
+  private async fetchWisdenAuxiliary<T>({
+    matchId,
+    cache,
+    keyPrefix,
+    label,
+    fetcher,
+  }: {
+    matchId: string;
+    cache: Map<string, CacheEntry>;
+    keyPrefix: string;
+    label: string;
+    fetcher: (matchGid: string) => Promise<T>;
+  }): Promise<T | null> {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: { wisdenMatchGid: true },
+    });
+    const wisdenMatchGid = match?.wisdenMatchGid ?? null;
+    if (!wisdenMatchGid) return null;
+
+    const key = `${keyPrefix}:${wisdenMatchGid}`;
+    const cached = this.getIfFresh(cache, key);
+    if (cached !== undefined) return cached as T;
+
+    const stale = this.getAny(cache, key);
+    try {
+      const data = await fetcher(wisdenMatchGid);
+      this.setCache(cache, key, data);
+      return data;
+    } catch (error) {
+      if (stale !== undefined && this.isThrottleOrUpstreamUnavailable(error)) {
+        this.logger.warn(
+          `Serving stale ${label} cache for ${wisdenMatchGid} due to upstream throttle/unavailability`,
+        );
+        return stale as T;
+      }
+      throw error;
+    }
   }
 
   async backfillHistoricalMatches(): Promise<{

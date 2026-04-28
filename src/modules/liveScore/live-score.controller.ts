@@ -33,6 +33,21 @@ export class LiveScoreController {
     return this.liveScoreService.getScoringBreakdown(matchId);
   }
 
+  @Get("matches/:matchId/winviz")
+  getWinViz(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.liveScoreService.getWinViz(matchId);
+  }
+
+  @Get("matches/:matchId/manhattan")
+  getManhattan(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.liveScoreService.getManhattan(matchId);
+  }
+
+  @Get("matches/:matchId/wagon")
+  getWagonWheel(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.liveScoreService.getWagonWheel(matchId);
+  }
+
   @Post("backfill")
   @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)

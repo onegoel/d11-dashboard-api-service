@@ -9,9 +9,109 @@ type GetSeasonMatchesOptions = {
   status?: MatchStatus;
 };
 
+type MatchPotmByImpact = {
+  fantasyPlayerId: string;
+  displayName: string;
+  shortName: string | null;
+  playerPhotoUrl: string | null;
+  teamShortCode: string | null;
+  totalImpact: number;
+  battingImpact: number;
+  bowlingImpact: number;
+};
+
 @Injectable()
 export class MatchService {
   constructor(private readonly prisma: PrismaService) {}
+
+  private async attachPotmByImpact<T extends { id: string }>(
+    matches: T[],
+  ): Promise<Array<T & { potmByImpact: MatchPotmByImpact | null }>> {
+    const potmByMatchId = await this.getPotmByImpactForMatches(
+      matches.map((match) => match.id),
+    );
+
+    return matches.map((match) => ({
+      ...match,
+      potmByImpact: potmByMatchId.get(match.id) ?? null,
+    }));
+  }
+
+  private async getPotmByImpactForMatches(
+    matchIds: string[],
+  ): Promise<Map<string, MatchPotmByImpact>> {
+    if (matchIds.length === 0) return new Map();
+
+    const impactRows =
+      await this.prisma.client.fantasyPlayerMatchStats.findMany({
+        where: {
+          matchId: { in: matchIds },
+          played: true,
+        },
+        select: {
+          matchId: true,
+          fantasyPlayerId: true,
+          battingImpact: true,
+          bowlingImpact: true,
+          fantasyPlayer: {
+            select: {
+              displayName: true,
+              shortName: true,
+              photoUrl: true,
+              team: {
+                select: {
+                  shortCode: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+    const byMatch = new Map<string, MatchPotmByImpact>();
+
+    for (const row of impactRows) {
+      const battingImpact = row.battingImpact ?? 0;
+      const bowlingImpact = row.bowlingImpact ?? 0;
+      const totalImpact = battingImpact + bowlingImpact;
+      if (totalImpact <= 0) continue;
+
+      const candidate: MatchPotmByImpact = {
+        fantasyPlayerId: row.fantasyPlayerId,
+        displayName: row.fantasyPlayer.displayName,
+        shortName: row.fantasyPlayer.shortName,
+        playerPhotoUrl: row.fantasyPlayer.photoUrl,
+        teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+        totalImpact,
+        battingImpact,
+        bowlingImpact,
+      };
+
+      const current = byMatch.get(row.matchId);
+      if (!current) {
+        byMatch.set(row.matchId, candidate);
+        continue;
+      }
+
+      const isBetter =
+        candidate.totalImpact > current.totalImpact ||
+        (candidate.totalImpact === current.totalImpact &&
+          candidate.battingImpact > current.battingImpact) ||
+        (candidate.totalImpact === current.totalImpact &&
+          candidate.battingImpact === current.battingImpact &&
+          candidate.bowlingImpact > current.bowlingImpact) ||
+        (candidate.totalImpact === current.totalImpact &&
+          candidate.battingImpact === current.battingImpact &&
+          candidate.bowlingImpact === current.bowlingImpact &&
+          candidate.displayName.localeCompare(current.displayName) < 0);
+
+      if (isBetter) {
+        byMatch.set(row.matchId, candidate);
+      }
+    }
+
+    return byMatch;
+  }
 
   async getMatchById(matchId: string) {
     const match = await this.prisma.client.match.findUnique({
@@ -36,7 +136,7 @@ export class MatchService {
       const shouldUpdateStatus = match.wisdenStatus === null;
 
       if (shouldUpdateResultText || shouldUpdateOutcome || shouldUpdateStatus) {
-        return this.prisma.client.match.update({
+        const updatedMatch = await this.prisma.client.match.update({
           where: { id: matchId },
           data: {
             ...(shouldUpdateResultText ? { matchResultText: resultText } : {}),
@@ -53,17 +153,20 @@ export class MatchService {
           },
           include: { homeTeam: true, awayTeam: true },
         });
+        const [withPotm] = await this.attachPotmByImpact([updatedMatch]);
+        return withPotm;
       }
     }
 
-    return match;
+    const [withPotm] = await this.attachPotmByImpact([match]);
+    return withPotm;
   }
 
   async getSeasonMatches(
     seasonId: number,
     options: GetSeasonMatchesOptions = {},
   ) {
-    return this.prisma.client.match.findMany({
+    const matches = await this.prisma.client.match.findMany({
       where: {
         seasonId,
         ...(options.status ? { status: options.status } : {}),
@@ -80,6 +183,8 @@ export class MatchService {
         },
       },
     });
+
+    return this.attachPotmByImpact(matches);
   }
 
   async updateMatchStatus(matchId: string, status: MatchStatus) {

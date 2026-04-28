@@ -59,6 +59,10 @@ export const WISDEN_ENDPOINTS = {
     `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/wagon`,
   pitchmap: (matchGid: string) =>
     `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/pitchmap`,
+  winvizHistory: (matchGid: string) =>
+    `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/winviz_history`,
+  manhattan: (matchGid: string) =>
+    `https://epr.ellipsedata.com/redirect/1/match/${matchGid}/manhattan`,
   standings: (compId = WISDEN_COMP_ID) =>
     `https://epr.ellipsedata.com/redirect/1/comp/${compId}/table`,
   squads: (compId = WISDEN_COMP_ID) =>
