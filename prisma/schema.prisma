@@ -486,6 +486,10 @@ model FantasyPlayerMatchStats {
   runsConceded    Int @default(0)
   maidens         Int @default(0)
   dotBalls        Int @default(0)
+  // Sum of wickets taken via LBW or bowled. Persisted so the Scoring Lab
+  // (and any future re-scoring path that doesn't have the live Wisden
+  // commentary) can apply the lbw_bowled_bonus.
+  lbwOrBowledWickets Int @default(0)
 
   // fielding
   catches         Int @default(0)

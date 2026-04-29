@@ -6,8 +6,6 @@
  * engine in fantasy-scoring.service.ts#computePoints.
  *
  * Differences vs. production scoring:
- *   - lbw_bowled_bonus is NOT computed — we don't persist lbw/bowled splits
- *     in FantasyPlayerMatchStats. The field is ignored from the config.
  *   - runOutAssist is used as the combined (thrower + catcher) count.
  *   - duck_penalty is approximated as `runs === 0 && ballsFaced > 0` (we
  *     don't persist gotOut; this is a close approximation — misses not-out-
@@ -38,7 +36,7 @@ export type FantasyPointSystem = {
     dot_ball_bonus: number;
     wicket_bonus: number;
     maiden_over_bonus: number;
-    lbw_bowled_bonus: number; // ignored in sandbox (no data stored)
+    lbw_bowled_bonus: number;
     three_wicket_haul_bonus: number;
     four_wicket_haul_bonus: number;
     five_wicket_haul_bonus: number;
@@ -76,6 +74,7 @@ export interface StoredPlayerMatchStats {
   runsConceded: number;
   maidens: number;
   dotBalls: number;
+  lbwOrBowledWickets: number;
   catches: number;
   stumpings: number;
   runOutDirect: number;
@@ -128,11 +127,15 @@ export function computeCustomPoints(
 
   // Bowling
   add("wickets", s.wickets * cfg.bowling.wicket_bonus);
+  add("lbwBowledBonus", s.lbwOrBowledWickets * cfg.bowling.lbw_bowled_bonus);
   add("maidenOverBonus", s.maidens * cfg.bowling.maiden_over_bonus);
   add("dotBallBonus", s.dotBalls * cfg.bowling.dot_ball_bonus);
-  if (s.wickets >= 5) add("fiveWicketHaulBonus", cfg.bowling.five_wicket_haul_bonus);
-  else if (s.wickets >= 4) add("fourWicketHaulBonus", cfg.bowling.four_wicket_haul_bonus);
-  else if (s.wickets >= 3) add("threeWicketHaulBonus", cfg.bowling.three_wicket_haul_bonus);
+  if (s.wickets >= 5)
+    add("fiveWicketHaulBonus", cfg.bowling.five_wicket_haul_bonus);
+  else if (s.wickets >= 4)
+    add("fourWicketHaulBonus", cfg.bowling.four_wicket_haul_bonus);
+  else if (s.wickets >= 3)
+    add("threeWicketHaulBonus", cfg.bowling.three_wicket_haul_bonus);
 
   if (s.ballsBowled >= 12) {
     const econ = (s.runsConceded * 6) / s.ballsBowled;

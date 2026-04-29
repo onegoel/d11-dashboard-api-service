@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { FANTASY_T20_POINT_SYSTEM } from "../../../common/constants/fantasy-point-rule.constants.js";
 import {
@@ -27,10 +31,16 @@ export class CustomScoringService {
         throw new BadRequestException(`config.${k} is required`);
       }
     }
-    if (!cfg.batting?.strike_rate || typeof cfg.batting.strike_rate !== "object") {
+    if (
+      !cfg.batting?.strike_rate ||
+      typeof cfg.batting.strike_rate !== "object"
+    ) {
       throw new BadRequestException("config.batting.strike_rate is required");
     }
-    if (!cfg.bowling?.economy_rate || typeof cfg.bowling.economy_rate !== "object") {
+    if (
+      !cfg.bowling?.economy_rate ||
+      typeof cfg.bowling.economy_rate !== "object"
+    ) {
       throw new BadRequestException("config.bowling.economy_rate is required");
     }
     // Deeper shape matches runtime duck-typing; wrong numbers just produce 0.
@@ -51,7 +61,11 @@ export class CustomScoringService {
         createdById: userId,
         config: config as unknown as object,
       },
-      include: { createdBy: { select: { id: true, display_name: true, user_name: true } } },
+      include: {
+        createdBy: {
+          select: { id: true, display_name: true, user_name: true },
+        },
+      },
     });
   }
 
@@ -59,24 +73,36 @@ export class CustomScoringService {
     return this.prisma.client.customScoringSystem.findMany({
       where: { isActive: true },
       orderBy: { createdAt: "desc" },
-      include: { createdBy: { select: { id: true, display_name: true, user_name: true } } },
+      include: {
+        createdBy: {
+          select: { id: true, display_name: true, user_name: true },
+        },
+      },
     });
   }
 
   async getById(id: string) {
     const system = await this.prisma.client.customScoringSystem.findUnique({
       where: { id },
-      include: { createdBy: { select: { id: true, display_name: true, user_name: true } } },
+      include: {
+        createdBy: {
+          select: { id: true, display_name: true, user_name: true },
+        },
+      },
     });
     if (!system) throw new NotFoundException("Scoring system not found");
     return system;
   }
 
   async update(id: string, userId: number, dto: UpdateCustomScoringSystemDto) {
-    const existing = await this.prisma.client.customScoringSystem.findUnique({ where: { id } });
+    const existing = await this.prisma.client.customScoringSystem.findUnique({
+      where: { id },
+    });
     if (!existing) throw new NotFoundException("Scoring system not found");
     if (existing.createdById !== userId) {
-      throw new BadRequestException("Only the creator can edit this scoring system");
+      throw new BadRequestException(
+        "Only the creator can edit this scoring system",
+      );
     }
     const data: {
       name?: string;
@@ -86,21 +112,30 @@ export class CustomScoringService {
     } = {};
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.description !== undefined) data.description = dto.description;
-    if (dto.config !== undefined) data.config = this.validateConfig(dto.config) as unknown as object;
+    if (dto.config !== undefined)
+      data.config = this.validateConfig(dto.config) as unknown as object;
     if (dto.isActive !== undefined) data.isActive = dto.isActive;
 
     return this.prisma.client.customScoringSystem.update({
       where: { id },
       data,
-      include: { createdBy: { select: { id: true, display_name: true, user_name: true } } },
+      include: {
+        createdBy: {
+          select: { id: true, display_name: true, user_name: true },
+        },
+      },
     });
   }
 
   async delete(id: string, userId: number) {
-    const existing = await this.prisma.client.customScoringSystem.findUnique({ where: { id } });
+    const existing = await this.prisma.client.customScoringSystem.findUnique({
+      where: { id },
+    });
     if (!existing) throw new NotFoundException("Scoring system not found");
     if (existing.createdById !== userId) {
-      throw new BadRequestException("Only the creator can delete this scoring system");
+      throw new BadRequestException(
+        "Only the creator can delete this scoring system",
+      );
     }
     // Soft delete — keep for audit, just mark inactive.
     return this.prisma.client.customScoringSystem.update({
@@ -179,6 +214,7 @@ export class CustomScoringService {
           runsConceded: true,
           maidens: true,
           dotBalls: true,
+          lbwOrBowledWickets: true,
           catches: true,
           stumpings: true,
           runOutDirect: true,

@@ -277,7 +277,9 @@ function accumulateWisdenCommentary(
       const caught = dismissalStr.match(/^c\s+(.+?)\s+b\s+(.+)$/i);
       const stumped = dismissalStr.match(/^st\s+(.+?)\s+b\s+(.+)$/i);
       const runOut = dismissalStr.match(/^run out\s*\(([^)]+)\)$/i);
-      const lbw = dismissalStr.match(/^lbw\s+b\s+(.+)$/i);
+      // Wisden uses "lbw <bowler>" (without an explicit "b" between), but
+      // we tolerate the cricket-convention "lbw b <bowler>" form too.
+      const lbw = dismissalStr.match(/^lbw\s+(?:b\s+)?(.+)$/i);
       const bowled = dismissalStr.match(/^b\s+(.+)$/i);
 
       if (caught?.[1] && caught?.[2]) {
@@ -479,7 +481,8 @@ function computePoints(
     add("duckPenalty", FANTASY_T20_POINT_SYSTEM.batting.duck_penalty);
   }
 
-  if (s.batted && s.ballsFaced >= 10) {
+  // Strike-rate eligibility per My11Circle: minimum 20 runs OR 10 balls.
+  if (s.batted && (s.ballsFaced >= 10 || s.runs >= 20)) {
     const strikeRate = (s.runs * 100) / s.ballsFaced;
     if (strikeRate < 50) {
       add(
@@ -901,6 +904,7 @@ export class FantasyScoringService {
         runsConceded: stats.runsConceded,
         maidens: stats.maidens,
         dotBalls: stats.dotBalls,
+        lbwOrBowledWickets: stats.lbwWickets + stats.bowledWickets,
         catches: stats.catches,
         stumpings: stats.stumpings,
         runOutDirect: stats.runOutDirect,
