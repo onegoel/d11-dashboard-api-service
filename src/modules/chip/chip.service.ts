@@ -735,6 +735,7 @@ const getSeasonPowerupsOverview = async (
 
       return {
         seasonUserId: seasonUser.id,
+        userId: seasonUser.user.id,
         displayName: seasonUser.user.display_name,
         teamName: seasonUser.teamName,
         position,
