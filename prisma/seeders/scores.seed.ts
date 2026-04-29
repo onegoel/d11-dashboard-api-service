@@ -50,14 +50,23 @@ const PLAYER_ORDER = [
  * permutation starting at 1 (e.g. 8 players → ranks 1-8).
  *
  * Match winners (rank 1):
- *   M1:  ujju       M2:  suryo      M3:  sart_wars  M4:  ujju
- *   M5:  suryo      M6:  rohukannz  M7:  ujju        M8:  sart_wars
- *   M9:  ujju       M10: suryo      M11: goelball    M12: ujju
- *   M13: rohukannz  M14: suryo      M15: ujju
+ *   M1:  ujju       M2:  suryo      M3:  sart_wars       M4:  ujju
+ *   M5:  suryo      M6:  rohukannz  M7:  ujju             M8:  sart_wars
+ *   M9:  ujju       M10: suryo      M11: goelball_gorillas M12: ujju
+ *   M13: rohukannz  M14: suryo      M15: ujju             M16: baksy
+ *   M17: mayank     M18: gamechangerjassibhai             M19: suryo
+ *   M20: ujju       M21: sart_wars  M22: rohukannz        M23: suryo
+ *   M24: goelball_gorillas          M25: ujju             M26: bigrickenergy
+ *   M27: sart_wars  M28: suryo      M29: ujju             M30: rohukannz
+ *   M31: mayank     M32: suryo      M33: ujju             M34: sart_wars
+ *   M35: gamechangerjassibhai       M36: suryo            M37: ujju
+ *   M38: rohukannz  M39: sart_wars  M40: suryo            M41: ujju
  *
  * DNPs (null):
- *   M3:  baksy          M7:  goelball_gorillas
- *   M11: bigrickenergy  M14: baksy
+ *   M3:  baksy              M7:  goelball_gorillas
+ *   M11: bigrickenergy      M14: baksy
+ *   M23: bigrickenergy      M28: baksy
+ *   M33: gamechangerjassibhai       M40: mayank
  */
 const matchRanks: (number | null)[][] = [
   // M1  : ujju 1st, suryo 2nd, sart_wars 3rd
@@ -90,22 +99,74 @@ const matchRanks: (number | null)[][] = [
   [1, 2, 5, 6, 4, 7, 3, 8, null],
   // M15 : ujju 1st, suryo 2nd, sart_wars 3rd
   [2, 3, 6, 5, 4, 7, 1, 9, 8],
+  // M16 : baksy 1st, ujju 2nd, suryo 3rd
+  [3, 4, 5, 6, 7, 8, 2, 9, 1],
+  // M17 : mayank 1st, ujju 2nd, sart_wars 3rd
+  [3, 5, 6, 7, 4, 8, 2, 1, 9],
+  // M18 : gamechangerjassibhai 1st, ujju 2nd, suryo 3rd
+  [3, 4, 1, 6, 5, 7, 2, 8, 9],
+  // M19 : suryo 1st, ujju 2nd, rohukannz 3rd
+  [1, 4, 5, 6, 3, 7, 2, 8, 9],
+  // M20 : ujju 1st, suryo 2nd, rohukannz 3rd
+  [2, 4, 5, 6, 3, 7, 1, 8, 9],
+  // M21 : sart_wars 1st, ujju 2nd, suryo 3rd
+  [3, 1, 5, 6, 4, 7, 2, 8, 9],
+  // M22 : rohukannz 1st, ujju 2nd, suryo 3rd
+  [2, 4, 5, 6, 1, 7, 3, 8, 9],
+  // M23 : suryo 1st, ujju 2nd, rohukannz 3rd | bigrickenergy DNP
+  [1, 3, 5, 6, 4, null, 2, 7, 8],
+  // M24 : goelball_gorillas 1st, ujju 2nd, suryo 3rd
+  [3, 5, 6, 1, 4, 7, 2, 8, 9],
+  // M25 : ujju 1st, rohukannz 2nd, suryo 3rd
+  [3, 4, 5, 6, 2, 7, 1, 8, 9],
+  // M26 : bigrickenergy 1st, ujju 2nd, rohukannz 3rd
+  [3, 4, 5, 6, 2, 1, 7, 8, 9],
+  // M27 : sart_wars 1st, ujju 2nd, goelball_gorillas 3rd
+  [4, 1, 5, 3, 6, 7, 2, 8, 9],
+  // M28 : suryo 1st, ujju 2nd, sart_wars 3rd | baksy DNP
+  [1, 3, 5, 4, 6, 7, 2, 8, null],
+  // M29 : ujju 1st, goelball_gorillas 2nd, suryo 3rd
+  [3, 4, 5, 2, 6, 7, 1, 8, 9],
+  // M30 : rohukannz 1st, ujju 2nd, sart_wars 3rd
+  [3, 4, 5, 6, 1, 7, 2, 8, 9],
+  // M31 : mayank 1st, ujju 2nd, suryo 3rd
+  [3, 5, 6, 7, 4, 8, 2, 1, 9],
+  // M32 : suryo 1st, ujju 2nd, rohukannz 3rd
+  [1, 4, 5, 6, 3, 7, 2, 8, 9],
+  // M33 : ujju 1st, suryo 2nd, sart_wars 3rd | gamechangerjassibhai DNP
+  [2, 3, null, 5, 4, 6, 1, 7, 8],
+  // M34 : sart_wars 1st, ujju 2nd, suryo 3rd
+  [3, 1, 5, 4, 6, 7, 2, 8, 9],
+  // M35 : gamechangerjassibhai 1st, ujju 2nd, suryo 3rd
+  [4, 3, 1, 5, 6, 7, 2, 8, 9],
+  // M36 : suryo 1st, ujju 2nd, sart_wars 3rd
+  [1, 3, 5, 6, 4, 7, 2, 8, 9],
+  // M37 : ujju 1st, suryo 2nd, goelball_gorillas 3rd
+  [2, 4, 5, 3, 6, 7, 1, 8, 9],
+  // M38 : rohukannz 1st, suryo 2nd, sart_wars 3rd
+  [4, 3, 5, 6, 1, 7, 2, 8, 9],
+  // M39 : sart_wars 1st, ujju 2nd, goelball_gorillas 3rd
+  [4, 1, 5, 3, 6, 7, 2, 8, 9],
+  // M40 : suryo 1st, ujju 2nd, sart_wars 3rd | mayank DNP
+  [1, 3, 5, 4, 6, 7, 2, null, 8],
+  // M41 : ujju 1st, goelball_gorillas 2nd, suryo 3rd
+  [3, 4, 5, 2, 6, 7, 1, 8, 9],
 ];
 
 export async function seedScores(prisma: PrismaClient, seasonId: number) {
-  console.log("Seeding scores for matches 1-15...");
+  console.log("Seeding scores for matches 1-41...");
 
-  // Fetch the first 15 matches ordered by matchNo
+  // Fetch the first 41 matches ordered by matchNo
   const matches = await prisma.match.findMany({
     where: { seasonId },
     orderBy: { matchNo: "asc" },
-    take: 15,
+    take: 41,
     select: { id: true, matchNo: true },
   });
 
-  if (matches.length < 15) {
+  if (matches.length < 41) {
     console.warn(
-      `Expected 15 matches but found ${matches.length}. ` +
+      `Expected 41 matches but found ${matches.length}. ` +
         "Seeding scores only for available matches.",
     );
   }

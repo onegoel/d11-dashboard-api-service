@@ -27,6 +27,35 @@ enum MatchResult {
   PENDING
 }
 
+enum MatchFormat {
+  T10
+  T20
+  ODI
+  TEST
+  OTHER
+}
+
+enum TournamentType {
+  BILATERAL
+  FRANCHISE_LEAGUE
+  TRI_SERIES
+  MULTI_NATION_TOURNAMENT
+  DOMESTIC_CUP
+  OTHER
+}
+
+enum TournamentStage {
+  LEAGUE
+  GROUP
+  SUPER_FOUR
+  SUPER_SIX
+  QUALIFIER
+  ELIMINATOR
+  SEMI_FINAL
+  FINAL
+  OTHER
+}
+
 enum ChipPlayStatus {
   SCHEDULED
   CANCELLED
@@ -117,13 +146,45 @@ model Team {
   shortCode String @unique
   wisdenTeamId String? @unique
 
+  // External/source mappings
+  cricbuzzTeamId String? @unique
+
+  // Branding
+  logoUrl String?
+  colorPrimary String?
+  colorSecondary String?
+  colorAccent String?
+
+  // Team profile
+  displayName String?
+  nickName String?
+  homeCity String?
+  stateOrRegion String?
+  country String?
+  foundedYear Int?
+  captainName String?
+  coachName String?
+  ownerName String?
+  aliases Json?
+  isActive Boolean @default(true)
+  displayOrder Int?
+
+  // Home ground
+  homeGroundId Int?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  homeGround Ground? @relation("HomeGround", fields: [homeGroundId], references: [id])
   homeMatches Match[] @relation("HomeTeam")
   awayMatches Match[] @relation("AwayTeam")
   chipPlaysTeamForm ChipPlay[] @relation("TeamFormSelection")
   fantasyPlayers FantasyPlayer[]
+
+  @@index([isActive])
+  @@index([country])
+  @@index([displayOrder])
+  @@index([homeGroundId])
 }
 
 model Match {
@@ -138,10 +199,23 @@ model Match {
   homeTeamId String
   awayTeamId String
   updatedByUserId Int?
+  groundId Int?
 
-  
   stadium String?
   venue String?
+
+  // Competition metadata for filtering/reporting
+  format MatchFormat?
+  tournamentType TournamentType?
+  tournamentStage TournamentStage?
+  tournamentName String?
+  tournamentShortName String?
+  stageLabel String? // e.g. "Match 52", "Qualifier 1", "Final"
+  groupName String? // e.g. "Group A"
+  roundNumber Int?
+  seriesName String?
+  seriesShortName String?
+  isKnockout Boolean @default(false)
 
   wisdenMatchGid String? @unique
 
@@ -155,6 +229,7 @@ model Match {
   updatedAt DateTime @updatedAt
 
   season Season? @relation(fields: [seasonId], references: [id])
+  ground Ground? @relation("GroundVenue", fields: [groundId], references: [id])
 
   homeTeam Team @relation("HomeTeam", fields: [homeTeamId], references: [id])
   awayTeam Team @relation("AwayTeam", fields: [awayTeamId], references: [id])
@@ -171,6 +246,10 @@ model Match {
   @@unique([seasonId, matchNo])
   @@index([seasonId])
   @@index([matchDate])
+  @@index([format])
+  @@index([tournamentType])
+  @@index([tournamentStage])
+  @@index([isKnockout])
   @@index([updatedByUserId])
   @@index([wisdenMatchGid])
 }
@@ -269,6 +348,46 @@ model PlayerPick {
   @@index([matchId])
 }
 
+model Ground {
+  id Int @id @default(autoincrement())
+  name String
+  city String
+  country String
+  region String? // state/province/region within country
+  knownAs String? // alternative names or common misspellings, comma-separated
+  
+  // Coordinates
+  latitude Float?
+  longitude Float?
+  altitudeMeters Int? // meters
+  
+  // Cricket-specific
+  capacity Int? // stadium capacity
+  establishedYear Int?
+  pitchType String? // e.g., "grass", "artificial", "mixed"
+  outfield String? // e.g., "grass", "artificial"
+  historicalTosses Int @default(0) // number of tosses at this ground in our dataset
+  cricbuzzGroundId Int? @unique
+  
+  // Operational
+  timezone String? // IANA timezone, e.g., "Asia/Kolkata"
+  hasFloodlights Boolean @default(false)
+  
+  // Notes
+  notableFeaturesJson Json? // { features: ["boundary_dimensions", "slope", ...] }
+  description String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  matches Match[] @relation("GroundVenue")
+  homeTeams Team[] @relation("HomeGround")
+
+  @@index([country])
+  @@index([cricbuzzGroundId])
+  @@index([region])
+}
+
 // ─── Fantasy (per-match DFS) ────────────────────────────────────────────────
 
 enum FantasyPlayerRole {
@@ -321,6 +440,8 @@ model FantasyPlayer {
   bowlingTechnique BowlingTechnique?
   isActive    Boolean @default(true)
   isStatsAvailable Boolean @default(false) // will be used to determine if we need to fetch player stats
+  isInjured Boolean? @default(false)
+  country String?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

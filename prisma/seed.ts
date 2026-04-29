@@ -2,6 +2,7 @@ import { prisma, pool } from "./client.js";
 
 import { seedUsers } from "./seeders/users.seed.js";
 import { seedTeams } from "./seeders/teams.seed.js";
+import { seedGrounds } from "./seeders/grounds.seed.js";
 import { seedSeason } from "./seeders/seasons.seed.js";
 import { seedSeasonUsers } from "./seeders/seasonUsers.seed.js";
 import { seedFixtures } from "./seeders/matches.seed.js";
@@ -12,14 +13,13 @@ async function main() {
   console.log("Seeding database...");
 
   const isProd = process.env.SEED_ENV === "production";
-  const enableTestUnlock =
-    process.env.SEED_ENABLE_TEST_UNLOCK === "true" && !isProd;
 
   // Reference data — safe for prod
+  await seedGrounds(prisma);
   await seedTeams(prisma);
   await seedChipTypes(prisma);
   const season = await seedSeason(prisma);
-  await seedFixtures(prisma, season.id, enableTestUnlock);
+  await seedFixtures(prisma, season.id);
 
   if (!isProd) {
     // Dev/test data only

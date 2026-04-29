@@ -1,4 +1,9 @@
-import { PrismaClient } from "../../generated/prisma/client.js";
+import {
+  MatchFormat,
+  PrismaClient,
+  TournamentStage,
+  TournamentType,
+} from "../../generated/prisma/client.js";
 import fixtures from "../data/ipl-2026/league-stage-ipl-2026.json" with { type: "json" };
 
 type Fixture = {
@@ -9,6 +14,11 @@ type Fixture = {
   stadium?: string;
   venue?: string;
   wisdenMatchGid?: string;
+  format?: string;
+  tournamentType?: string;
+  tournamentName?: string;
+  tournamentStage?: string;
+  cricbuzzGroundId?: number;
 };
 
 const unlockOneScheduledMatchForTesting = async (
@@ -89,34 +99,74 @@ export async function seedFixtures(
       );
     }
 
-    await prisma.match.upsert({
-      where: {
-        seasonId_matchNo: {
+    const ground = await prisma.ground.findFirst({
+      where: { cricbuzzGroundId: fixture.cricbuzzGroundId ?? undefined },
+      select: { id: true },
+    });
+
+    // await prisma.match.upsert({
+    //   where: {
+    //     seasonId_matchNo: {
+    //       seasonId,
+    //       matchNo: fixture.matchNo,
+    //     },
+    //   },
+    //   update: {
+    //     matchDate: new Date(fixture.date),
+    //     homeTeamId,
+    //     awayTeamId,
+    //     stadium: fixture.stadium,
+    //     venue: fixture.venue,
+    //     wisdenMatchGid: fixture.wisdenMatchGid,
+    //     format: MatchFormat.T20,
+    //     tournamentType: TournamentType.FRANCHISE_LEAGUE,
+    //     tournamentName: fixture.tournamentName,
+    //     tournamentStage: TournamentStage.LEAGUE,
+    //     groundId: ground ? ground.id : null,
+    //   },
+    //   create: {
+    //     seasonId,
+    //     matchNo: fixture.matchNo,
+    //     matchDate: new Date(fixture.date),
+    //     homeTeamId,
+    //     awayTeamId,
+    //     stadium: fixture.stadium,
+    //     venue: fixture.venue,
+    //     status: "SCHEDULED",
+    //     matchResult: "PENDING",
+    //     wisdenMatchGid: fixture.wisdenMatchGid,
+    //     format: MatchFormat.T20,
+    //     tournamentType: TournamentType.FRANCHISE_LEAGUE,
+    //     tournamentName: fixture.tournamentName,
+    //     tournamentStage: TournamentStage.LEAGUE,
+    //     groundId: ground ? ground.id : null,
+    //   },
+    // });
+
+    if (
+      !fixture.format ||
+      !fixture.tournamentType ||
+      !fixture.tournamentName ||
+      !fixture.tournamentStage
+    ) {
+      throw new Error(
+        `Missing tournament info in fixture ${fixture.matchNo}: format=${fixture.format}, tournamentType=${fixture.tournamentType}, tournamentName=${fixture.tournamentName}, tournamentStage=${fixture.tournamentStage}`,
+      );
+    } else {
+      await prisma.match.updateMany({
+        where: {
           seasonId,
           matchNo: fixture.matchNo,
         },
-      },
-      update: {
-        matchDate: new Date(fixture.date),
-        homeTeamId,
-        awayTeamId,
-        stadium: fixture.stadium,
-        venue: fixture.venue,
-        wisdenMatchGid: fixture.wisdenMatchGid,
-      },
-      create: {
-        seasonId,
-        matchNo: fixture.matchNo,
-        matchDate: new Date(fixture.date),
-        homeTeamId,
-        awayTeamId,
-        stadium: fixture.stadium,
-        venue: fixture.venue,
-        status: "SCHEDULED",
-        matchResult: "PENDING",
-        wisdenMatchGid: fixture.wisdenMatchGid,
-      },
-    });
+        data: {
+          format: MatchFormat.T20,
+          tournamentType: TournamentType.FRANCHISE_LEAGUE,
+          tournamentName: fixture.tournamentName,
+          tournamentStage: TournamentStage.LEAGUE,
+          groundId: ground ? ground.id : null,
+        },
+      });
+    }
   }
 
   if (enableTestUnlock) {
