@@ -201,9 +201,6 @@ model Match {
   updatedByUserId Int?
   groundId Int?
 
-  stadium String?
-  venue String?
-
   // Competition metadata for filtering/reporting
   format MatchFormat?
   tournamentType TournamentType?
@@ -216,6 +213,7 @@ model Match {
   seriesName String?
   seriesShortName String?
   isKnockout Boolean @default(false)
+  weatherForecast Json? // e.g. { temperatureC: 30, condition: "Sunny", windKph: 10 }
 
   wisdenMatchGid String? @unique
 
@@ -368,7 +366,6 @@ model Ground {
   outfield String? // e.g., "grass", "artificial"
   historicalTosses Int @default(0) // number of tosses at this ground in our dataset
   cricbuzzGroundId Int? @unique
-  
   // Operational
   timezone String? // IANA timezone, e.g., "Asia/Kolkata"
   hasFloodlights Boolean @default(false)

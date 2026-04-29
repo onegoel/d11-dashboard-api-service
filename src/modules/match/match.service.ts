@@ -20,6 +20,22 @@ type MatchPotmByImpact = {
   bowlingImpact: number;
 };
 
+const MATCH_INCLUDE = {
+  homeTeam: true,
+  awayTeam: true,
+  ground: true,
+} as const;
+
+const MATCH_WITH_AUDIT_INCLUDE = {
+  ...MATCH_INCLUDE,
+  updatedByUser: {
+    select: {
+      id: true,
+      display_name: true,
+    },
+  },
+} as const;
+
 @Injectable()
 export class MatchService {
   constructor(private readonly prisma: PrismaService) {}
@@ -116,7 +132,7 @@ export class MatchService {
   async getMatchById(matchId: string) {
     const match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
-      include: { homeTeam: true, awayTeam: true },
+      include: MATCH_INCLUDE,
     });
 
     if (!match) {
@@ -151,7 +167,7 @@ export class MatchService {
               : {}),
             ...(shouldUpdateOutcome ? { matchResult: derived.outcome } : {}),
           },
-          include: { homeTeam: true, awayTeam: true },
+          include: MATCH_INCLUDE,
         });
         const [withPotm] = await this.attachPotmByImpact([updatedMatch]);
         return withPotm;
@@ -172,16 +188,7 @@ export class MatchService {
         ...(options.status ? { status: options.status } : {}),
       },
       orderBy: { matchDate: "asc" },
-      include: {
-        homeTeam: true,
-        awayTeam: true,
-        updatedByUser: {
-          select: {
-            id: true,
-            display_name: true,
-          },
-        },
-      },
+      include: MATCH_WITH_AUDIT_INCLUDE,
     });
 
     return this.attachPotmByImpact(matches);
@@ -192,16 +199,7 @@ export class MatchService {
       return await this.prisma.client.match.update({
         where: { id: matchId },
         data: { status },
-        include: {
-          homeTeam: true,
-          awayTeam: true,
-          updatedByUser: {
-            select: {
-              id: true,
-              display_name: true,
-            },
-          },
-        },
+        include: MATCH_WITH_AUDIT_INCLUDE,
       });
     } catch (error) {
       if (isPrismaRecordNotFoundError(error)) {
@@ -215,7 +213,7 @@ export class MatchService {
   async getMatchByWisdenGid(wisdenMatchGid: string) {
     const match = await this.prisma.client.match.findFirst({
       where: { wisdenMatchGid },
-      include: { homeTeam: true, awayTeam: true },
+      include: MATCH_INCLUDE,
     });
     if (!match) {
       throw new NotFoundException(

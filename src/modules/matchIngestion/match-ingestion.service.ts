@@ -19,8 +19,6 @@ type FixtureSeed = {
   home: string;
   away: string;
   date: string;
-  stadium?: string;
-  venue?: string;
   wisdenMatchGid?: string;
 };
 
@@ -84,8 +82,6 @@ export class MatchIngestionService {
         where: { id: dbMatch.id },
         data: {
           wisdenMatchGid: fixture.wisdenMatchGid,
-          venue: dbMatch.venue ?? fixture.venue ?? null,
-          stadium: dbMatch.stadium ?? fixture.stadium ?? null,
         },
       });
 
