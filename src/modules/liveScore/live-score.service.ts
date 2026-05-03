@@ -1,4 +1,5 @@
 import { HttpException, Injectable, Logger } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
 import { AxiosError } from "axios";
 import type {
   WisdenCommentaryResponse,
@@ -27,6 +28,8 @@ interface CacheEntry {
 
 // TTL for on-demand cache hits; poller refreshes more frequently
 const ON_DEMAND_TTL_MS = 90_000;
+const IMPACT_RETRY_LOOKBACK_HOURS = 72;
+const IMPACT_RETRY_BATCH_SIZE = 25;
 
 @Injectable()
 export class LiveScoreService {
@@ -44,6 +47,14 @@ export class LiveScoreService {
     private readonly scoringService: FantasyScoringService,
     private readonly squadsService: FantasySquadsService,
   ) {}
+
+  @Cron("17 */6 * * *", { timeZone: "Asia/Kolkata" })
+  async scheduledDelayedImpactBackfill() {
+    await this.backfillDelayedImpactScores(
+      IMPACT_RETRY_LOOKBACK_HOURS,
+      IMPACT_RETRY_BATCH_SIZE,
+    );
+  }
 
   // ── Public read APIs ──────────────────────────────────────────────────────
 
@@ -496,6 +507,79 @@ export class LiveScoreService {
       `backfillMatchStats complete: processed=${processed}, errors=${errors}, total=${matches.length}`,
     );
     return { processed, errors };
+  }
+
+  async backfillDelayedImpactScores(
+    lookbackHours = IMPACT_RETRY_LOOKBACK_HOURS,
+    maxMatches = IMPACT_RETRY_BATCH_SIZE,
+  ): Promise<{
+    candidates: number;
+    processed: number;
+    skipped: number;
+    errors: number;
+  }> {
+    const now = new Date();
+    const lookbackFrom = new Date(
+      now.getTime() - lookbackHours * 60 * 60 * 1000,
+    );
+
+    const matches = await this.prisma.client.match.findMany({
+      where: {
+        status: MatchStatus.COMPLETED,
+        wisdenMatchGid: { not: null },
+        matchDate: { gte: lookbackFrom, lte: now },
+      },
+      orderBy: { matchDate: "asc" },
+      take: maxMatches,
+      select: { id: true, wisdenMatchGid: true, matchDate: true },
+    });
+
+    let processed = 0;
+    let skipped = 0;
+    let errors = 0;
+
+    for (const match of matches) {
+      const hasAnyImpact =
+        await this.prisma.client.fantasyPlayerMatchStats.findFirst({
+          where: {
+            matchId: match.id,
+            OR: [
+              { battingImpact: { not: null } },
+              { bowlingImpact: { not: null } },
+            ],
+          },
+          select: { fantasyPlayerId: true },
+        });
+
+      if (hasAnyImpact) {
+        skipped++;
+        continue;
+      }
+
+      try {
+        await this.scoringService.scoreMatchStatsOnly(match.id);
+        processed++;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `backfillDelayedImpactScores failed for matchId=${match.id}: ${msg}`,
+        );
+        errors++;
+      }
+
+      await new Promise((r) => setTimeout(r, 500));
+    }
+
+    this.logger.log(
+      `backfillDelayedImpactScores complete: candidates=${matches.length}, processed=${processed}, skipped=${skipped}, errors=${errors}, lookbackHours=${lookbackHours}`,
+    );
+
+    return {
+      candidates: matches.length,
+      processed,
+      skipped,
+      errors,
+    };
   }
 
   async backfillRecalculateFantasyPoints(): Promise<{

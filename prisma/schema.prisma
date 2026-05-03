@@ -420,6 +420,7 @@ enum BowlingTechnique {
 model FantasyPlayer {
   id          String @id @default(uuid())
   wisdenPlayerId String? @unique
+  iplFantasyId String? @unique
 
   firstName   String
   lastName    String

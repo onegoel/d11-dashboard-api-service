@@ -68,4 +68,11 @@ export class LiveScoreController {
   backfillRecalculateFantasyPoints() {
     return this.liveScoreService.backfillRecalculateFantasyPoints();
   }
+
+  @Post("backfill/delayed-impact")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  backfillDelayedImpactScores() {
+    return this.liveScoreService.backfillDelayedImpactScores();
+  }
 }

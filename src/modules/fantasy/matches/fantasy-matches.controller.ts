@@ -165,8 +165,10 @@ export class FantasyMatchesController {
   })
   @ApiParam({ name: "matchId", format: "uuid" })
   @ApiResponse({ status: 200, description: "Scored and ranked" })
-  scoreMatch(@Param("matchId", ParseUUIDPipe) matchId: string) {
-    return this.scoring.scoreMatch(matchId);
+  async scoreMatch(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    const result = await this.scoring.scoreMatch(matchId);
+    await this.service.syncUpcomingPoolsForTeamsFromMatch(matchId);
+    return result;
   }
 
   @Get("players/:fantasyPlayerId/season/:seasonId")

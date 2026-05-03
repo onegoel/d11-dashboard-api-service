@@ -891,6 +891,51 @@ export class FantasyMatchesService {
     return { success: true, matchId };
   }
 
+  async syncUpcomingPoolsForTeamsFromMatch(matchId: string) {
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: {
+        id: true,
+        matchDate: true,
+        homeTeamId: true,
+        awayTeamId: true,
+      },
+    });
+
+    if (!match) throw new NotFoundException(`Match ${matchId} not found`);
+
+    const upcomingMatches = await this.prisma.client.match.findMany({
+      where: {
+        status: { not: MatchStatus.COMPLETED },
+        matchDate: { gt: match.matchDate },
+        OR: [
+          { homeTeamId: { in: [match.homeTeamId, match.awayTeamId] } },
+          { awayTeamId: { in: [match.homeTeamId, match.awayTeamId] } },
+        ],
+      },
+      orderBy: { matchDate: "asc" },
+      select: { id: true },
+    });
+
+    let synced = 0;
+    for (const upcoming of upcomingMatches) {
+      try {
+        await this.squads.getMatchSquad(upcoming.id);
+        synced += 1;
+      } catch (err) {
+        this.logger.warn(
+          `Failed to auto-refresh upcoming pool matchId=${upcoming.id} from sourceMatch=${matchId}: ${String(err)}`,
+        );
+      }
+    }
+
+    this.logger.log(
+      `Auto-refreshed ${synced}/${upcomingMatches.length} upcoming pools after matchId=${matchId}`,
+    );
+
+    return { sourceMatchId: matchId, synced, totalUpcoming: upcomingMatches.length };
+  }
+
   async extendContestDeadline(matchId: string, extendByMinutes: number) {
     const match = await this.prisma.client.match.findUnique({
       where: { id: matchId },

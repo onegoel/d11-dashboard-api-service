@@ -317,6 +317,9 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
         where: { id: matchId },
         select: {
           id: true,
+          homeTeamId: true,
+          awayTeamId: true,
+          matchDate: true,
           wisdenMatchGid: true,
           matchResult: true,
           matchResultText: true,
@@ -361,6 +364,16 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
         this.logger.log(
           `[${matchId}] Fantasy scoring complete: scored=${result.scored} ranked=${result.ranked}`,
         );
+
+        // Keep upcoming pools fresh: once this match is completed/scored,
+        // refresh future matches involving either team so isLastMatchPlayed and
+        // related form flags are ready before users open the next picker.
+        await this.refreshUpcomingPoolsForCompletedTeams(
+          match.id,
+          match.matchDate,
+          match.homeTeamId,
+          match.awayTeamId,
+        );
       } catch (scoringErr) {
         this.logger.warn(
           `[${matchId}] Fantasy scoring failed (non-fatal): ${String(scoringErr)}`,
@@ -381,6 +394,56 @@ export class MatchPollerService implements OnModuleInit, OnModuleDestroy {
     } catch (err) {
       this.logger.error(
         `[${matchId}] Failed to persist final scorecard: ${String(err)}`,
+      );
+    }
+  }
+
+  private async refreshUpcomingPoolsForCompletedTeams(
+    completedMatchId: string,
+    completedMatchDate: Date,
+    homeTeamId: string,
+    awayTeamId: string,
+  ): Promise<void> {
+    try {
+      const upcomingMatches = await this.prisma.client.match.findMany({
+        where: {
+          status: { not: MatchStatus.COMPLETED },
+          matchDate: { gt: completedMatchDate },
+          OR: [
+            { homeTeamId: { in: [homeTeamId, awayTeamId] } },
+            { awayTeamId: { in: [homeTeamId, awayTeamId] } },
+          ],
+        },
+        orderBy: { matchDate: "asc" },
+        select: {
+          id: true,
+          matchNo: true,
+          matchDate: true,
+        },
+      });
+
+      if (upcomingMatches.length === 0) {
+        this.logger.log(
+          `[${completedMatchId}] No upcoming team-linked matches found for post-match pool refresh`,
+        );
+        return;
+      }
+
+      for (const upcoming of upcomingMatches) {
+        try {
+          await this.squadsService.getMatchSquad(upcoming.id);
+          this.logger.log(
+            `[${completedMatchId}] Refreshed pool for upcoming matchId=${upcoming.id} matchNo=${upcoming.matchNo} date=${upcoming.matchDate.toISOString()}`,
+          );
+        } catch (syncErr) {
+          this.logger.warn(
+            `[${completedMatchId}] Failed refreshing upcoming matchId=${upcoming.id}: ${String(syncErr)}`,
+          );
+        }
+      }
+    } catch (err) {
+      this.logger.warn(
+        `[${completedMatchId}] Post-match upcoming pool refresh failed: ${String(err)}`,
       );
     }
   }
