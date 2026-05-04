@@ -239,6 +239,83 @@ export class WeatherPollerService implements OnModuleInit {
     );
   }
 
+  async ensureForecastForMatch(
+    matchId: string,
+    trigger: "on-demand" | "startup" | "cron" = "on-demand",
+  ): Promise<boolean> {
+    const now = new Date();
+
+    const match = await this.prisma.client.match.findUnique({
+      where: { id: matchId },
+      select: {
+        id: true,
+        matchNo: true,
+        matchDate: true,
+        status: true,
+        weatherForecast: true,
+        ground: {
+          select: {
+            latitude: true,
+            longitude: true,
+            timezone: true,
+          },
+        },
+      },
+    });
+
+    if (!match || match.status === MatchStatus.COMPLETED) {
+      return false;
+    }
+
+    const policy = this.resolvePolicy(match.matchDate, now);
+    if (!policy) {
+      return false;
+    }
+
+    const ground = match.ground;
+    if (!ground || ground.latitude == null || ground.longitude == null) {
+      return false;
+    }
+
+    const existing = this.parseStoredForecast(match.weatherForecast);
+    if (!this.isDue(existing, policy, now)) {
+      return existing != null;
+    }
+
+    try {
+      const payload = await this.fetchForecast({
+        latitude: ground.latitude,
+        longitude: ground.longitude,
+        matchDate: match.matchDate,
+        timezone: ground.timezone,
+        stage: policy.stage,
+        frequencyMinutes: policy.frequencyMinutes,
+      });
+
+      const next = this.mergeSnapshot(existing, {
+        latitude: ground.latitude,
+        longitude: ground.longitude,
+        matchDateIso: match.matchDate.toISOString(),
+        snapshot: payload,
+      });
+
+      await this.prisma.client.match.update({
+        where: { id: match.id },
+        data: { weatherForecast: next as any },
+      });
+
+      this.logger.log(
+        `[weather:${trigger}] Hydrated forecast for match ${match.matchNo}`,
+      );
+      return true;
+    } catch (error) {
+      this.logger.warn(
+        `[weather:${trigger}] Match ${match.matchNo} on-demand weather refresh failed: ${String(error)}`,
+      );
+      return false;
+    }
+  }
+
   private resolvePolicy(matchDate: Date, now: Date): PollPolicy | null {
     const msToStart = matchDate.getTime() - now.getTime();
 
@@ -548,7 +625,9 @@ export class WeatherPollerService implements OnModuleInit {
     return Math.max(min, Math.min(max, value));
   }
 
-  private computeDaytimeTemperature(hourly: OpenMeteoResponse["hourly"]): number | null {
+  private computeDaytimeTemperature(
+    hourly: OpenMeteoResponse["hourly"],
+  ): number | null {
     const times = hourly.time ?? [];
     const values = hourly.temperature_2m ?? [];
     const daytime: number[] = [];
@@ -621,7 +700,10 @@ export class WeatherPollerService implements OnModuleInit {
     return null;
   }
 
-  private toLocalDateTimeParts(date: Date, timezone: string): {
+  private toLocalDateTimeParts(
+    date: Date,
+    timezone: string,
+  ): {
     year: string;
     month: string;
     day: string;

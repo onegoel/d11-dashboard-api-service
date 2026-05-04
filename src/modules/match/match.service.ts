@@ -4,6 +4,7 @@ import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
 import type { WisdenScorecardResponse } from "../../common/types/wisden.types.js";
 import { withDerivedMatchResult } from "../liveScore/wisden-match-result.util.js";
+import { WeatherPollerService } from "../weather/weather-poller.service.js";
 
 type GetSeasonMatchesOptions = {
   status?: MatchStatus;
@@ -38,7 +39,10 @@ const MATCH_WITH_AUDIT_INCLUDE = {
 
 @Injectable()
 export class MatchService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly weatherPollerService: WeatherPollerService,
+  ) {}
 
   private async attachPotmByImpact<T extends { id: string }>(
     matches: T[],
@@ -130,13 +134,30 @@ export class MatchService {
   }
 
   async getMatchById(matchId: string) {
-    const match = await this.prisma.client.match.findUnique({
+    let match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
       include: MATCH_INCLUDE,
     });
 
     if (!match) {
       throw new NotFoundException(`No match found for id ${matchId}`);
+    }
+
+    if (!match.weatherForecast) {
+      const refreshed = await this.weatherPollerService.ensureForecastForMatch(
+        match.id,
+      );
+
+      if (refreshed) {
+        match = await this.prisma.client.match.findUnique({
+          where: { id: matchId },
+          include: MATCH_INCLUDE,
+        });
+
+        if (!match) {
+          throw new NotFoundException(`No match found for id ${matchId}`);
+        }
+      }
     }
 
     if (match.status === MatchStatus.COMPLETED && match.wisdenScore) {
