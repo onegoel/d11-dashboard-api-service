@@ -22,6 +22,34 @@ const WINDOW_HOURS_EACH_SIDE = 2;
 const DEW_TIMELINE_HOURS = 4;
 const DEW_TIMELINE_INTERVAL_MINUTES = 30;
 
+// Map UTC offset strings (as stored in some ground records) to IANA names.
+// Intl.DateTimeFormat rejects bare offset strings like "+05:30".
+const OFFSET_TO_IANA: Record<string, string> = {
+  "+05:30": "Asia/Kolkata",
+  "+05:00": "Asia/Karachi",
+  "+06:00": "Asia/Dhaka",
+  "+08:00": "Asia/Singapore",
+  "+01:00": "Europe/London",
+  "+00:00": "UTC",
+  "-05:00": "America/New_York",
+  "-06:00": "America/Chicago",
+  "-07:00": "America/Denver",
+  "-08:00": "America/Los_Angeles",
+};
+
+function normalizeTimezone(tz: string | null | undefined): string {
+  if (!tz) return "UTC";
+  const mapped = OFFSET_TO_IANA[tz.trim()];
+  if (mapped) return mapped;
+  // Validate it's a real IANA timezone; fall back to UTC if not.
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: tz });
+    return tz;
+  } catch {
+    return "UTC";
+  }
+}
+
 type WeatherStage = "T48H" | "T24H" | "T6H" | "T60M";
 
 type PollPolicy = {
@@ -394,7 +422,7 @@ export class WeatherPollerService implements OnModuleInit {
     stage: WeatherStage;
     frequencyMinutes: number | null;
   }): Promise<WeatherSnapshot> {
-    const timezone = input.timezone ?? "UTC";
+    const timezone = normalizeTimezone(input.timezone);
     const matchLocalDate = this.toLocalDate(input.matchDate, timezone);
     const matchLocalHourKey = this.toLocalHourKey(input.matchDate, timezone);
 
