@@ -19,6 +19,7 @@ type VenueDetailed = {
   imageId?: string;
   cricbuzzGroundId?: number;
   description?: string;
+  nickname?: string;
 };
 
 function parseCapacity(value?: string | number): number | null {
@@ -70,6 +71,7 @@ export async function seedGrounds(prisma: PrismaClient) {
         hasFloodlights: venue.floodlights || false,
         cricbuzzGroundId: venue.cricbuzzGroundId || null,
         description: venue.description || null,
+        nickname: venue.nickname || null,
       };
 
       const existing = venue.cricbuzzGroundId

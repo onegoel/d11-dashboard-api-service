@@ -7,7 +7,7 @@ import { seedSeason } from "./seeders/seasons.seed.js";
 import { seedSeasonUsers } from "./seeders/seasonUsers.seed.js";
 import { seedFixtures } from "./seeders/matches.seed.js";
 import { seedChipTypes } from "./seeders/chips.seed.js";
-import { seedScores } from "./seeders/scores.seed.js";
+// import { seedScores } from "./seeders/scores.seed.js";
 
 async function main() {
   console.log("Seeding database...");
@@ -25,7 +25,7 @@ async function main() {
     // Dev/test data only
     await seedUsers(prisma);
     await seedSeasonUsers(prisma, season.id);
-    await seedScores(prisma, season.id);
+    // await seedScores(prisma, season.id);
   } else {
     console.log("Skipping user/score seeders (SEED_ENV=production)");
   }

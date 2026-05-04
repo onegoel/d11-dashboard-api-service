@@ -366,6 +366,7 @@ model Ground {
   outfield String? // e.g., "grass", "artificial"
   historicalTosses Int @default(0) // number of tosses at this ground in our dataset
   cricbuzzGroundId Int? @unique
+  nickname String? // short display name, e.g., "Wankhede", "Chinnaswamy"
   // Operational
   timezone String? // IANA timezone, e.g., "Asia/Kolkata"
   hasFloodlights Boolean @default(false)

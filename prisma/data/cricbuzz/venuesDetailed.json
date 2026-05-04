@@ -108,7 +108,7 @@
       "city": "Mumbai",
       "region": "Maharashtra",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "established": 1974,
       "capacity": "33,000",
       "latitude": 18.9367,
@@ -118,13 +118,14 @@
       "homeTeam": "Mumbai, Mumbai Indians",
       "floodlights": true,
       "imageId": "864761",
-      "cricbuzzGroundId": 81
+      "cricbuzzGroundId": 81,
+      "nickname": "Wankhede"
     },
     {
       "ground": "M. Chinnaswamy Stadium",
       "city": "Bengaluru",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "established": 1969,
       "region": "Karnataka",
       "capacity": "40,000",
@@ -136,14 +137,15 @@
       "homeTeam": "Karnataka, Royal Challengers Bengaluru",
       "floodlights": true,
       "imageId": "731714",
-      "cricbuzzGroundId": 27
+      "cricbuzzGroundId": 27,
+      "nickname": "Chinnaswamy"
     },
     {
       "ground": "Barsapara Cricket Stadium",
       "city": "Guwahati",
       "region": "Assam",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "established": 2012,
       "capacity": "40000",
       "latitude": 26.14,
@@ -154,15 +156,15 @@
       "homeTeam": "Assam",
       "floodlights": true,
       "imageId": "731778",
-      "nickname": "Barsapara",
-      "cricbuzzGroundId": 380
+      "cricbuzzGroundId": 380,
+      "nickname": "Barsapara"
     },
     {
       "ground": "Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",
       "city": "New Chandigarh",
       "region": "Punjab",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "established": 2021,
       "capacity": "38000",
       "latitude": 30.78,
@@ -172,14 +174,15 @@
       "homeTeam": "Punjab, Punjab Kings",
       "floodlights": true,
       "imageId": "870922",
-      "cricbuzzGroundId": 851
+      "cricbuzzGroundId": 851,
+      "nickname": "MYS Stadium"
     },
     {
       "ground": "Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium",
       "city": "Lucknow",
       "region": "Uttar Pradesh",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "established": 2017,
       "capacity": "50000",
       "latitude": 26.81,
@@ -190,14 +193,15 @@
       "homeTeam": "Uttar Pradesh, Lucknow Super Giants",
       "floodlights": true,
       "imageId": "864829",
-      "cricbuzzGroundId": 485
+      "cricbuzzGroundId": 485,
+      "nickname": "Ekana"
     },
     {
       "ground": "Eden Gardens",
       "city": "Kolkata",
       "region": "West Bengal",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "established": 1864,
       "capacity": "63000",
       "latitude": 22.56,
@@ -207,14 +211,15 @@
       "homeTeam": "Bengal, Kolkata Knight Riders",
       "floodlights": true,
       "imageId": "864799",
-      "cricbuzzGroundId": 31
+      "cricbuzzGroundId": 31,
+      "nickname": "Eden Gardens"
     },
     {
       "ground": "MA Chidambaram Stadium",
       "city": "Chennai",
       "region": "Tamil Nadu",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "capacity": "50000",
       "latitude": 13.05,
       "longitude": 80.27,
@@ -224,14 +229,15 @@
       "homeTeam": "Tamil Nadu, Chennai Super Kings",
       "floodlights": true,
       "imageId": "864652",
-      "cricbuzzGroundId": 11
+      "cricbuzzGroundId": 11,
+      "nickname": "Chepauk"
     },
     {
       "ground": "Arun Jaitley Stadium",
       "city": "Delhi",
       "region": "Delhi",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "cricbuzzGroundId": 51,
       "established": 1883,
       "capacity": "48000",
@@ -242,14 +248,15 @@
       "ends": "Stadium End, Pavilion End",
       "homeTeam": "Delhi, Delhi Capitals",
       "floodlights": true,
-      "imageId": "864655"
+      "imageId": "864655",
+      "nickname": "Kotla"
     },
     {
       "ground": "Narendra Modi Stadium",
       "city": "Ahmedabad",
       "region": "Gujarat",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "cricbuzzGroundId": 50,
       "established": 1982,
       "capacity": "132,000",
@@ -260,14 +267,15 @@
       "ends": "Adani Pavilion End, GMDC End",
       "homeTeam": "Gujarat, Gujarat Titans",
       "floodlights": true,
-      "imageId": "865030"
+      "imageId": "865030",
+      "nickname": "Motera"
     },
     {
       "ground": "Rajiv Gandhi International Stadium",
       "city": "Hyderabad",
       "region": "Telangana",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "cricbuzzGroundId": 80,
       "established": 2004,
       "capacity": "38000",
@@ -278,14 +286,15 @@
       "ends": "Pavilion End, North End",
       "homeTeam": "Hyderabad (India), Sunrisers Hyderabad",
       "floodlights": true,
-      "imageId": "864828"
+      "imageId": "864828",
+      "nickname": "Uppal"
     },
     {
       "ground": "Sawai Mansingh Stadium",
       "city": "Jaipur",
       "region": "Rajasthan",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "cricbuzzGroundId": 76,
       "capacity": "30000",
       "latitude": 26.89,
@@ -294,14 +303,15 @@
       "altitudeMeters": 426,
       "homeTeam": "Rajasthan, Rajasthan Royals",
       "floodlights": true,
-      "imageId": "870923"
+      "imageId": "870923",
+      "nickname": "Sawai Mansingh"
     },
     {
       "ground": "Shaheed Veer Narayan Singh International Stadium",
       "city": "Raipur",
       "region": "Chhattisgarh",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "cricbuzzGroundId": 335,
       "established": 2008,
       "capacity": "65,000",
@@ -312,14 +322,15 @@
       "ends": "North End, South End",
       "homeTeam": "Chhattisgarh",
       "floodlights": true,
-      "imageId": "189174"
+      "imageId": "189174",
+      "nickname": "Nava Raipur Stadium"
     },
     {
       "ground": "Himachal Pradesh Cricket Association Stadium",
       "city": "Dharamshala",
       "region": "Himachal Pradesh",
       "country": "India",
-      "timezone": "+05:30",
+      "timezone": "Asia/Kolkata",
       "cricbuzzGroundId": 155,
       "established": 2003,
       "capacity": "23000",
@@ -330,7 +341,8 @@
       "homeTeam": "Himachal Pradesh",
       "knownAs": "HPCA Stadium, Dharamshala Cricket Stadium",
       "floodlights": true,
-      "imageId": "865027"
+      "imageId": "865027",
+      "nickname": "HPCA Stadium"
     }
   ]
 }
