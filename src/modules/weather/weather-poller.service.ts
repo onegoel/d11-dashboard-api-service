@@ -77,7 +77,7 @@ type OpenMeteoResponse = {
 };
 
 type WeatherBand = "HIGH" | "MEDIUM" | "LOW";
-type DewBand = "HEAVY" | "MODERATE" | "LOW";
+type DewBand = "HEAVY" | "MEDIUM" | "LOW";
 
 type WeatherScores = {
   xDewIndex: {
@@ -525,7 +525,7 @@ export class WeatherPollerService implements OnModuleInit {
     let dewBand: DewBand | null = null;
     if (dewIndexNow != null) {
       if (dewIndexNow < 2) dewBand = "HEAVY";
-      else if (dewIndexNow <= 5) dewBand = "MODERATE";
+      else if (dewIndexNow <= 5) dewBand = "MEDIUM";
       else dewBand = "LOW";
     }
 

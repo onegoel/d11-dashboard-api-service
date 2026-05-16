@@ -44,6 +44,7 @@ type PersistedScorecard = {
     players?: Array<{
       player_id?: number | string;
       type?: string | null;
+      player_order?: number | null;
     }>;
   };
   team2?: {
@@ -51,6 +52,7 @@ type PersistedScorecard = {
     players?: Array<{
       player_id?: number | string;
       type?: string | null;
+      player_order?: number | null;
     }>;
   };
   innings?: Array<{
@@ -60,6 +62,21 @@ type PersistedScorecard = {
     }>;
   }>;
 };
+
+function extractPlayerOrderMap(scorecard: unknown): Map<string, number> {
+  if (!scorecard || typeof scorecard !== "object") return new Map();
+  const payload = scorecard as PersistedScorecard;
+  const result = new Map<string, number>();
+  for (const team of [payload.team1, payload.team2]) {
+    for (const player of team?.players ?? []) {
+      const id = String(player.player_id ?? "");
+      if (id && player.player_order != null) {
+        result.set(id, player.player_order);
+      }
+    }
+  }
+  return result;
+}
 
 function extractPlayedPlayerIds(
   scorecard: unknown,
@@ -459,6 +476,7 @@ export class FantasySquadsService {
 
     const currentPlayingXi = extractPlayedPlayerIds(effectiveScorecard);
     const currentPlayingXiKnown = currentPlayingXi.size > 0;
+    const playerOrderMap = extractPlayerOrderMap(effectiveScorecard);
 
     let created = 0;
     for (const player of squadPlayers) {
@@ -476,11 +494,18 @@ export class FantasySquadsService {
         currentPlayingXi.has(player.wisdenPlayerId),
       );
 
+      const lineupOrder = player.wisdenPlayerId
+        ? (playerOrderMap.get(player.wisdenPlayerId) ?? null)
+        : null;
+
       const xiDelta = currentPlayingXiKnown
         ? {
             isInPlayingXI,
             playerIn: isInPlayingXI && !isLastMatchPlayed,
             playerOut: !isInPlayingXI && isLastMatchPlayed,
+            ...(isInPlayingXI && lineupOrder != null
+              ? { battingPosition: lineupOrder }
+              : {}),
           }
         : {};
 
@@ -514,6 +539,9 @@ export class FantasySquadsService {
             currentPlayingXiKnown && !isInPlayingXI && isLastMatchPlayed,
           isLastMatchPlayed,
           inLastMatchBestXI: false,
+          ...(isInPlayingXI && lineupOrder != null
+            ? { battingPosition: lineupOrder }
+            : {}),
           currentSeasonPoints: seasonStatsByPlayerId.get(player.id) ?? 0,
         },
       });
