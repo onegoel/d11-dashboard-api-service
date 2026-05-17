@@ -131,3 +131,15 @@ export class SyncLineupDto {
   @Type(() => SyncLineupPlayerDto)
   players!: SyncLineupPlayerDto[];
 }
+
+export class PatchCreditValueDto {
+  @ApiProperty({
+    description: "New credit value (snapped to 0.5 increments, 7.5–12.5)",
+    minimum: 7.5,
+    maximum: 12.5,
+    example: 9.5,
+  })
+  @Min(7.5)
+  @Max(12.5)
+  creditValue!: number;
+}

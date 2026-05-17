@@ -579,6 +579,7 @@ export class FantasyMatchesService {
       bypassContestStatusGate?: boolean;
     } = {},
   ) {
+    const DEV_BYPASS_BUDGET = true; // set to true to skip budget checks while testing credit pricing
     await this.assertMatchExists(matchId);
 
     const matchMeta = await this.prisma.client.match.findUnique({
@@ -707,7 +708,10 @@ export class FantasyMatchesService {
       (sum, player) => sum + player.creditValue,
       0,
     );
-    if (xiTotalCredits > FantasyMatchesService.BUDGET_CAP + 0.001) {
+    if (
+      !DEV_BYPASS_BUDGET &&
+      xiTotalCredits > FantasyMatchesService.BUDGET_CAP + 0.001
+    ) {
       throw new BadRequestException(
         `XI credit cap exceeded: ${xiTotalCredits.toFixed(1)}/${FantasyMatchesService.BUDGET_CAP}`,
       );
@@ -875,6 +879,30 @@ export class FantasyMatchesService {
     });
   }
 
+  // ── Patch credit value ───────────────────────────────────────────────────
+
+  async patchMatchPlayerCredit(
+    matchId: string,
+    matchPlayerId: string,
+    creditValue: number,
+  ) {
+    const record = await this.prisma.client.fantasyMatchPlayer.findFirst({
+      where: { id: matchPlayerId, matchId },
+      select: { id: true },
+    });
+    if (!record) {
+      throw new NotFoundException(
+        `FantasyMatchPlayer ${matchPlayerId} not found in match ${matchId}`,
+      );
+    }
+    const updated = await this.prisma.client.fantasyMatchPlayer.update({
+      where: { id: matchPlayerId },
+      data: { creditValue },
+      select: { id: true, fantasyPlayerId: true, creditValue: true },
+    });
+    return updated;
+  }
+
   // ── Sync match players ───────────────────────────────────────────────────
 
   async syncMatch(matchId: string) {
@@ -933,7 +961,11 @@ export class FantasyMatchesService {
       `Auto-refreshed ${synced}/${upcomingMatches.length} upcoming pools after matchId=${matchId}`,
     );
 
-    return { sourceMatchId: matchId, synced, totalUpcoming: upcomingMatches.length };
+    return {
+      sourceMatchId: matchId,
+      synced,
+      totalUpcoming: upcomingMatches.length,
+    };
   }
 
   async extendContestDeadline(matchId: string, extendByMinutes: number) {

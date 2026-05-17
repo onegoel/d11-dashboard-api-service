@@ -478,9 +478,47 @@ export class FantasySquadsService {
     const currentPlayingXiKnown = currentPlayingXi.size > 0;
     const playerOrderMap = extractPlayerOrderMap(effectiveScorecard);
 
+    // ── Percentile-based credit pricing ──────────────────────────────────
+    // Base credit by role; all-rounders and keepers get a slight premium
+    // for their dual-contribution value.
+    const ROLE_BASE: Record<string, number> = {
+      WICKET_KEEPER: 8.5,
+      ALL_ROUNDER: 8.5,
+      BATSMAN: 8.0,
+      BOWLER: 8.0,
+    };
+
+    // Build sorted array of season points across this match pool.
+    const poolPoints = squadPlayers.map(
+      (p) => seasonStatsByPlayerId.get(p.id) ?? 0,
+    );
+    const sortedPoolPoints = [...poolPoints].sort((a, b) => a - b);
+    const poolSize = sortedPoolPoints.length;
+
+    function percentileCreditValue(playerId: string, role: string): number {
+      const pts = seasonStatsByPlayerId.get(playerId) ?? 0;
+      // Percentile = fraction of pool players with strictly fewer points.
+      const below = sortedPoolPoints.filter((p) => p < pts).length;
+      const percentile = poolSize > 1 ? below / (poolSize - 1) : 0.5;
+
+      const base = ROLE_BASE[role] ?? 8.0;
+      let delta: number;
+      if (percentile >= 0.95) delta = 3.0;
+      else if (percentile >= 0.8) delta = 2.0;
+      else if (percentile >= 0.6) delta = 1.0;
+      else if (percentile >= 0.4) delta = 0.0;
+      else if (percentile >= 0.2) delta = -0.5;
+      else delta = -1.0;
+
+      // Snap to nearest 0.5, clamp to [7.5, 12.5].
+      const raw = base + delta;
+      return Math.max(7.5, Math.min(12.5, Math.round(raw * 2) / 2));
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     let created = 0;
     for (const player of squadPlayers) {
-      const creditValue = DEFAULT_CREDIT_VALUE;
+      const creditValue = percentileCreditValue(player.id, player.role);
       const isLastMatchPlayed = Boolean(
         player.wisdenPlayerId &&
         player.teamWisdenId &&

@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  Patch,
   Post,
   UseGuards,
 } from "@nestjs/common";
@@ -25,6 +26,7 @@ import { RolesGuard } from "../../auth/roles.guard.js";
 import { UserRole } from "../../../../generated/prisma/client.js";
 import {
   ExtendContestDeadlineDto,
+  PatchCreditValueDto,
   SubmitEntryDto,
   SyncLineupDto,
 } from "../dto/fantasy.dto.js";
@@ -140,6 +142,28 @@ export class FantasyMatchesController {
   @ApiResponse({ status: 200, description: "Sync triggered" })
   syncMatch(@Param("matchId", ParseUUIDPipe) matchId: string) {
     return this.service.syncMatch(matchId);
+  }
+
+  @Patch(":matchId/players/:matchPlayerId/credit")
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: "Override credit value for a player in a match pool (admin only)",
+  })
+  @ApiParam({ name: "matchId", format: "uuid" })
+  @ApiParam({ name: "matchPlayerId", format: "uuid" })
+  @ApiBody({ type: PatchCreditValueDto })
+  @ApiResponse({ status: 200, description: "Credit value updated" })
+  patchMatchPlayerCredit(
+    @Param("matchId", ParseUUIDPipe) matchId: string,
+    @Param("matchPlayerId", ParseUUIDPipe) matchPlayerId: string,
+    @Body() dto: PatchCreditValueDto,
+  ) {
+    return this.service.patchMatchPlayerCredit(
+      matchId,
+      matchPlayerId,
+      dto.creditValue,
+    );
   }
 
   @Post(":matchId/sync-lineup")
