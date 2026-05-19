@@ -112,10 +112,6 @@ export async function seedFixtures(
         },
       },
       data: {
-        homeTeamId,
-        awayTeamId,
-        stadium: fixture.stadium,
-        venue: fixture.venue,
         format: MatchFormat.T20,
         tournamentType: TournamentType.FRANCHISE_LEAGUE,
         tournamentName: fixture.tournamentName,
