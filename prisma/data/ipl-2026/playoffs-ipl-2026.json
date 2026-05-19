@@ -1,0 +1,54 @@
+[
+  {
+    "format": "T20",
+    "tournamentType": "FRANCHISE_LEAGUE",
+    "tournamentName": "Indian Premier League 2026",
+    "tournamentStage": "QUALIFIER",
+    "stageLabel": "Qualifier 1",
+    "matchNo": 71,
+    "date": "2026-05-26T19:30:00+05:30",
+    "home": "TBD",
+    "away": "TBD",
+    "wisdenMatchGid": "18fef503-20db-48a6-8b58-d6d93c51e5aa",
+    "cricbuzzGroundId": 155
+  },
+  {
+    "format": "T20",
+    "tournamentType": "FRANCHISE_LEAGUE",
+    "tournamentName": "Indian Premier League 2026",
+    "tournamentStage": "ELIMINATOR",
+    "stageLabel": "Eliminator",
+    "matchNo": 72,
+    "date": "2026-05-27T19:30:00+05:30",
+    "home": "TBD",
+    "away": "TBD",
+    "wisdenMatchGid": "7a80b657-514f-4db7-95c2-3423134e38f3",
+    "cricbuzzGroundId": 851
+  },
+  {
+    "format": "T20",
+    "tournamentType": "FRANCHISE_LEAGUE",
+    "tournamentName": "Indian Premier League 2026",
+    "tournamentStage": "QUALIFIER",
+    "stageLabel": "Qualifier 2",
+    "matchNo": 73,
+    "date": "2026-05-29T19:30:00+05",
+    "home": "TBD",
+    "away": "TBD",
+    "wisdenMatchGid": "d936ece5-66c8-411b-bfa1-43613ace06bb",
+    "cricbuzzGroundId": 851
+  },
+  {
+    "format": "T20",
+    "tournamentType": "FRANCHISE_LEAGUE",
+    "tournamentName": "Indian Premier League 2026",
+    "tournamentStage": "FINAL",
+    "stageLabel": "Final",
+    "matchNo": 74,
+    "date": "2026-05-31T19:30:00+05",
+    "home": "TBD",
+    "away": "TBD",
+    "wisdenMatchGid": "8c6b3b7b-d2c6-482e-936e-9454d7ee0eb2",
+    "cricbuzzGroundId": 50
+  }
+]

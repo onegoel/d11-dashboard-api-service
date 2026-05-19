@@ -916,12 +916,12 @@
     "tournamentStage": "LEAGUE",
     "matchNo": 66,
     "date": "2026-05-21T19:30:00+05:30",
-    "home": "CSK",
-    "away": "GT",
-    "stadium": "MA Chidambaram Stadium",
-    "venue": "Chennai",
+    "home": "GT",
+    "away": "CSK",
+    "stadium": "Narendra Modi Stadium",
+    "venue": "Ahmedabad",
     "wisdenMatchGid": "b862c40e-5873-406c-9158-8dc824e2e0e6",
-    "cricbuzzGroundId": 11
+    "cricbuzzGroundId": 50
   },
   {
     "format": "T20",
