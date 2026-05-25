@@ -1229,69 +1229,15 @@ export class FantasyScoringService {
         chipPlaysByUserId.get(entry.userId) ?? [],
       );
 
-      const starters = effectivePlayers.filter((p) => !p.isBench);
-      const bench = effectivePlayers
-        .filter((p) => p.isBench)
-        .sort((a, b) => (a.benchPriority ?? 99) - (b.benchPriority ?? 99));
-
-      const activePlayers = new Map(
-        starters.map((p) => [p.fantasyPlayerId, { ...p, subbed: false }]),
+      const activeStarters = this.lineup.resolveActiveScoringStartersAfterBenchSubs(
+        effectivePlayers,
+        scoreMap,
+        teamKeyByPlayerId,
+        playingXIByPlayerId,
       );
-
-      const availableBench = bench.filter(
-        (p) => (scoreMap.get(p.fantasyPlayerId) ?? 0) > 0,
-      );
-
-      const activeTeamCounts = new Map<string, number>();
-      for (const starter of starters) {
-        const teamKey = teamKeyByPlayerId.get(starter.fantasyPlayerId);
-        if (!teamKey) continue;
-        activeTeamCounts.set(teamKey, (activeTeamCounts.get(teamKey) ?? 0) + 1);
-      }
-
-      for (const [fpId, sp] of activePlayers) {
-        const pts = scoreMap.get(fpId) ?? 0;
-        // Only auto-sub if the player didn't play (not in playing XI).
-        // A player who played but scored 0 legitimately should not be replaced.
-        const didNotPlay = !(playingXIByPlayerId.get(fpId) ?? false);
-        if (pts === 0 && didNotPlay && availableBench.length > 0) {
-          const outgoingTeam = teamKeyByPlayerId.get(sp.fantasyPlayerId);
-
-          const subIdx = availableBench.findIndex((sub) => {
-            const subTeam = teamKeyByPlayerId.get(sub.fantasyPlayerId);
-            if (!subTeam) return false;
-            if (subTeam === outgoingTeam) return true;
-
-            const currentCount = activeTeamCounts.get(subTeam) ?? 0;
-            return currentCount + 1 <= 8;
-          });
-
-          if (subIdx >= 0) {
-            const sub = availableBench.splice(subIdx, 1)[0]!;
-            const incomingTeam = teamKeyByPlayerId.get(sub.fantasyPlayerId);
-
-            if (outgoingTeam && incomingTeam && outgoingTeam !== incomingTeam) {
-              activeTeamCounts.set(
-                outgoingTeam,
-                Math.max(0, (activeTeamCounts.get(outgoingTeam) ?? 0) - 1),
-              );
-              activeTeamCounts.set(
-                incomingTeam,
-                (activeTeamCounts.get(incomingTeam) ?? 0) + 1,
-              );
-            }
-
-            activePlayers.set(fpId, {
-              ...sp,
-              fantasyPlayerId: sub.fantasyPlayerId,
-              subbed: true,
-            });
-          }
-        }
-      }
 
       let total = 0;
-      for (const sp of activePlayers.values()) {
+      for (const sp of activeStarters) {
         const raw = scoreMap.get(sp.fantasyPlayerId) ?? 0;
         const mult = sp.isCaptain
           ? MY11_T20_CAPTAIN_MULTIPLIER

@@ -68,6 +68,13 @@ export class LeaderboardController {
     return this.leaderboardService.getSeasonLeaderboard(seasonId);
   }
 
+  @Get("season/:seasonId/playoff")
+  @ApiOperation({ summary: "Get fantasy playoff bracket and knockout match list" })
+  @ApiParam({ name: "seasonId", type: "number", example: 1 })
+  async getPlayoffConfig(@Param("seasonId", ParseIntPipe) seasonId: number) {
+    return this.leaderboardService.getPlayoffConfig(seasonId);
+  }
+
   @Get("match/:matchId")
   @ApiOperation({
     summary: "Get match leaderboard",

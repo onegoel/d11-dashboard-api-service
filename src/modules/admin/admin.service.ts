@@ -28,6 +28,8 @@ import type {
   ReopenMatchDto,
   ReplaceMatchScoresDto,
   ReverseChipPlayDto,
+  SetPlayoffQ2WinnerDto,
+  SetPlayoffSeedsDto,
   UpdateAdminMatchDto,
   UpdateAdminPlayerDto,
   UpdateScoreRankDto,
@@ -245,6 +247,11 @@ export class AdminService {
             awayTeamId: dto.awayTeamId,
             status: dto.status ?? MatchStatus.SCHEDULED,
             matchResult: dto.matchResult ?? MatchResult.PENDING,
+            ...(dto.tournamentStage ? { tournamentStage: dto.tournamentStage } : {}),
+            ...(dto.stageLabel ? { stageLabel: dto.stageLabel } : {}),
+            ...(dto.tournamentName ? { tournamentName: dto.tournamentName } : {}),
+            ...(dto.isKnockout !== undefined ? { isKnockout: dto.isKnockout } : {}),
+            ...(dto.wisdenMatchGid ? { wisdenMatchGid: dto.wisdenMatchGid } : {}),
           },
           include: {
             homeTeam: true,
@@ -366,6 +373,11 @@ export class AdminService {
             ...(dto.awayTeamId ? { awayTeamId: dto.awayTeamId } : {}),
             ...(dto.status ? { status: dto.status } : {}),
             ...(dto.matchResult ? { matchResult: dto.matchResult } : {}),
+            ...(dto.tournamentStage ? { tournamentStage: dto.tournamentStage } : {}),
+            ...(dto.stageLabel !== undefined ? { stageLabel: dto.stageLabel } : {}),
+            ...(dto.tournamentName !== undefined ? { tournamentName: dto.tournamentName } : {}),
+            ...(dto.isKnockout !== undefined ? { isKnockout: dto.isKnockout } : {}),
+            ...(dto.wisdenMatchGid !== undefined ? { wisdenMatchGid: dto.wisdenMatchGid } : {}),
           },
           include: {
             homeTeam: true,
@@ -1328,6 +1340,166 @@ export class AdminService {
           select: { id: true, name: true, shortCode: true, wisdenTeamId: true },
         },
       },
+    });
+  }
+
+  // ─── Fantasy playoff ──────────────────────────────────────────────────────
+
+  async setPlayoffSeeds(seasonId: number, dto: SetPlayoffSeedsDto) {
+    const { seed1UserId, seed2UserId, seed3UserId } = dto;
+
+    const uniqueIds = new Set([seed1UserId, seed2UserId, seed3UserId]);
+    if (uniqueIds.size !== 3) {
+      throw new BadRequestException("All three seed user IDs must be distinct");
+    }
+
+    // Validate all three are season users
+    const seasonUsers = await this.prisma.client.seasonUser.findMany({
+      where: { seasonId, userId: { in: [seed1UserId, seed2UserId, seed3UserId] } },
+      select: { userId: true, user: { select: { id: true, display_name: true } } },
+    });
+    if (seasonUsers.length !== 3) {
+      throw new BadRequestException("One or more seed users are not members of this season");
+    }
+
+    const nameMap = new Map(seasonUsers.map((su) => [su.userId, su.user.display_name]));
+
+    // Find the Q2 match (stageLabel = "Qualifier 2")
+    const q2Match = await this.prisma.client.match.findFirst({
+      where: { seasonId, stageLabel: "Qualifier 2" },
+      select: { id: true },
+    });
+    if (!q2Match) {
+      throw new NotFoundException("Qualifier 2 match not found — create it via admin first");
+    }
+
+    const playoffConfig = {
+      seeds: {
+        1: seed1UserId,
+        2: seed2UserId,
+        3: seed3UserId,
+      },
+      seedNames: {
+        1: nameMap.get(seed1UserId),
+        2: nameMap.get(seed2UserId),
+        3: nameMap.get(seed3UserId),
+      },
+      q2Participants: [seed2UserId, seed3UserId],
+      q2WinnerId: null,
+      finalParticipants: null,
+      finalWinnerId: null,
+    };
+
+    return this.prisma.client.$transaction(async (tx) => {
+      // Store bracket on the season
+      await tx.season.update({
+        where: { id: seasonId },
+        data: { fantasyPlayoffConfig: playoffConfig },
+      });
+
+      // Mark Q2 contest as playoff-only for seeds 2 and 3
+      await tx.fantasyContest.upsert({
+        where: { matchId: q2Match.id },
+        update: {
+          isPlayoffContest: true,
+          eligibleUserIds: [seed2UserId, seed3UserId],
+        },
+        create: {
+          matchId: q2Match.id,
+          isPlayoffContest: true,
+          eligibleUserIds: [seed2UserId, seed3UserId],
+        },
+      });
+
+      await this.logAction(
+        tx,
+        "playoff.seeds.set",
+        "season",
+        String(seasonId),
+        dto.reason,
+        { seed1UserId, seed2UserId, seed3UserId } as Prisma.InputJsonValue,
+      );
+
+      return { playoffConfig };
+    });
+  }
+
+  async setPlayoffQ2Winner(seasonId: number, dto: SetPlayoffQ2WinnerDto) {
+    const season = await this.prisma.client.season.findUnique({
+      where: { id: seasonId },
+      select: { fantasyPlayoffConfig: true },
+    });
+
+    if (!season) throw new NotFoundException("Season not found");
+
+    const config = season.fantasyPlayoffConfig as {
+      seeds: Record<string, number>;
+      seedNames: Record<string, string>;
+      q2Participants: number[];
+      q2WinnerId: number | null;
+      finalParticipants: number[] | null;
+      finalWinnerId: number | null;
+    } | null;
+
+    if (!config) {
+      throw new BadRequestException("Playoff seeds have not been set yet — call setPlayoffSeeds first");
+    }
+
+    const { winnerUserId } = dto;
+    if (!config.q2Participants.includes(winnerUserId)) {
+      throw new BadRequestException(
+        `winnerUserId ${winnerUserId} is not a Q2 participant. Must be one of: ${config.q2Participants.join(", ")}`,
+      );
+    }
+
+    const seed1UserId = Number(config.seeds[1]);
+    const finalParticipants: number[] = [seed1UserId, winnerUserId];
+
+    // Find the Final match
+    const finalMatch = await this.prisma.client.match.findFirst({
+      where: { seasonId, stageLabel: "Final" },
+      select: { id: true },
+    });
+    if (!finalMatch) {
+      throw new NotFoundException("Final match not found — create it via admin first");
+    }
+
+    const updatedConfig = {
+      ...config,
+      q2WinnerId: winnerUserId,
+      finalParticipants,
+    };
+
+    return this.prisma.client.$transaction(async (tx) => {
+      await tx.season.update({
+        where: { id: seasonId },
+        data: { fantasyPlayoffConfig: updatedConfig },
+      });
+
+      // Mark Final contest as playoff-only for seed1 and Q2 winner
+      await tx.fantasyContest.upsert({
+        where: { matchId: finalMatch.id },
+        update: {
+          isPlayoffContest: true,
+          eligibleUserIds: finalParticipants,
+        },
+        create: {
+          matchId: finalMatch.id,
+          isPlayoffContest: true,
+          eligibleUserIds: finalParticipants,
+        },
+      });
+
+      await this.logAction(
+        tx,
+        "playoff.q2-winner.set",
+        "season",
+        String(seasonId),
+        dto.reason,
+        { winnerUserId, finalParticipants } as Prisma.InputJsonValue,
+      );
+
+      return { updatedConfig };
     });
   }
 

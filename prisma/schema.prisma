@@ -106,6 +106,9 @@ model Season {
 
   winnerUserId Int?
 
+  // Stores fantasy playoff bracket state: seeds, q2WinnerId, finalParticipants, etc.
+  fantasyPlayoffConfig Json?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -505,6 +508,10 @@ model FantasyContest {
 
   lockedAt DateTime?            // closes at match start; enforced by scoring service
 
+  // Playoff-only: when true, only eligibleUserIds may submit entries
+  isPlayoffContest Boolean @default(false)
+  eligibleUserIds  Int[]   @default([])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -525,6 +532,9 @@ model FantasyContestEntry {
 
   totalPoints Float?
   rank        Int?
+
+  // For playoff contests: which D11 leaderboard seed this entry represents (1, 2, or 3)
+  fantasyPlayoffSeed Int?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

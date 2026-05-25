@@ -168,6 +168,91 @@ export class FantasyLineupService {
     return effectivePlayers;
   }
 
+  /**
+   * After swapper chip adjustments (pass {@link buildEffectivePlayers} output as
+   * `effectivePlayers`), returns the 11 fantasy players whose raw scores count
+   * toward the entry total — including automatic bench substitutions. Matches
+   * scoring `recomputeContestEntries` so contest-wide views stay aligned.
+   */
+  resolveActiveScoringStartersAfterBenchSubs<T extends FantasyLineupPlayer>(
+    effectivePlayers: T[],
+    scoreMap: ReadonlyMap<string, number>,
+    teamKeyByPlayerId: ReadonlyMap<string, string | null | undefined>,
+    playingXIByPlayerId: ReadonlyMap<string, boolean>,
+  ): Array<{
+    fantasyPlayerId: string;
+    isCaptain: boolean;
+    isViceCaptain: boolean;
+  }> {
+    const starters = effectivePlayers.filter((p) => !p.isBench);
+    const bench = effectivePlayers
+      .filter((p) => p.isBench)
+      .sort((a, b) => (a.benchPriority ?? 99) - (b.benchPriority ?? 99));
+
+    const activePlayers = new Map(
+      starters.map((p) => [
+        p.fantasyPlayerId,
+        { ...p, subbed: false as boolean },
+      ]),
+    );
+
+    const availableBench = bench.filter(
+      (p) => (scoreMap.get(p.fantasyPlayerId) ?? 0) > 0,
+    );
+
+    const activeTeamCounts = new Map<string, number>();
+    for (const starter of starters) {
+      const teamKey = teamKeyByPlayerId.get(starter.fantasyPlayerId);
+      if (!teamKey) continue;
+      activeTeamCounts.set(teamKey, (activeTeamCounts.get(teamKey) ?? 0) + 1);
+    }
+
+    for (const [fpId, sp] of activePlayers) {
+      const pts = scoreMap.get(fpId) ?? 0;
+      const didNotPlay = !(playingXIByPlayerId.get(fpId) ?? false);
+      if (pts === 0 && didNotPlay && availableBench.length > 0) {
+        const outgoingTeam = teamKeyByPlayerId.get(sp.fantasyPlayerId);
+
+        const subIdx = availableBench.findIndex((sub) => {
+          const subTeam = teamKeyByPlayerId.get(sub.fantasyPlayerId);
+          if (!subTeam) return false;
+          if (subTeam === outgoingTeam) return true;
+
+          const currentCount = activeTeamCounts.get(subTeam) ?? 0;
+          return currentCount + 1 <= 8;
+        });
+
+        if (subIdx >= 0) {
+          const sub = availableBench.splice(subIdx, 1)[0]!;
+          const incomingTeam = teamKeyByPlayerId.get(sub.fantasyPlayerId);
+
+          if (outgoingTeam && incomingTeam && outgoingTeam !== incomingTeam) {
+            activeTeamCounts.set(
+              outgoingTeam,
+              Math.max(0, (activeTeamCounts.get(outgoingTeam) ?? 0) - 1),
+            );
+            activeTeamCounts.set(
+              incomingTeam,
+              (activeTeamCounts.get(incomingTeam) ?? 0) + 1,
+            );
+          }
+
+          activePlayers.set(fpId, {
+            ...sp,
+            fantasyPlayerId: sub.fantasyPlayerId,
+            subbed: true,
+          });
+        }
+      }
+    }
+
+    return [...activePlayers.values()].map((sp) => ({
+      fantasyPlayerId: sp.fantasyPlayerId,
+      isCaptain: sp.isCaptain,
+      isViceCaptain: sp.isViceCaptain,
+    }));
+  }
+
   async getEffectivePlayersForEntries<
     T extends FantasyLineupPlayer,
     TEntry extends {

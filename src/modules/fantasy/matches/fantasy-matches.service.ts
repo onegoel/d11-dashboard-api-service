@@ -13,6 +13,7 @@ import {
 import { PrismaService } from "../../../common/database/prisma.service.js";
 import { ChipService } from "../../chip/chip.service.js";
 import { FantasyLineupService } from "../lineup/fantasy-lineup.service.js";
+import type { FantasyLineupChipPlay } from "../lineup/fantasy-lineup.service.js";
 import { FantasySquadsService } from "../squads/fantasy-squads.service.js";
 import type {
   SubmitEntryDto,
@@ -400,40 +401,62 @@ export class FantasyMatchesService {
       );
     }
 
-    const [entries, matchPlayers, playerScores] = await Promise.all([
-      this.prisma.client.fantasyContestEntry.findMany({
-        where: { contestId: contest.id },
-        select: {
-          id: true,
-          teamNo: true,
-          user: {
-            select: {
-              id: true,
-              display_name: true,
-              user_name: true,
-              photo_url: true,
-            },
-          },
-          players: {
-            where: { isBench: false },
-            select: {
-              fantasyPlayerId: true,
-              isCaptain: true,
-              isViceCaptain: true,
-            },
+    const entries = await this.prisma.client.fantasyContestEntry.findMany({
+      where: { contestId: contest.id },
+      select: {
+        id: true,
+        teamNo: true,
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            display_name: true,
+            user_name: true,
+            photo_url: true,
           },
         },
-      }),
+        players: {
+          select: {
+            fantasyPlayerId: true,
+            isCaptain: true,
+            isViceCaptain: true,
+            isBench: true,
+            benchPriority: true,
+          },
+        },
+      },
+    });
+
+    const userIds = Array.from(new Set(entries.map((e) => e.userId)));
+
+    const [chipPlays, matchPlayers, playerScores] = await Promise.all([
+      userIds.length === 0
+        ? Promise.resolve([])
+        : this.prisma.client.chipPlay.findMany({
+            where: {
+              status: { not: ChipPlayStatus.CANCELLED },
+              startMatchId: matchId,
+              seasonUser: { userId: { in: userIds } },
+            },
+            select: {
+              chipType: { select: { code: true } },
+              extraInfo: true,
+              seasonUser: { select: { userId: true } },
+            },
+          }),
       this.prisma.client.fantasyMatchPlayer.findMany({
         where: { matchId },
         select: {
           fantasyPlayerId: true,
+          teamWisdenId: true,
+          isInPlayingXI: true,
           fantasyPlayer: {
             select: {
               id: true,
               displayName: true,
               role: true,
               photoUrl: true,
+              teamId: true,
               team: { select: { shortCode: true } },
             },
           },
@@ -454,6 +477,29 @@ export class FantasyMatchesService {
     const scoreByPlayerId = new Map(
       playerScores.map((score) => [score.fantasyPlayerId, score]),
     );
+    const scoreMap = new Map(
+      playerScores.map((s) => [s.fantasyPlayerId, s.points]),
+    );
+
+    const teamKeyByPlayerId = new Map(
+      matchPlayers.map((item) => [
+        item.fantasyPlayerId,
+        item.teamWisdenId ?? item.fantasyPlayer.teamId,
+      ]),
+    );
+    const playingXIByPlayerId = new Map(
+      matchPlayers.map((item) => [item.fantasyPlayerId, item.isInPlayingXI]),
+    );
+
+    const chipPlaysByUserId = new Map<number, FantasyLineupChipPlay[]>();
+    for (const chipPlay of chipPlays) {
+      const existing = chipPlaysByUserId.get(chipPlay.seasonUser.userId) ?? [];
+      existing.push({
+        chipType: chipPlay.chipType,
+        extraInfo: chipPlay.extraInfo,
+      });
+      chipPlaysByUserId.set(chipPlay.seasonUser.userId, existing);
+    }
 
     type PickedByEntry = {
       entryId: string;
@@ -471,7 +517,20 @@ export class FantasyMatchesService {
     const viceCaptainCountByPlayerId = new Map<string, number>();
 
     for (const entry of entries) {
-      for (const player of entry.players) {
+      const effectivePlayers = this.lineup.buildEffectivePlayers(
+        entry.players,
+        entry.teamNo,
+        chipPlaysByUserId.get(entry.userId) ?? [],
+      );
+      const activeStarters =
+        this.lineup.resolveActiveScoringStartersAfterBenchSubs(
+          effectivePlayers,
+          scoreMap,
+          teamKeyByPlayerId,
+          playingXIByPlayerId,
+        );
+
+      for (const player of activeStarters) {
         const pickedBy = pickedByByPlayerId.get(player.fantasyPlayerId) ?? [];
         pickedBy.push({
           entryId: entry.id,

@@ -39,6 +39,8 @@ import {
   RemoveSeasonUserDto,
   ReplaceMatchScoresDto,
   ReverseChipPlayDto,
+  SetPlayoffQ2WinnerDto,
+  SetPlayoffSeedsDto,
   UpdateUserRoleDto,
   UpdateAdminMatchDto,
   UpdateAdminPlayerDto,
@@ -242,6 +244,36 @@ export class AdminController {
     @Body() body: RemoveSeasonUserDto,
   ) {
     return this.adminService.removeSeasonUser(seasonUserId, body ?? {});
+  }
+
+  // ─── Fantasy playoffs ────────────────────────────────────────────────────────
+
+  @Post("seasons/:seasonId/playoff/seeds")
+  @ApiOperation({
+    summary: "Set fantasy playoff seeds",
+    description: "Call after regular season + Q1 + Eliminator are complete. Sets D11 leaderboard positions 1/2/3 and locks the Q2 contest to seeds 2 vs 3.",
+  })
+  @ApiParam({ name: "seasonId", example: 1 })
+  @ApiBody({ type: SetPlayoffSeedsDto })
+  setPlayoffSeeds(
+    @Param("seasonId", ParseIntPipe) seasonId: number,
+    @Body() body: SetPlayoffSeedsDto,
+  ) {
+    return this.adminService.setPlayoffSeeds(seasonId, body);
+  }
+
+  @Post("seasons/:seasonId/playoff/q2-winner")
+  @ApiOperation({
+    summary: "Record Q2 fantasy playoff winner",
+    description: "Call after Q2 DFS contest is scored. Locks the Final contest to seed 1 vs Q2 winner.",
+  })
+  @ApiParam({ name: "seasonId", example: 1 })
+  @ApiBody({ type: SetPlayoffQ2WinnerDto })
+  setPlayoffQ2Winner(
+    @Param("seasonId", ParseIntPipe) seasonId: number,
+    @Body() body: SetPlayoffQ2WinnerDto,
+  ) {
+    return this.adminService.setPlayoffQ2Winner(seasonId, body);
   }
 
   // ─── Player catalog ─────────────────────────────────────────────────────────────────

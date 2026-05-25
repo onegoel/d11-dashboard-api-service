@@ -22,6 +22,7 @@ import {
   FantasyPlayerRole,
   MatchResult,
   MatchStatus,
+  TournamentStage,
   UserRole,
 } from "../../../../generated/prisma/client.js";
 
@@ -73,6 +74,34 @@ export class CreateAdminMatchDto extends AdminReasonDto {
   )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
+
+  @ApiPropertyOptional({ enum: TournamentStage, example: TournamentStage.QUALIFIER })
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
+  @IsEnum(TournamentStage)
+  tournamentStage?: TournamentStage;
+
+  @ApiPropertyOptional({ example: "Qualifier 2" })
+  @IsOptional()
+  @IsString()
+  stageLabel?: string;
+
+  @ApiPropertyOptional({ example: "Indian Premier League 2026" })
+  @IsOptional()
+  @IsString()
+  tournamentName?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isKnockout?: boolean;
+
+  @ApiPropertyOptional({ example: "d936ece5-66c8-411b-bfa1-43613ace06bb" })
+  @IsOptional()
+  @IsString()
+  wisdenMatchGid?: string;
 }
 
 export class BulkCreateAdminMatchesDto extends AdminReasonDto {
@@ -121,6 +150,34 @@ export class UpdateAdminMatchDto extends AdminReasonDto {
   )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
+
+  @ApiPropertyOptional({ enum: TournamentStage })
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
+  @IsEnum(TournamentStage)
+  tournamentStage?: TournamentStage;
+
+  @ApiPropertyOptional({ example: "Qualifier 2" })
+  @IsOptional()
+  @IsString()
+  stageLabel?: string;
+
+  @ApiPropertyOptional({ example: "Indian Premier League 2026" })
+  @IsOptional()
+  @IsString()
+  tournamentName?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isKnockout?: boolean;
+
+  @ApiPropertyOptional({ example: "d936ece5-66c8-411b-bfa1-43613ace06bb" })
+  @IsOptional()
+  @IsString()
+  wisdenMatchGid?: string;
 }
 
 export class DeleteAdminMatchDto extends AdminReasonDto {
@@ -478,4 +535,30 @@ export class UpdateAdminPlayerDto {
   @IsOptional()
   @IsEnum(BowlingStyle)
   bowlingStyle?: BowlingStyle | null;
+}
+
+// ─── Fantasy playoff DTOs ──────────────────────────────────────────────────────
+
+export class SetPlayoffSeedsDto extends AdminReasonDto {
+  @ApiProperty({ example: 5, description: "userId of 1st-place D11 leaderboard finisher" })
+  @IsInt()
+  @Min(1)
+  seed1UserId!: number;
+
+  @ApiProperty({ example: 3, description: "userId of 2nd-place D11 leaderboard finisher" })
+  @IsInt()
+  @Min(1)
+  seed2UserId!: number;
+
+  @ApiProperty({ example: 7, description: "userId of 3rd-place D11 leaderboard finisher" })
+  @IsInt()
+  @Min(1)
+  seed3UserId!: number;
+}
+
+export class SetPlayoffQ2WinnerDto extends AdminReasonDto {
+  @ApiProperty({ example: 3, description: "userId of the Q2 fantasy contest winner (must be seed2 or seed3)" })
+  @IsInt()
+  @Min(1)
+  winnerUserId!: number;
 }

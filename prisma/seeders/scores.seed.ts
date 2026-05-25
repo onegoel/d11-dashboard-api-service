@@ -21,16 +21,6 @@ const pointsForRank = (rank: number) => RANK_POINTS[rank] ?? 0;
 const getSeededMatchResult = (matchNo: number): MatchResult =>
   matchNo % 2 === 0 ? MatchResult.AWAY_WIN : MatchResult.HOME_WIN;
 
-/**
- * Ranks for matches 1-15 (index 0 = match 1).
- * Inner array order maps to the player order below (PLAYER_ORDER).
- * Each row must be a permutation of 1-9.
- *
- * Players   : suryo, sart_wars, gamechangerjassibhai, goelball_gorillas,
- *             rohukannz, bigrickenergy, ujju, mayank, baksy
- * Indexes   :   0       1              2                3
- *               4          5              6      7       8
- */
 const PLAYER_ORDER = [
   "suryo",
   "sart_wars",
@@ -43,148 +33,57 @@ const PLAYER_ORDER = [
   "baksy",
 ] as const;
 
-/**
- * matchRanks[m][p] = rank of player p in match m+1, or null for DNP.
- * When a player DNPs they get no Score row; the leaderboard treats absent
- * rows as "did not play".  Ranks for playing players must be a contiguous
- * permutation starting at 1 (e.g. 8 players → ranks 1-8).
- *
- * Match winners (rank 1):
- *   M1:  ujju       M2:  suryo      M3:  sart_wars       M4:  ujju
- *   M5:  suryo      M6:  rohukannz  M7:  ujju             M8:  sart_wars
- *   M9:  ujju       M10: suryo      M11: goelball_gorillas M12: ujju
- *   M13: rohukannz  M14: suryo      M15: ujju             M16: baksy
- *   M17: mayank     M18: gamechangerjassibhai             M19: suryo
- *   M20: ujju       M21: sart_wars  M22: rohukannz        M23: suryo
- *   M24: goelball_gorillas          M25: ujju             M26: bigrickenergy
- *   M27: sart_wars  M28: suryo      M29: ujju             M30: rohukannz
- *   M31: mayank     M32: suryo      M33: ujju             M34: sart_wars
- *   M35: gamechangerjassibhai       M36: suryo            M37: ujju
- *   M38: rohukannz  M39: sart_wars  M40: suryo            M41: ujju
- *
- * DNPs (null):
- *   M3:  baksy              M7:  goelball_gorillas
- *   M11: bigrickenergy      M14: baksy
- *   M23: bigrickenergy      M28: baksy
- *   M33: gamechangerjassibhai       M40: mayank
- */
-const matchRanks: (number | null)[][] = [
-  // M1  : ujju 1st, suryo 2nd, sart_wars 3rd
-  [2, 3, 4, 9, 5, 6, 1, 7, 8],
-  // M2  : suryo 1st, ujju 2nd, rohukannz 3rd
-  [1, 5, 7, 4, 3, 6, 2, 9, 8],
-  // M3  : sart_wars 1st, ujju 2nd, suryo 3rd | baksy DNP
-  [3, 1, 5, 4, 6, 7, 2, 8, null],
-  // M4  : ujju 1st, rohukannz 2nd, sart_wars 3rd
-  [4, 3, 7, 6, 2, 5, 1, 9, 8],
-  // M5  : suryo 1st, ujju 2nd, sart_wars 3rd
-  [1, 3, 5, 6, 4, 8, 2, 7, 9],
-  // M6  : rohukannz 1st, suryo 2nd, ujju 3rd
-  [2, 4, 5, 7, 1, 6, 3, 8, 9],
-  // M7  : ujju 1st, suryo 2nd, gamechangerjassibhai 3rd | goelball_gorillas DNP
-  [2, 4, 3, null, 5, 6, 1, 7, 8],
-  // M8  : sart_wars 1st, rohukannz 2nd, ujju 3rd
-  [4, 1, 5, 6, 2, 7, 3, 9, 8],
-  // M9  : ujju 1st, gamechangerjassibhai 2nd, sart_wars 3rd
-  [5, 3, 2, 7, 4, 6, 1, 8, 9],
-  // M10 : suryo 1st, ujju 2nd, rohukannz 3rd
-  [1, 4, 6, 7, 3, 5, 2, 9, 8],
-  // M11 : goelball_gorillas 1st, suryo 2nd, ujju 3rd | bigrickenergy DNP
-  [2, 6, 4, 1, 5, null, 3, 7, 8],
-  // M12 : ujju 1st, suryo 2nd, sart_wars 3rd
-  [2, 3, 6, 4, 7, 5, 1, 8, 9],
-  // M13 : rohukannz 1st, ujju 2nd, suryo 3rd
-  [3, 4, 5, 7, 1, 6, 2, 9, 8],
-  // M14 : suryo 1st, sart_wars 2nd, ujju 3rd | baksy DNP
-  [1, 2, 5, 6, 4, 7, 3, 8, null],
-  // M15 : ujju 1st, suryo 2nd, sart_wars 3rd
-  [2, 3, 6, 5, 4, 7, 1, 9, 8],
-  // M16 : baksy 1st, ujju 2nd, suryo 3rd
-  [3, 4, 5, 6, 7, 8, 2, 9, 1],
-  // M17 : mayank 1st, ujju 2nd, sart_wars 3rd
-  [3, 5, 6, 7, 4, 8, 2, 1, 9],
-  // M18 : gamechangerjassibhai 1st, ujju 2nd, suryo 3rd
-  [3, 4, 1, 6, 5, 7, 2, 8, 9],
-  // M19 : suryo 1st, ujju 2nd, rohukannz 3rd
-  [1, 4, 5, 6, 3, 7, 2, 8, 9],
-  // M20 : ujju 1st, suryo 2nd, rohukannz 3rd
-  [2, 4, 5, 6, 3, 7, 1, 8, 9],
-  // M21 : sart_wars 1st, ujju 2nd, suryo 3rd
-  [3, 1, 5, 6, 4, 7, 2, 8, 9],
-  // M22 : rohukannz 1st, ujju 2nd, suryo 3rd
-  [2, 4, 5, 6, 1, 7, 3, 8, 9],
-  // M23 : suryo 1st, ujju 2nd, rohukannz 3rd | bigrickenergy DNP
-  [1, 3, 5, 6, 4, null, 2, 7, 8],
-  // M24 : goelball_gorillas 1st, ujju 2nd, suryo 3rd
-  [3, 5, 6, 1, 4, 7, 2, 8, 9],
-  // M25 : ujju 1st, rohukannz 2nd, suryo 3rd
-  [3, 4, 5, 6, 2, 7, 1, 8, 9],
-  // M26 : bigrickenergy 1st, ujju 2nd, rohukannz 3rd
-  [3, 4, 5, 6, 2, 1, 7, 8, 9],
-  // M27 : sart_wars 1st, ujju 2nd, goelball_gorillas 3rd
-  [4, 1, 5, 3, 6, 7, 2, 8, 9],
-  // M28 : suryo 1st, ujju 2nd, sart_wars 3rd | baksy DNP
-  [1, 3, 5, 4, 6, 7, 2, 8, null],
-  // M29 : ujju 1st, goelball_gorillas 2nd, suryo 3rd
-  [3, 4, 5, 2, 6, 7, 1, 8, 9],
-  // M30 : rohukannz 1st, ujju 2nd, sart_wars 3rd
-  [3, 4, 5, 6, 1, 7, 2, 8, 9],
-  // M31 : mayank 1st, ujju 2nd, suryo 3rd
-  [3, 5, 6, 7, 4, 8, 2, 1, 9],
-  // M32 : suryo 1st, ujju 2nd, rohukannz 3rd
-  [1, 4, 5, 6, 3, 7, 2, 8, 9],
-  // M33 : ujju 1st, suryo 2nd, sart_wars 3rd | gamechangerjassibhai DNP
-  [2, 3, null, 5, 4, 6, 1, 7, 8],
-  // M34 : sart_wars 1st, ujju 2nd, suryo 3rd
-  [3, 1, 5, 4, 6, 7, 2, 8, 9],
-  // M35 : gamechangerjassibhai 1st, ujju 2nd, suryo 3rd
-  [4, 3, 1, 5, 6, 7, 2, 8, 9],
-  // M36 : suryo 1st, ujju 2nd, sart_wars 3rd
-  [1, 3, 5, 6, 4, 7, 2, 8, 9],
-  // M37 : ujju 1st, suryo 2nd, goelball_gorillas 3rd
-  [2, 4, 5, 3, 6, 7, 1, 8, 9],
-  // M38 : rohukannz 1st, suryo 2nd, sart_wars 3rd
-  [4, 3, 5, 6, 1, 7, 2, 8, 9],
-  // M39 : sart_wars 1st, ujju 2nd, goelball_gorillas 3rd
-  [4, 1, 5, 3, 6, 7, 2, 8, 9],
-  // M40 : suryo 1st, ujju 2nd, sart_wars 3rd | mayank DNP
-  [1, 3, 5, 4, 6, 7, 2, null, 8],
-  // M41 : ujju 1st, goelball_gorillas 2nd, suryo 3rd
-  [3, 4, 5, 2, 6, 7, 1, 8, 9],
-];
+const TOTAL_MATCHES = 72; // 70 league + Q1 + Eliminator
+const DNP_CHANCE = 0.08;  // ~8% chance each player sits out a match
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+}
+
+function randomRanks(playerCount: number): (number | null)[] {
+  const result: (number | null)[] = Array(playerCount).fill(null);
+  const playing = Array.from({ length: playerCount }, (_, i) => i).filter(
+    () => Math.random() > DNP_CHANCE,
+  );
+  shuffle(playing).forEach((playerIdx, rank) => {
+    result[playerIdx] = rank + 1;
+  });
+  return result;
+}
 
 export async function seedScores(prisma: PrismaClient, seasonId: number) {
-  console.log("Seeding scores for matches 1-41...");
+  console.log(
+    `Seeding scores for up to ${TOTAL_MATCHES} matches (league + Q1 + Eliminator)...`,
+  );
 
-  // Fetch the first 41 matches ordered by matchNo
   const matches = await prisma.match.findMany({
     where: { seasonId },
     orderBy: { matchNo: "asc" },
-    take: 41,
+    take: TOTAL_MATCHES,
     select: { id: true, matchNo: true },
   });
 
-  if (matches.length < 41) {
+  if (matches.length < TOTAL_MATCHES) {
     console.warn(
-      `Expected 41 matches but found ${matches.length}. ` +
-        "Seeding scores only for available matches.",
+      `Found ${matches.length} of ${TOTAL_MATCHES} expected matches — ` +
+        "scores will be seeded for available matches only.",
     );
   }
 
-  // Resolve userName → seasonUserId
   const seasonUsers = await prisma.seasonUser.findMany({
     where: { seasonId },
-    select: {
-      id: true,
-      user: { select: { user_name: true } },
-    },
+    select: { id: true, user: { select: { user_name: true } } },
   });
 
   const userNameToSeasonUserId = new Map(
     seasonUsers.map((su) => [su.user.user_name, su.id]),
   );
 
-  // Validate all expected players are present
   for (const userName of PLAYER_ORDER) {
     if (!userNameToSeasonUserId.has(userName)) {
       throw new Error(
@@ -194,41 +93,21 @@ export async function seedScores(prisma: PrismaClient, seasonId: number) {
     }
   }
 
-  for (let matchIdx = 0; matchIdx < matches.length; matchIdx++) {
-    const match = matches[matchIdx]!;
-    const ranks = matchRanks[matchIdx];
-
-    if (!ranks) {
-      console.warn(`No rank data for match index ${matchIdx}, skipping.`);
-      continue;
-    }
-
-    console.log(
-      `  Seeding scores for match ${match.matchNo} (id=${match.id})...`,
-    );
+  for (const match of matches) {
+    const ranks = randomRanks(PLAYER_ORDER.length);
 
     await prisma.$transaction(async (tx) => {
-      // Delete any existing scores for this match so upsert is clean
       await tx.score.deleteMany({ where: { matchId: match.id } });
 
       for (let playerIdx = 0; playerIdx < PLAYER_ORDER.length; playerIdx++) {
-        const userName = PLAYER_ORDER[playerIdx]!;
         const rank = ranks[playerIdx];
-
-        // null rank = DNP: no Score row is created, the leaderboard treats
-        // the absent row as "did not play"
-        if (rank === null || rank === undefined) {
-          continue;
-        }
-
-        const points = pointsForRank(rank);
-        const seasonUserId = userNameToSeasonUserId.get(userName)!;
+        if (rank === null || rank === undefined) continue;
 
         await tx.score.create({
           data: {
-            seasonUserId,
+            seasonUserId: userNameToSeasonUserId.get(PLAYER_ORDER[playerIdx]!)!,
             matchId: match.id,
-            points,
+            points: pointsForRank(rank),
             rank,
             rawScore: null,
             effectiveScore: null,
@@ -238,7 +117,6 @@ export async function seedScores(prisma: PrismaClient, seasonId: number) {
         });
       }
 
-      // Mark match as COMPLETED so leaderboard service includes it
       await tx.match.update({
         where: { id: match.id },
         data: {

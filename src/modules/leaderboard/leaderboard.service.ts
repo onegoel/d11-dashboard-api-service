@@ -518,4 +518,45 @@ export class LeaderboardService {
       chipCode: player.chipPlay?.chipType.code ?? null,
     }));
   }
+
+  async getPlayoffConfig(seasonId: number) {
+    const [season, playoffMatches] = await Promise.all([
+      this.prisma.client.season.findUnique({
+        where: { id: seasonId },
+        select: { fantasyPlayoffConfig: true },
+      }),
+      this.prisma.client.match.findMany({
+        where: {
+          seasonId,
+          isKnockout: true,
+        },
+        select: {
+          id: true,
+          matchNo: true,
+          matchDate: true,
+          status: true,
+          matchResult: true,
+          tournamentStage: true,
+          stageLabel: true,
+          homeTeam: { select: { id: true, name: true, shortCode: true, logoUrl: true } },
+          awayTeam: { select: { id: true, name: true, shortCode: true, logoUrl: true } },
+          fantasyContests: {
+            select: {
+              id: true,
+              status: true,
+              isPlayoffContest: true,
+              eligibleUserIds: true,
+            },
+          },
+        },
+        orderBy: { matchNo: "asc" },
+      }),
+    ]);
+
+    return {
+      seasonId,
+      playoffBracket: season?.fantasyPlayoffConfig ?? null,
+      matches: playoffMatches,
+    };
+  }
 }
