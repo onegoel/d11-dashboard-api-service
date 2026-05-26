@@ -38,7 +38,7 @@ export class ScoreService {
   private static readonly TEAM_FORM_WIN_BONUS = 5;
   private static readonly TEAM_FORM_LOSS_PENALTY = -2;
   private static readonly REGULAR_SEASON_MATCH_COUNT = parseInt(
-    process.env.REGULAR_SEASON_MATCH_COUNT ?? "70",
+    process.env.REGULAR_SEASON_MATCH_COUNT ?? "72",
     10,
   );
 

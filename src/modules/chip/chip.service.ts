@@ -106,7 +106,7 @@ const getChipShortCode = (code: ChipCode) => {
 };
 
 const REGULAR_SEASON_MATCH_COUNT = parseInt(
-  process.env.REGULAR_SEASON_MATCH_COUNT ?? "70",
+  process.env.REGULAR_SEASON_MATCH_COUNT ?? "72",
   10,
 );
 
