@@ -21,14 +21,14 @@ async function main() {
   const season = await seedSeason(prisma);
   await seedFixtures(prisma, season.id);
 
-  if (!isProd) {
-    // Dev/test data only
-    await seedUsers(prisma);
-    await seedSeasonUsers(prisma, season.id);
-    await seedScores(prisma, season.id);
-  } else {
-    console.log("Skipping user/score seeders (SEED_ENV=production)");
-  }
+  // if (!isProd) {
+  //   // Dev/test data only
+  //   await seedUsers(prisma);
+  //   await seedSeasonUsers(prisma, season.id);
+  //   await seedScores(prisma, season.id);
+  // } else {
+  //   console.log("Skipping user/score seeders (SEED_ENV=production)");
+  // }
 
   console.log("Seed complete");
 }
