@@ -5,8 +5,8 @@ import {
   TournamentStage,
   TournamentType,
 } from "../../generated/prisma/client.js";
-import fixtures from "../data/ipl-2026/league-stage-ipl-2026.json" with { type: "json" };
-import playoffs from "../data/ipl-2026/playoffs-ipl-2026.json" with { type: "json" };
+import fixtures from "../data/ipl-2026/league-stage-ipl-2026.json";
+import playoffs from "../data/ipl-2026/playoffs-ipl-2026.json";
 
 type Fixture = {
   matchNo: number;
