@@ -8,5 +8,6 @@ import { ScoreService } from "./score.service.js";
   imports: [AuthModule, ChipModule],
   controllers: [ScoreController],
   providers: [ScoreService],
+  exports: [ScoreService],
 })
 export class ScoreModule {}

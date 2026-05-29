@@ -132,7 +132,7 @@ jobs:
             --image "$IMAGE_URI" \
             --allow-unauthenticated \
             --service-account "${{ vars.BACKEND_RUNTIME_SA }}" \
-            --set-env-vars "NODE_ENV=production,CORS_ORIGIN=${{ vars.BACKEND_CORS_ORIGIN }},BEST_N_DROP_COUNT=${{ vars.BACKEND_BEST_N_DROP_COUNT }},PROFILE_PHOTO_BUCKET=${{ vars.BACKEND_PROFILE_PHOTO_BUCKET }}" \
+            --set-env-vars "^|^NODE_ENV=production|CORS_ORIGIN=${{ vars.BACKEND_CORS_ORIGIN }}|BEST_N_DROP_COUNT=${{ vars.BACKEND_BEST_N_DROP_COUNT }}|PROFILE_PHOTO_BUCKET=${{ vars.BACKEND_PROFILE_PHOTO_BUCKET }}" \
             --set-secrets "DATABASE_URL=DATABASE_URL:latest" \
             --set-secrets "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest" \
             --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \

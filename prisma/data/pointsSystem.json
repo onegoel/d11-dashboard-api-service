@@ -1,0 +1,51 @@
+{
+  "batting": {
+    "runs": 1,
+    "four_bonus": 4,
+    "six_bonus": 6,
+    "25_runs_bonus": 4,
+    "50_runs_bonus": 8,
+    "75_runs_bonus": 12,
+    "100_runs_bonus": 16,
+    "duck_penalty": -2,
+    "strike_rate": {
+      "less_than_50": -6,
+      "50_to_59.99": -4,
+      "60_to_69.99": -2,
+      "70_to_129.99": 0,
+      "130_to_149.99": 2,
+      "150_to_169.99": 4,
+      "170_and_above": 6
+    }
+  },
+  "bowling": {
+    "dot_ball_bonus": 1,
+    "wicket_bonus": 30,
+    "maiden_over_bonus": 12,
+    "lbw_bowled_bonus": 8,
+    "three_wicket_haul_bonus": 4,
+    "four_wicket_haul_bonus": 8,
+    "five_wicket_haul_bonus": 12,
+    "economy_rate": {
+      "less_than_5": 6,
+      "5_to_5.99": 4,
+      "6_to_6.99": 2,
+      "7_to_9.99": 0,
+      "10_to_10.99": -2,
+      "11_to_11.99": -4,
+      "12_and_above": -6
+    }
+  },
+  "fielding": {
+    "catch": 8,
+    "catch_bonus": 4,
+    "stumping": 12,
+    "run_out_direct": 12,
+    "run_out_multiple": 6
+  },
+  "other": {
+    "playing_11_bonus": 4,
+    "captain_multiplier": 2,
+    "vice_captain_multiplier": 1.5
+  }
+}

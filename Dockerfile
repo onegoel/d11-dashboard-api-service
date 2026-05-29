@@ -23,15 +23,17 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && apt-get install -y --no-install-recommends openssl ca-certificates curl \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/generated ./generated
+COPY --from=build /app/scripts ./scripts
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma.config.* ./
+COPY --from=build /app/tsconfig.json ./
 
 EXPOSE 8080
 

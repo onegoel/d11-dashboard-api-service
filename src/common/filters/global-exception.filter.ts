@@ -1,5 +1,6 @@
 import { Catch, HttpException, Logger } from "@nestjs/common";
 import type { ArgumentsHost, ExceptionFilter } from "@nestjs/common";
+import { AxiosError } from "axios";
 import type { Request, Response } from "express";
 
 type StatusCodeException = {
@@ -16,13 +17,6 @@ const extractHttpMessage = (exception: HttpException) => {
 
   if (typeof response === "object" && response !== null) {
     if (
-      "error" in response &&
-      typeof (response as { error?: unknown }).error === "string"
-    ) {
-      return (response as { error: string }).error;
-    }
-
-    if (
       "message" in response &&
       typeof (response as { message?: unknown }).message === "string"
     ) {
@@ -35,12 +29,21 @@ const extractHttpMessage = (exception: HttpException) => {
     ) {
       return (response as { message: string[] }).message.join(", ");
     }
+
+    if (
+      "error" in response &&
+      typeof (response as { error?: unknown }).error === "string"
+    ) {
+      return (response as { error: string }).error;
+    }
   }
 
   return exception.message;
 };
 
-const isStatusCodeException = (exception: unknown): exception is StatusCodeException => {
+const isStatusCodeException = (
+  exception: unknown,
+): exception is StatusCodeException => {
   if (typeof exception !== "object" || exception === null) {
     return false;
   }
@@ -63,16 +66,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const res = ctx.getResponse<Response>();
 
     const isHttpException = exception instanceof HttpException;
+    const isAxiosException = exception instanceof AxiosError;
     const status = isHttpException
       ? exception.getStatus()
-      : isStatusCodeException(exception)
-        ? exception.statusCode
-        : 500;
+      : isAxiosException
+        ? (exception.response?.status ?? 502)
+        : isStatusCodeException(exception)
+          ? exception.statusCode
+          : 500;
     const message = isHttpException
       ? extractHttpMessage(exception)
-      : isStatusCodeException(exception)
-        ? exception.message
-      : "Internal Server Error";
+      : isAxiosException
+        ? exception.response?.statusText || exception.message
+        : isStatusCodeException(exception)
+          ? exception.message
+          : "Internal Server Error";
 
     const requestLabel = `${req.method} ${req.originalUrl ?? req.url}`;
 

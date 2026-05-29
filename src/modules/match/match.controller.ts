@@ -2,12 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from "@nestjs/common";
@@ -20,7 +18,6 @@ import {
   ApiBody,
   ApiResponse,
 } from "@nestjs/swagger";
-import { GetMatchScoreResponseDto } from "./dto/get-match-score-response.dto.js";
 import { UpdateMatchStatusDto } from "./dto/update-match-status.dto.js";
 import { MatchService } from "./match.service.js";
 import { MatchStatus, UserRole } from "../../../generated/prisma/client.js";
@@ -35,6 +32,14 @@ import { RolesGuard } from "../auth/roles.guard.js";
 @UseGuards(FirebaseAuthGuard, AppUserGuard)
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
+
+  @Get(":matchId")
+  @ApiOperation({ summary: "Get match by internal match ID" })
+  @ApiParam({ name: "matchId", format: "uuid", type: String })
+  @ApiResponse({ status: 200 })
+  getMatchById(@Param("matchId", ParseUUIDPipe) matchId: string) {
+    return this.matchService.getMatchById(matchId);
+  }
 
   @Get("season/:seasonId")
   @ApiOperation({
@@ -75,49 +80,12 @@ export class MatchController {
     return this.matchService.getSeasonMatches(seasonId);
   }
 
-  @Get(":matchId/score")
-  @ApiOperation({
-    summary: "Get match score snapshot",
-    description:
-      "Returns the latest persisted CricAPI score snapshot from DB (no direct CricAPI hit).",
-  })
-  @ApiParam({
-    name: "matchId",
-    format: "uuid",
-    description: "The match ID",
-    example: "550e8400-e29b-41d4-a716-446655440000",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "Match score snapshot retrieved successfully",
-    type: GetMatchScoreResponseDto,
-  })
-  async getMatchScore(@Param("matchId", ParseUUIDPipe) matchId: string) {
-    return this.matchService.getMatchScore(matchId);
-  }
-
-  @Post(":matchId/score/sync")
-  @HttpCode(200)
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({
-    summary: "Sync match score from CricAPI",
-    description:
-      "Fetches one score snapshot from configured source (mock/live) and persists it in DB.",
-  })
-  @ApiParam({
-    name: "matchId",
-    format: "uuid",
-    description: "The match ID",
-    example: "550e8400-e29b-41d4-a716-446655440000",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "Match score synced successfully",
-    type: GetMatchScoreResponseDto,
-  })
-  async syncMatchScore(@Param("matchId", ParseUUIDPipe) matchId: string) {
-    return this.matchService.syncMatchScore(matchId);
+  @Get("by-wisden/:wisdenMatchGid")
+  @ApiOperation({ summary: "Look up a match by Wisden match gid" })
+  @ApiParam({ name: "wisdenMatchGid", type: String })
+  @ApiResponse({ status: 200 })
+  getMatchByWisdenGid(@Param("wisdenMatchGid") wisdenMatchGid: string) {
+    return this.matchService.getMatchByWisdenGid(wisdenMatchGid);
   }
 
   @Patch(":matchId/status")

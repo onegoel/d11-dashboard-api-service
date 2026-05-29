@@ -11,13 +11,18 @@ import {
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   ValidateNested,
 } from "class-validator";
 import {
+  BowlingStyle,
+  BowlingTechnique,
   ChipCode,
+  FantasyPlayerRole,
   MatchResult,
   MatchStatus,
+  TournamentStage,
   UserRole,
 } from "../../../../generated/prisma/client.js";
 
@@ -56,15 +61,47 @@ export class CreateAdminMatchDto extends AdminReasonDto {
 
   @ApiPropertyOptional({ enum: MatchStatus, example: MatchStatus.SCHEDULED })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchStatus)
   status?: MatchStatus;
 
   @ApiPropertyOptional({ enum: MatchResult, example: MatchResult.PENDING })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
+
+  @ApiPropertyOptional({ enum: TournamentStage, example: TournamentStage.QUALIFIER })
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
+  @IsEnum(TournamentStage)
+  tournamentStage?: TournamentStage;
+
+  @ApiPropertyOptional({ example: "Qualifier 2" })
+  @IsOptional()
+  @IsString()
+  stageLabel?: string;
+
+  @ApiPropertyOptional({ example: "Indian Premier League 2026" })
+  @IsOptional()
+  @IsString()
+  tournamentName?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isKnockout?: boolean;
+
+  @ApiPropertyOptional({ example: "d936ece5-66c8-411b-bfa1-43613ace06bb" })
+  @IsOptional()
+  @IsString()
+  wisdenMatchGid?: string;
 }
 
 export class BulkCreateAdminMatchesDto extends AdminReasonDto {
@@ -100,15 +137,47 @@ export class UpdateAdminMatchDto extends AdminReasonDto {
 
   @ApiPropertyOptional({ enum: MatchStatus })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchStatus)
   status?: MatchStatus;
 
   @ApiPropertyOptional({ enum: MatchResult })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
+
+  @ApiPropertyOptional({ enum: TournamentStage })
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
+  @IsEnum(TournamentStage)
+  tournamentStage?: TournamentStage;
+
+  @ApiPropertyOptional({ example: "Qualifier 2" })
+  @IsOptional()
+  @IsString()
+  stageLabel?: string;
+
+  @ApiPropertyOptional({ example: "Indian Premier League 2026" })
+  @IsOptional()
+  @IsString()
+  tournamentName?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isKnockout?: boolean;
+
+  @ApiPropertyOptional({ example: "d936ece5-66c8-411b-bfa1-43613ace06bb" })
+  @IsOptional()
+  @IsString()
+  wisdenMatchGid?: string;
 }
 
 export class DeleteAdminMatchDto extends AdminReasonDto {
@@ -119,15 +188,25 @@ export class DeleteAdminMatchDto extends AdminReasonDto {
 }
 
 export class ReopenMatchDto extends AdminReasonDto {
-  @ApiPropertyOptional({ enum: [MatchStatus.SCHEDULED, MatchStatus.LIVE], example: MatchStatus.LIVE })
+  @ApiPropertyOptional({
+    enum: [MatchStatus.SCHEDULED, MatchStatus.LIVE],
+    example: MatchStatus.LIVE,
+  })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchStatus)
   status?: MatchStatus;
 
-  @ApiPropertyOptional({ enum: [MatchResult.PENDING], example: MatchResult.PENDING })
+  @ApiPropertyOptional({
+    enum: [MatchResult.PENDING],
+    example: MatchResult.PENDING,
+  })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(MatchResult)
   matchResult?: MatchResult;
 }
@@ -169,7 +248,9 @@ export class ReassignChipPlayDto extends AdminReasonDto {
 
   @ApiPropertyOptional({ enum: ChipCode, example: ChipCode.DOUBLE_TEAM })
   @IsOptional()
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(ChipCode)
   chipCode?: ChipCode;
 
@@ -182,6 +263,24 @@ export class ReassignChipPlayDto extends AdminReasonDto {
   @IsOptional()
   @IsUUID()
   selectedTeamId?: string;
+
+  @ApiPropertyOptional({
+    format: "uuid",
+    description: "For ANCHOR_PLAYER: UUID of the anchor FantasyPlayer",
+  })
+  @IsOptional()
+  @IsUUID()
+  anchorFantasyPlayerId?: string;
+
+  @ApiPropertyOptional({
+    example: "Vaibhav Suryavanshi",
+    description:
+      "For ANCHOR_PLAYER: display name (stored alongside ID for readability)",
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  anchorPlayerName?: string;
 }
 
 export class AddSeasonUserDto extends AdminReasonDto {
@@ -289,7 +388,177 @@ export class AuditLogQueryDto {
 
 export class UpdateUserRoleDto extends AdminReasonDto {
   @ApiProperty({ enum: UserRole, example: UserRole.ADMIN })
-  @Transform(({ value }) => typeof value === "string" ? value.toUpperCase() : value)
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+  )
   @IsEnum(UserRole)
   role!: UserRole;
+}
+
+// ─── Player admin DTOs ────────────────────────────────────────────────────────
+
+export class CreateAdminPlayerDto {
+  @ApiProperty({ example: "Jos" })
+  @IsString()
+  firstName!: string;
+
+  @ApiProperty({ example: "Buttler" })
+  @IsString()
+  lastName!: string;
+
+  @ApiProperty({ example: "Jos Buttler" })
+  @IsString()
+  displayName!: string;
+
+  @ApiProperty({ enum: FantasyPlayerRole, example: FantasyPlayerRole.BATSMAN })
+  @IsEnum(FantasyPlayerRole)
+  role!: FantasyPlayerRole;
+
+  @ApiPropertyOptional({ format: "uuid", description: "Team ID (UUID)" })
+  @IsOptional()
+  @IsUUID()
+  teamId?: string;
+
+  @ApiPropertyOptional({ example: "https://example.com/photo.png" })
+  @IsOptional()
+  @IsString()
+  photoUrl?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({ example: "Buttler" })
+  @IsOptional()
+  @IsString()
+  shortName?: string;
+
+  @ApiPropertyOptional({ example: "RIGHT_HAND" })
+  @IsOptional()
+  @IsString()
+  battingHand?: string;
+
+  @ApiPropertyOptional({ example: "RIGHT_HAND" })
+  @IsOptional()
+  @IsString()
+  bowlingHand?: string;
+
+  @ApiPropertyOptional({ description: "Wisden team ID" })
+  @IsOptional()
+  @IsString()
+  teamWisdenId?: string;
+
+  @ApiPropertyOptional({ description: "Wisden player ID" })
+  @IsOptional()
+  @IsString()
+  wisdenPlayerId?: string;
+
+  @ApiPropertyOptional({ enum: BowlingTechnique })
+  @IsOptional()
+  @IsEnum(BowlingTechnique)
+  bowlingTechnique?: BowlingTechnique;
+
+  @ApiPropertyOptional({ enum: BowlingStyle })
+  @IsOptional()
+  @IsEnum(BowlingStyle)
+  bowlingStyle?: BowlingStyle;
+}
+
+export class UpdateAdminPlayerDto {
+  @ApiPropertyOptional({ example: "Jos" })
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @ApiPropertyOptional({ example: "Buttler" })
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @ApiPropertyOptional({ example: "Jos Buttler" })
+  @IsOptional()
+  @IsString()
+  displayName?: string;
+
+  @ApiPropertyOptional({ enum: FantasyPlayerRole })
+  @IsOptional()
+  @IsEnum(FantasyPlayerRole)
+  role?: FantasyPlayerRole;
+
+  @ApiPropertyOptional({ format: "uuid", nullable: true })
+  @IsOptional()
+  @IsUUID()
+  teamId?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  photoUrl?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  shortName?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  battingHand?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  bowlingHand?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  teamWisdenId?: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @IsString()
+  wisdenPlayerId?: string | null;
+
+  @ApiPropertyOptional({ enum: BowlingTechnique, nullable: true })
+  @IsOptional()
+  @IsEnum(BowlingTechnique)
+  bowlingTechnique?: BowlingTechnique | null;
+
+  @ApiPropertyOptional({ enum: BowlingStyle, nullable: true })
+  @IsOptional()
+  @IsEnum(BowlingStyle)
+  bowlingStyle?: BowlingStyle | null;
+}
+
+// ─── Fantasy playoff DTOs ──────────────────────────────────────────────────────
+
+export class SetPlayoffSeedsDto extends AdminReasonDto {
+  @ApiProperty({ example: 5, description: "userId of 1st-place D11 leaderboard finisher" })
+  @IsInt()
+  @Min(1)
+  seed1UserId!: number;
+
+  @ApiProperty({ example: 3, description: "userId of 2nd-place D11 leaderboard finisher" })
+  @IsInt()
+  @Min(1)
+  seed2UserId!: number;
+
+  @ApiProperty({ example: 7, description: "userId of 3rd-place D11 leaderboard finisher" })
+  @IsInt()
+  @Min(1)
+  seed3UserId!: number;
+}
+
+export class SetPlayoffQ2WinnerDto extends AdminReasonDto {
+  @ApiProperty({ example: 3, description: "userId of the Q2 fantasy contest winner (must be seed2 or seed3)" })
+  @IsInt()
+  @Min(1)
+  winnerUserId!: number;
 }

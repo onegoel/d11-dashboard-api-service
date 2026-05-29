@@ -1,176 +1,218 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import type { InputJsonValue } from "@prisma/client/runtime/client";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { MatchResult, MatchStatus } from "../../../generated/prisma/client.js";
 import { PrismaService } from "../../common/database/prisma.service.js";
 import { isPrismaRecordNotFoundError } from "../../common/errors/prisma-error.utils.js";
-import { CRICAPI_POLLING } from "../cricapi/cricapi.polling-config.js";
-import {
-  CRICAPI_ENABLE_MOCK_SCORE_FALLBACK,
-  CRICAPI_USE_MOCK_SCORE,
-} from "../cricapi/cricapi.source-config.js";
-import { CricapiService } from "../cricapi/cricapi.service.js";
-import type { GetMatchScoreResponseDto } from "./dto/get-match-score-response.dto.js";
+import type { WisdenScorecardResponse } from "../../common/types/wisden.types.js";
+import { withDerivedMatchResult } from "../liveScore/wisden-match-result.util.js";
+import { WeatherPollerService } from "../weather/weather-poller.service.js";
 
 type GetSeasonMatchesOptions = {
   status?: MatchStatus;
 };
 
-type MatchScoreSnapshotRow = {
-  id: string;
-  status: MatchStatus;
-  matchResult: MatchResult;
-  cricApiMatchId: string | null;
-  cricApiStatus: string | null;
-  cricApiScore: unknown;
-  cricApiLastSyncedAt: Date | null;
+type MatchPotmByImpact = {
+  fantasyPlayerId: string;
+  displayName: string;
+  shortName: string | null;
+  playerPhotoUrl: string | null;
+  teamShortCode: string | null;
+  totalImpact: number;
+  battingImpact: number;
+  bowlingImpact: number;
 };
+
+const MATCH_INCLUDE = {
+  homeTeam: true,
+  awayTeam: true,
+  ground: true,
+} as const;
+
+const MATCH_WITH_AUDIT_INCLUDE = {
+  ...MATCH_INCLUDE,
+  updatedByUser: {
+    select: {
+      id: true,
+      display_name: true,
+    },
+  },
+} as const;
 
 @Injectable()
 export class MatchService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cricapiService: CricapiService,
+    private readonly weatherPollerService: WeatherPollerService,
   ) {}
 
-  async syncMatchScore(matchId: string): Promise<GetMatchScoreResponseDto> {
-    const match = await this.prisma.client.match.findUnique({
-      where: { id: matchId },
-      include: {
-        homeTeam: { select: { name: true } },
-        awayTeam: { select: { name: true } },
-      },
-    });
-
-    if (!match) {
-      throw new NotFoundException("Match not found");
-    }
-
-    if (!match.cricApiMatchId) {
-      throw new BadRequestException(
-        "Match is not linked to CricAPI. Missing cricApiMatchId.",
-      );
-    }
-
-    const matchInfo = await this.cricapiService.getMatchInfo(
-      match.cricApiMatchId,
-    );
-    const score = (matchInfo.data.score ?? []).map((inning) => ({
-      r: inning.r,
-      w: inning.w,
-      o: inning.o,
-      inning: inning.inning,
-    })) as InputJsonValue;
-
-    const nextStatus: MatchStatus = matchInfo.data.matchEnded
-      ? MatchStatus.COMPLETED
-      : matchInfo.data.matchStarted
-        ? MatchStatus.LIVE
-        : MatchStatus.SCHEDULED;
-
-    const nextResult = this.deriveMatchResult(
-      matchInfo.data.matchWinner,
-      match.homeTeam.name,
-      match.awayTeam.name,
-      matchInfo.data.matchEnded,
+  private async attachPotmByImpact<T extends { id: string }>(
+    matches: T[],
+  ): Promise<Array<T & { potmByImpact: MatchPotmByImpact | null }>> {
+    const potmByMatchId = await this.getPotmByImpactForMatches(
+      matches.map((match) => match.id),
     );
 
-    await this.prisma.client.match.update({
-      where: { id: matchId },
-      data: {
-        cricApiScore: score,
-        cricApiStatus: matchInfo.data.status || null,
-        cricApiLastSyncedAt: new Date(),
-        status: nextStatus,
-        matchResult: nextResult,
-      },
-    });
-
-    return this.getMatchScore(matchId);
+    return matches.map((match) => ({
+      ...match,
+      potmByImpact: potmByMatchId.get(match.id) ?? null,
+    }));
   }
 
-  async getMatchScore(matchId: string): Promise<GetMatchScoreResponseDto> {
-    const match = (await this.prisma.client.match.findUnique({
+  private async getPotmByImpactForMatches(
+    matchIds: string[],
+  ): Promise<Map<string, MatchPotmByImpact>> {
+    if (matchIds.length === 0) return new Map();
+
+    const impactRows =
+      await this.prisma.client.fantasyPlayerMatchStats.findMany({
+        where: {
+          matchId: { in: matchIds },
+          played: true,
+        },
+        select: {
+          matchId: true,
+          fantasyPlayerId: true,
+          battingImpact: true,
+          bowlingImpact: true,
+          fantasyPlayer: {
+            select: {
+              displayName: true,
+              shortName: true,
+              photoUrl: true,
+              team: {
+                select: {
+                  shortCode: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+    const byMatch = new Map<string, MatchPotmByImpact>();
+
+    for (const row of impactRows) {
+      const battingImpact = row.battingImpact ?? 0;
+      const bowlingImpact = row.bowlingImpact ?? 0;
+      const totalImpact = battingImpact + bowlingImpact;
+      if (totalImpact <= 0) continue;
+
+      const candidate: MatchPotmByImpact = {
+        fantasyPlayerId: row.fantasyPlayerId,
+        displayName: row.fantasyPlayer.displayName,
+        shortName: row.fantasyPlayer.shortName,
+        playerPhotoUrl: row.fantasyPlayer.photoUrl,
+        teamShortCode: row.fantasyPlayer.team?.shortCode ?? null,
+        totalImpact,
+        battingImpact,
+        bowlingImpact,
+      };
+
+      const current = byMatch.get(row.matchId);
+      if (!current) {
+        byMatch.set(row.matchId, candidate);
+        continue;
+      }
+
+      const isBetter =
+        candidate.totalImpact > current.totalImpact ||
+        (candidate.totalImpact === current.totalImpact &&
+          candidate.battingImpact > current.battingImpact) ||
+        (candidate.totalImpact === current.totalImpact &&
+          candidate.battingImpact === current.battingImpact &&
+          candidate.bowlingImpact > current.bowlingImpact) ||
+        (candidate.totalImpact === current.totalImpact &&
+          candidate.battingImpact === current.battingImpact &&
+          candidate.bowlingImpact === current.bowlingImpact &&
+          candidate.displayName.localeCompare(current.displayName) < 0);
+
+      if (isBetter) {
+        byMatch.set(row.matchId, candidate);
+      }
+    }
+
+    return byMatch;
+  }
+
+  async getMatchById(matchId: string) {
+    let match = await this.prisma.client.match.findUnique({
       where: { id: matchId },
-      select: {
-        id: true,
-        status: true,
-        matchResult: true,
-        cricApiMatchId: true,
-        cricApiStatus: true,
-        cricApiScore: true,
-        cricApiLastSyncedAt: true,
-      },
-    })) as MatchScoreSnapshotRow | null;
+      include: MATCH_INCLUDE,
+    });
 
     if (!match) {
-      throw new NotFoundException("Match not found");
+      throw new NotFoundException(`No match found for id ${matchId}`);
     }
 
-    if (
-      CRICAPI_USE_MOCK_SCORE &&
-      CRICAPI_ENABLE_MOCK_SCORE_FALLBACK &&
-      !match.cricApiLastSyncedAt &&
-      !match.cricApiStatus &&
-      !match.cricApiScore
-    ) {
-      const mockMatchInfo = await this.cricapiService.getMatchInfo(
-        match.cricApiMatchId ?? match.id,
+    if (!match.weatherForecast) {
+      const refreshed = await this.weatherPollerService.ensureForecastForMatch(
+        match.id,
       );
 
-      return {
-        matchId: match.id,
-        status: match.status,
-        matchResult: match.matchResult,
-        cricApiStatus: mockMatchInfo.data.status || null,
-        cricApiScore: mockMatchInfo.data.score ?? null,
-        lastSyncedAt: new Date().toISOString(),
-        isStale: false,
-      };
+      if (refreshed) {
+        match = await this.prisma.client.match.findUnique({
+          where: { id: matchId },
+          include: MATCH_INCLUDE,
+        });
+
+        if (!match) {
+          throw new NotFoundException(`No match found for id ${matchId}`);
+        }
+      }
     }
 
-    const staleThresholdMs = CRICAPI_POLLING.POLL_INTERVAL_MS * 3;
-    const ageMs = match.cricApiLastSyncedAt
-      ? Date.now() - match.cricApiLastSyncedAt.getTime()
-      : Number.POSITIVE_INFINITY;
+    if (match.status === MatchStatus.COMPLETED && match.wisdenScore) {
+      const derived = withDerivedMatchResult(
+        match.wisdenScore as WisdenScorecardResponse,
+      );
+      const resultText = derived.scorecard.match_result ?? null;
+      const shouldUpdateResultText =
+        resultText !== null && resultText !== match.matchResultText;
+      const shouldUpdateOutcome =
+        match.matchResult === MatchResult.PENDING &&
+        derived.outcome !== MatchResult.PENDING;
+      const shouldUpdateStatus = match.wisdenStatus === null;
 
-    return {
-      matchId: match.id,
-      status: match.status,
-      matchResult: match.matchResult,
-      cricApiStatus: match.cricApiStatus,
-      cricApiScore:
-        (match.cricApiScore as GetMatchScoreResponseDto["cricApiScore"]) ??
-        null,
-      lastSyncedAt: match.cricApiLastSyncedAt?.toISOString() ?? null,
-      isStale: Boolean(match.cricApiLastSyncedAt) && ageMs > staleThresholdMs,
-    };
+      if (shouldUpdateResultText || shouldUpdateOutcome || shouldUpdateStatus) {
+        const updatedMatch = await this.prisma.client.match.update({
+          where: { id: matchId },
+          data: {
+            ...(shouldUpdateResultText ? { matchResultText: resultText } : {}),
+            ...(shouldUpdateStatus
+              ? {
+                  wisdenStatus:
+                    match.wisdenStatus ??
+                    derived.scorecard.match_status ??
+                    "complete",
+                  wisdenLastSyncedAt: new Date(),
+                }
+              : {}),
+            ...(shouldUpdateOutcome ? { matchResult: derived.outcome } : {}),
+          },
+          include: MATCH_INCLUDE,
+        });
+        const [withPotm] = await this.attachPotmByImpact([updatedMatch]);
+        return withPotm;
+      }
+    }
+
+    const [withPotm] = await this.attachPotmByImpact([match]);
+    return withPotm;
   }
 
   async getSeasonMatches(
     seasonId: number,
     options: GetSeasonMatchesOptions = {},
   ) {
-    return this.prisma.client.match.findMany({
+    const matches = await this.prisma.client.match.findMany({
       where: {
         seasonId,
         ...(options.status ? { status: options.status } : {}),
       },
       orderBy: { matchDate: "asc" },
-      include: {
-        homeTeam: true,
-        awayTeam: true,
-        updatedByUser: {
-          select: {
-            id: true,
-            display_name: true,
-          },
-        },
-      },
+      include: MATCH_WITH_AUDIT_INCLUDE,
     });
+
+    return this.attachPotmByImpact(matches);
   }
 
   async updateMatchStatus(matchId: string, status: MatchStatus) {
@@ -178,16 +220,7 @@ export class MatchService {
       return await this.prisma.client.match.update({
         where: { id: matchId },
         data: { status },
-        include: {
-          homeTeam: true,
-          awayTeam: true,
-          updatedByUser: {
-            select: {
-              id: true,
-              display_name: true,
-            },
-          },
-        },
+        include: MATCH_WITH_AUDIT_INCLUDE,
       });
     } catch (error) {
       if (isPrismaRecordNotFoundError(error)) {
@@ -198,44 +231,16 @@ export class MatchService {
     }
   }
 
-  private deriveMatchResult(
-    matchWinner: string,
-    homeTeamName: string,
-    awayTeamName: string,
-    matchEnded: boolean,
-  ): MatchResult {
-    if (!matchEnded) {
-      return MatchResult.PENDING;
+  async getMatchByWisdenGid(wisdenMatchGid: string) {
+    const match = await this.prisma.client.match.findFirst({
+      where: { wisdenMatchGid },
+      include: MATCH_INCLUDE,
+    });
+    if (!match) {
+      throw new NotFoundException(
+        `No match found for Wisden gid ${wisdenMatchGid}`,
+      );
     }
-
-    const winner = this.normalizeTeamName(matchWinner);
-    if (!winner) {
-      return MatchResult.PENDING;
-    }
-
-    if (winner.includes("abandon") || winner.includes("no result")) {
-      return MatchResult.ABANDONED;
-    }
-
-    const home = this.normalizeTeamName(homeTeamName);
-    const away = this.normalizeTeamName(awayTeamName);
-
-    if (winner.includes(home) || home.includes(winner)) {
-      return MatchResult.HOME_WIN;
-    }
-
-    if (winner.includes(away) || away.includes(winner)) {
-      return MatchResult.AWAY_WIN;
-    }
-
-    return MatchResult.PENDING;
-  }
-
-  private normalizeTeamName(name: string): string {
-    return (name || "")
-      .toLowerCase()
-      .replace(/[^a-z0-9 ]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+    return match;
   }
 }

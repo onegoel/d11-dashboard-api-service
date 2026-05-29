@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "FantasyPlayer" ADD COLUMN     "my11CreditValue" DOUBLE PRECISION,
+ADD COLUMN     "my11IsInjured" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "my11PointsOverall" INTEGER NOT NULL DEFAULT 0;

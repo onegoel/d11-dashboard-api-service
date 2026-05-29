@@ -1,13 +1,12 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module.js";
-import { CricapiModule } from "../cricapi/cricapi.module.js";
+import { WeatherModule } from "../weather/weather.module.js";
 import { MatchController } from "./match.controller.js";
-import { MatchScorePollerService } from "./match-score-poller.service.js";
 import { MatchService } from "./match.service.js";
 
 @Module({
-  imports: [AuthModule, CricapiModule],
+  imports: [AuthModule, WeatherModule],
   controllers: [MatchController],
-  providers: [MatchService, MatchScorePollerService],
+  providers: [MatchService],
 })
 export class MatchModule {}

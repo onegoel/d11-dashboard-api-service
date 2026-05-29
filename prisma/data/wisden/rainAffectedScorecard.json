@@ -1,0 +1,2075 @@
+{
+  "class_id": 6,
+  "class_name": "List A Twenty20",
+  "epoch_timestamp": 1776457164.0878856,
+  "innings": [
+    {
+      "balls_bowled": 66,
+      "batted": "yes",
+      "batting": [
+        {
+          "balls_faced": 32,
+          "batted": "yes",
+          "batting_hand": "left",
+          "batting_position": 1,
+          "boundary_percentage": "43.8",
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "dismissal_str": "not out",
+          "dots_faced": 5,
+          "fours": 10,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 63,
+          "player_id": 68314,
+          "player_img": null,
+          "player_known_as": "Yashasvi Jaiswal",
+          "player_name": "YB Jaiswal",
+          "role": "batter",
+          "runs": 77,
+          "sixes": 4,
+          "strike_rate": 241,
+          "type": null
+        },
+        {
+          "balls_faced": 14,
+          "batted": "yes",
+          "batting_hand": "left",
+          "batting_position": 2,
+          "boundary_percentage": "42.9",
+          "dismissal": [
+            {
+              "details": "c NT Tilak Varma"
+            },
+            {
+              "details": "b SN Thakur"
+            }
+          ],
+          "dismissal_str": "c NT Tilak Varma b SN Thakur",
+          "dots_faced": 3,
+          "fours": 1,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 25,
+          "player_id": 83313,
+          "player_img": null,
+          "player_known_as": "Vaibhav Sooryavanshi",
+          "player_name": "V Sooryavanshi",
+          "role": "batter",
+          "runs": 39,
+          "sixes": 5,
+          "strike_rate": 279,
+          "type": null
+        },
+        {
+          "balls_faced": 3,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 3,
+          "boundary_percentage": "0.0",
+          "dismissal": [
+            {
+              "details": "lbw AM Ghazanfar"
+            }
+          ],
+          "dismissal_str": "lbw AM Ghazanfar",
+          "dots_faced": 2,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 1,
+          "is_out": 1,
+          "minutes": 3,
+          "player_id": 71456,
+          "player_img": null,
+          "player_known_as": "Dhruv Jurel",
+          "player_name": "DC Jurel",
+          "role": "batter",
+          "runs": 2,
+          "sixes": 0,
+          "strike_rate": 67,
+          "type": null
+        },
+        {
+          "balls_faced": 10,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 4,
+          "boundary_percentage": "30.0",
+          "dismissal": [
+            {
+              "details": "c NT Tilak Varma"
+            },
+            {
+              "details": "b AM Ghazanfar"
+            }
+          ],
+          "dismissal_str": "c NT Tilak Varma b AM Ghazanfar",
+          "dots_faced": 3,
+          "fours": 1,
+          "is_captain": 1,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 14,
+          "player_id": 65476,
+          "player_img": null,
+          "player_known_as": "Riyan Parag",
+          "player_name": "RP Das",
+          "role": "all_rounder",
+          "runs": 20,
+          "sixes": 2,
+          "strike_rate": 200,
+          "type": null
+        },
+        {
+          "balls_faced": 7,
+          "batted": "yes",
+          "batting_hand": "left",
+          "batting_position": 5,
+          "boundary_percentage": "0.0",
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "dismissal_str": "not out",
+          "dots_faced": 2,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 17,
+          "player_id": 23713,
+          "player_img": null,
+          "player_known_as": "Shimron Hetmyer",
+          "player_name": "SO Hetmyer",
+          "role": "batter",
+          "runs": 6,
+          "sixes": 0,
+          "strike_rate": 86,
+          "type": null
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "right",
+          "batting_position": 6,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 68473,
+          "player_img": null,
+          "player_known_as": "Donovan Ferreira",
+          "player_name": "D Ferreira",
+          "role": "batter",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": "replaced"
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "left",
+          "batting_position": 7,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 13143,
+          "player_img": null,
+          "player_known_as": "Ravindra Jadeja",
+          "player_name": "RA Jadeja",
+          "role": "all_rounder",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": null
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "right",
+          "batting_position": 8,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 28503,
+          "player_img": null,
+          "player_known_as": "Jofra Archer",
+          "player_name": "JC Archer",
+          "role": "bowler",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": null
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "left",
+          "batting_position": 9,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 52827,
+          "player_img": null,
+          "player_known_as": "Nandre Burger",
+          "player_name": "N Burger",
+          "role": "bowler",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": null
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "left",
+          "batting_position": 10,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 44044,
+          "player_img": null,
+          "player_known_as": "Tushar Deshpande",
+          "player_name": "TU Deshpande",
+          "role": "bowler",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": null
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "right",
+          "batting_position": 11,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 15660,
+          "player_img": null,
+          "player_known_as": "Sandeep Sharma",
+          "player_name": "S Sharma",
+          "role": "bowler",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": null
+        }
+      ],
+      "batting_team_id": 1558,
+      "batting_team_logo": "https://cv-general-images.s3.amazonaws.com/teams/This_is_the_logo_for_Rajasthan_Royals,_a_cricket_team_playing_in_the_Indian_Premier_League_(IPL).svg.png",
+      "batting_team_name": "Rajasthan Royals",
+      "bowling": [
+        {
+          "balls": 6,
+          "bowler_desc_abbreviation": "RMF",
+          "bowler_id": 19257,
+          "bowler_img": null,
+          "bowler_known_as": "Deepak Chahar",
+          "bowler_name": "DL Chahar",
+          "bowling_position": 1,
+          "bowling_type": "pace",
+          "economy_rate": "22.00",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "1.0",
+          "runs": 22,
+          "type": null,
+          "wickets": 0,
+          "wides": 0
+        },
+        {
+          "balls": 18,
+          "bowler_desc_abbreviation": "RFM",
+          "bowler_id": 16096,
+          "bowler_img": null,
+          "bowler_known_as": "Jasprit Bumrah",
+          "bowler_name": "JJ Bumrah",
+          "bowling_position": 2,
+          "bowling_type": "pace",
+          "economy_rate": "10.67",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "3.0",
+          "runs": 32,
+          "type": null,
+          "wickets": 0,
+          "wides": 1
+        },
+        {
+          "balls": 6,
+          "bowler_desc_abbreviation": "LFM",
+          "bowler_id": 14330,
+          "bowler_img": null,
+          "bowler_known_as": "Trent Boult",
+          "bowler_name": "TA Boult",
+          "bowling_position": 3,
+          "bowling_type": "pace",
+          "economy_rate": "22.00",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "1.0",
+          "runs": 22,
+          "type": null,
+          "wickets": 0,
+          "wides": 1
+        },
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "RMF",
+          "bowler_id": 16093,
+          "bowler_img": null,
+          "bowler_known_as": "Hardik Pandya",
+          "bowler_name": "HH Pandya",
+          "bowling_position": 4,
+          "bowling_type": "pace",
+          "economy_rate": "8.50",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 17,
+          "type": null,
+          "wickets": 0,
+          "wides": 0
+        },
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "RFM",
+          "bowler_id": 27765,
+          "bowler_img": null,
+          "bowler_known_as": "Shardul Thakur",
+          "bowler_name": "SN Thakur",
+          "bowling_position": 5,
+          "bowling_type": "pace",
+          "economy_rate": "18.00",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 36,
+          "type": null,
+          "wickets": 1,
+          "wides": 3
+        },
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "OB",
+          "bowler_id": 78206,
+          "bowler_img": null,
+          "bowler_known_as": "AM Ghazanfar",
+          "bowler_name": "AM Ghazanfar",
+          "bowling_position": 6,
+          "bowling_type": "spin",
+          "economy_rate": "10.50",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 21,
+          "type": "replaced",
+          "wickets": 2,
+          "wides": 1
+        }
+      ],
+      "bowling_team_id": 1854,
+      "bowling_team_name": "Mumbai Indians",
+      "closure_id": 5,
+      "closure_name": "complete",
+      "fow": [
+        {
+          "fow_batter_id": 83313,
+          "fow_batter_known_as": "Vaibhav Sooryavanshi",
+          "fow_batter_name": "V Sooryavanshi",
+          "fow_nonstriker_id": 68314,
+          "fow_nonstriker_known_as": "Yashasvi Jaiswal",
+          "fow_nonstriker_name": "YB Jaiswal",
+          "fow_number": 1,
+          "fow_overs": "4.6",
+          "fow_runs": 80,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 71456,
+          "fow_batter_known_as": "Dhruv Jurel",
+          "fow_batter_name": "DC Jurel",
+          "fow_nonstriker_id": 68314,
+          "fow_nonstriker_known_as": "Yashasvi Jaiswal",
+          "fow_nonstriker_name": "YB Jaiswal",
+          "fow_number": 2,
+          "fow_overs": "5.4",
+          "fow_runs": 84,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 65476,
+          "fow_batter_known_as": "Riyan Parag",
+          "fow_batter_name": "RP Das",
+          "fow_nonstriker_id": 68314,
+          "fow_nonstriker_known_as": "Yashasvi Jaiswal",
+          "fow_nonstriker_name": "YB Jaiswal",
+          "fow_number": 3,
+          "fow_overs": "8.5",
+          "fow_runs": 121,
+          "fow_type": "out"
+        }
+      ],
+      "innings_number": 1,
+      "milestones": [],
+      "minutes": 62,
+      "notes": [
+        {
+          "id": 88762,
+          "text": "Mumbai Indians wins the toss and elects to field"
+        },
+        {
+          "id": 88763,
+          "text": "Partnership: 50 runs for 1st wicket in 16 balls, Vaibhav Sooryavanshi 19 (6), Yashasvi Jaiswal 36 (10), Extras 1"
+        },
+        {
+          "id": 88764,
+          "text": "Rajasthan Royals: 50 runs in 2.4 overs, 12 minutes, 1 extras"
+        },
+        {
+          "id": 88765,
+          "text": "Powerplay 1: Overs 1 - 3, 59 runs, 0 wickets"
+        },
+        {
+          "id": 88766,
+          "text": "Review taken by Rajasthan Royals for Dhruv Jurel - lbw, on field decision - out by on-field umpire, Review Decision - out - review lost (Review unsuccessful), reviews remaining: Mumbai Indians: 1, Rajasthan Royals: 1"
+        },
+        {
+          "id": 88767,
+          "text": "Yashasvi Jaiswal: 52 in 23 balls, 49 minutes, (6*4 , 3*6)"
+        },
+        {
+          "id": 88768,
+          "text": "Rajasthan Royals: 100 runs in 7.3 overs, 37 minutes, 3 extras"
+        },
+        {
+          "id": 88769,
+          "text": "Rajasthan Royals: 150 runs in 11.0 overs, 61 minutes, 6 extras"
+        },
+        {
+          "id": 88770,
+          "text": "Innings break (23:13 to 23:22): Rajasthan Royals - 150/3 in 11.0 overs, Yashasvi Jaiswal 77 (32), Shimron Hetmyer 6 (7)"
+        }
+      ],
+      "overs": "11.0",
+      "partnerships": [
+        {
+          "balls": 30,
+          "extras": 1,
+          "out_batter": {
+            "balls_faced": 14,
+            "known_as": "Vaibhav Sooryavanshi",
+            "name": "V Sooryavanshi",
+            "runs": 39
+          },
+          "p1": {
+            "balls_faced": 16,
+            "known_as": "Yashasvi Jaiswal",
+            "name": "YB Jaiswal",
+            "runs": 40
+          },
+          "p2": {
+            "balls_faced": 14,
+            "known_as": "Vaibhav Sooryavanshi",
+            "name": "V Sooryavanshi",
+            "runs": 39
+          },
+          "runs": 80,
+          "score": {
+            "overs": "4.6",
+            "runs": 80,
+            "wickets": 1
+          },
+          "wicket": 1
+        },
+        {
+          "balls": 4,
+          "extras": 1,
+          "out_batter": {
+            "balls_faced": 3,
+            "known_as": "Dhruv Jurel",
+            "name": "DC Jurel",
+            "runs": 2
+          },
+          "p1": {
+            "balls_faced": 1,
+            "known_as": "Yashasvi Jaiswal",
+            "name": "YB Jaiswal",
+            "runs": 1
+          },
+          "p2": {
+            "balls_faced": 3,
+            "known_as": "Dhruv Jurel",
+            "name": "DC Jurel",
+            "runs": 2
+          },
+          "runs": 4,
+          "score": {
+            "overs": "5.4",
+            "runs": 84,
+            "wickets": 2
+          },
+          "wicket": 2
+        },
+        {
+          "balls": 19,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": 10,
+            "known_as": "Riyan Parag",
+            "name": "RP Das",
+            "runs": 20
+          },
+          "p1": {
+            "balls_faced": 9,
+            "known_as": "Yashasvi Jaiswal",
+            "name": "YB Jaiswal",
+            "runs": 17
+          },
+          "p2": {
+            "balls_faced": 10,
+            "known_as": "Riyan Parag",
+            "name": "RP Das",
+            "runs": 20
+          },
+          "runs": 37,
+          "score": {
+            "overs": "8.5",
+            "runs": 121,
+            "wickets": 3
+          },
+          "wicket": 3
+        },
+        {
+          "balls": 13,
+          "extras": 4,
+          "out_batter": {
+            "balls_faced": null,
+            "name": null,
+            "runs": null
+          },
+          "p1": {
+            "balls_faced": 7,
+            "known_as": "Shimron Hetmyer",
+            "name": "SO Hetmyer",
+            "runs": 6
+          },
+          "p2": {
+            "balls_faced": 6,
+            "known_as": "Yashasvi Jaiswal",
+            "name": "YB Jaiswal",
+            "runs": 19
+          },
+          "runs": 29,
+          "score": {
+            "overs": "11.0",
+            "runs": 150,
+            "wickets": 3
+          },
+          "wicket": 4
+        }
+      ],
+      "reviews": {
+        "batting": {
+          "allowed": 2,
+          "count": 1,
+          "remaining": 1,
+          "retained": 0,
+          "success": 0,
+          "unsuccessful": 1
+        },
+        "bowling": {
+          "allowed": 2,
+          "count": 0,
+          "remaining": 1,
+          "retained": 0,
+          "success": 0,
+          "unsuccessful": 0
+        }
+      },
+      "score": {
+        "byes": 0,
+        "legbyes": 0,
+        "noballs": 0,
+        "penalties": 0,
+        "run_rate": "13.63",
+        "runs": 150,
+        "total_fours": 12,
+        "total_maidens": 0,
+        "total_sixes": 11,
+        "wickets": 3,
+        "wides": 6
+      },
+      "total_ball_count": 72
+    },
+    {
+      "balls_bowled": 66,
+      "batted": "yes",
+      "batting": [
+        {
+          "balls_faced": 4,
+          "batted": "yes",
+          "batting_hand": "left",
+          "batting_position": 1,
+          "boundary_percentage": "25.0",
+          "dismissal": [
+            {
+              "details": "c \u2020DC Jurel"
+            },
+            {
+              "details": "b JC Archer"
+            }
+          ],
+          "dismissal_str": "c \u2020DC Jurel b JC Archer",
+          "dots_faced": 1,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 1,
+          "is_out": 1,
+          "minutes": 5,
+          "player_id": 37670,
+          "player_img": null,
+          "player_known_as": "Ryan Rickelton",
+          "player_name": "RD Rickelton",
+          "role": "batter",
+          "runs": 8,
+          "sixes": 1,
+          "strike_rate": 200,
+          "type": null
+        },
+        {
+          "balls_faced": 6,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 2,
+          "boundary_percentage": "0.0",
+          "dismissal": [
+            {
+              "details": "lbw S Sharma"
+            }
+          ],
+          "dismissal_str": "lbw S Sharma",
+          "dots_faced": 3,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 15,
+          "player_id": 11326,
+          "player_img": null,
+          "player_known_as": "Rohit Sharma",
+          "player_name": "RG Sharma",
+          "role": "batter",
+          "runs": 5,
+          "sixes": 0,
+          "strike_rate": 83,
+          "type": null
+        },
+        {
+          "balls_faced": 3,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 3,
+          "boundary_percentage": "33.3",
+          "dismissal": [
+            {
+              "details": "c JC Archer"
+            },
+            {
+              "details": "b N Burger"
+            }
+          ],
+          "dismissal_str": "c JC Archer b N Burger",
+          "dots_faced": 2,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 4,
+          "player_id": 20861,
+          "player_img": null,
+          "player_known_as": "Suryakumar Yadav",
+          "player_name": "SA Yadav",
+          "role": "batter",
+          "runs": 6,
+          "sixes": 1,
+          "strike_rate": 200,
+          "type": null
+        },
+        {
+          "balls_faced": 10,
+          "batted": "yes",
+          "batting_hand": "left",
+          "batting_position": 4,
+          "boundary_percentage": "20.0",
+          "dismissal": [
+            {
+              "details": "c SO Hetmyer"
+            },
+            {
+              "details": "b RM Bishnoi"
+            }
+          ],
+          "dismissal_str": "c SO Hetmyer b RM Bishnoi",
+          "dots_faced": 3,
+          "fours": 2,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 19,
+          "player_id": 69845,
+          "player_img": null,
+          "player_known_as": "Tilak Varma",
+          "player_name": "NT Tilak Varma",
+          "role": "batter",
+          "runs": 14,
+          "sixes": 0,
+          "strike_rate": 140,
+          "type": null
+        },
+        {
+          "balls_faced": 6,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 5,
+          "boundary_percentage": "33.3",
+          "dismissal": [
+            {
+              "details": "c YB Jaiswal"
+            },
+            {
+              "details": "b RM Bishnoi"
+            }
+          ],
+          "dismissal_str": "c YB Jaiswal b RM Bishnoi",
+          "dots_faced": 3,
+          "fours": 2,
+          "is_captain": 1,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 11,
+          "player_id": 16093,
+          "player_img": null,
+          "player_known_as": "Hardik Pandya",
+          "player_name": "HH Pandya",
+          "role": "all_rounder",
+          "runs": 9,
+          "sixes": 0,
+          "strike_rate": 150,
+          "type": null
+        },
+        {
+          "balls_faced": 13,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 6,
+          "boundary_percentage": "30.8",
+          "dismissal": [
+            {
+              "details": "c RM Bishnoi"
+            },
+            {
+              "details": "b N Burger"
+            }
+          ],
+          "dismissal_str": "c RM Bishnoi b N Burger",
+          "dots_faced": 4,
+          "fours": 3,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 23,
+          "player_id": 79429,
+          "player_img": null,
+          "player_known_as": "Naman Dhir",
+          "player_name": "N Dhir",
+          "role": "batter",
+          "runs": 25,
+          "sixes": 1,
+          "strike_rate": 192,
+          "type": null
+        },
+        {
+          "balls_faced": 8,
+          "batted": "yes",
+          "batting_hand": "left",
+          "batting_position": 7,
+          "boundary_percentage": "50.0",
+          "dismissal": [
+            {
+              "details": "c S Sharma"
+            },
+            {
+              "details": "b TU Deshpande"
+            }
+          ],
+          "dismissal_str": "c S Sharma b TU Deshpande",
+          "dots_faced": 1,
+          "fours": 2,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 14,
+          "player_id": 66048,
+          "player_img": null,
+          "player_known_as": "Sherfane Rutherford",
+          "player_name": "SE Rutherford",
+          "role": "batter",
+          "runs": 25,
+          "sixes": 2,
+          "strike_rate": 313,
+          "type": "substitute"
+        },
+        {
+          "balls_faced": 7,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 8,
+          "boundary_percentage": "14.3",
+          "dismissal": [
+            {
+              "details": "c \u2020DC Jurel"
+            },
+            {
+              "details": "b S Sharma"
+            }
+          ],
+          "dismissal_str": "c \u2020DC Jurel b S Sharma",
+          "dots_faced": 3,
+          "fours": 1,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 10,
+          "player_id": 27765,
+          "player_img": null,
+          "player_known_as": "Shardul Thakur",
+          "player_name": "SN Thakur",
+          "role": "bowler",
+          "runs": 8,
+          "sixes": 0,
+          "strike_rate": 114,
+          "type": null
+        },
+        {
+          "balls_faced": 5,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 9,
+          "boundary_percentage": "20.0",
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "dismissal_str": "not out",
+          "dots_faced": 2,
+          "fours": 1,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 13,
+          "player_id": 19257,
+          "player_img": null,
+          "player_known_as": "Deepak Chahar",
+          "player_name": "DL Chahar",
+          "role": "bowler",
+          "runs": 6,
+          "sixes": 0,
+          "strike_rate": 120,
+          "type": null
+        },
+        {
+          "balls_faced": 2,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 10,
+          "boundary_percentage": "0.0",
+          "dismissal": [
+            {
+              "details": "run out"
+            },
+            {
+              "details": "(JC Archer)"
+            }
+          ],
+          "dismissal_str": "run out (JC Archer)",
+          "dots_faced": 1,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 1,
+          "minutes": 3,
+          "player_id": 14330,
+          "player_img": null,
+          "player_known_as": "Trent Boult",
+          "player_name": "TA Boult",
+          "role": "bowler",
+          "runs": 1,
+          "sixes": 0,
+          "strike_rate": 50,
+          "type": null
+        },
+        {
+          "balls_faced": 2,
+          "batted": "yes",
+          "batting_hand": "right",
+          "batting_position": 11,
+          "boundary_percentage": "50.0",
+          "dismissal": [
+            {
+              "details": "not out"
+            }
+          ],
+          "dismissal_str": "not out",
+          "dots_faced": 0,
+          "fours": 1,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 4,
+          "player_id": 16096,
+          "player_img": null,
+          "player_known_as": "Jasprit Bumrah",
+          "player_name": "JJ Bumrah",
+          "role": "bowler",
+          "runs": 5,
+          "sixes": 0,
+          "strike_rate": 250,
+          "type": null
+        },
+        {
+          "balls_faced": 0,
+          "batted": "DNB",
+          "batting_hand": "right",
+          "batting_position": 12,
+          "boundary_percentage": null,
+          "dismissal": [
+            {
+              "details": null
+            }
+          ],
+          "dismissal_str": null,
+          "dots_faced": 0,
+          "fours": 0,
+          "is_captain": 0,
+          "is_keeper": 0,
+          "is_out": 0,
+          "minutes": 0,
+          "player_id": 78206,
+          "player_img": null,
+          "player_known_as": "AM Ghazanfar",
+          "player_name": "AM Ghazanfar",
+          "role": "bowler",
+          "runs": 0,
+          "sixes": 0,
+          "strike_rate": 0,
+          "type": "replaced"
+        }
+      ],
+      "batting_team_id": 1854,
+      "batting_team_logo": "https://cv-general-images.s3.amazonaws.com/teams/1280px-Mumbai_Indians_Logo.svg.png",
+      "batting_team_name": "Mumbai Indians",
+      "bowling": [
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "RF",
+          "bowler_id": 28503,
+          "bowler_img": null,
+          "bowler_known_as": "Jofra Archer",
+          "bowler_name": "JC Archer",
+          "bowling_position": 1,
+          "bowling_type": "pace",
+          "economy_rate": "8.50",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 17,
+          "type": null,
+          "wickets": 1,
+          "wides": 0
+        },
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "LFM",
+          "bowler_id": 52827,
+          "bowler_img": null,
+          "bowler_known_as": "Nandre Burger",
+          "bowler_name": "N Burger",
+          "bowling_position": 2,
+          "bowling_type": "pace",
+          "economy_rate": "10.50",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 21,
+          "type": null,
+          "wickets": 2,
+          "wides": 1
+        },
+        {
+          "balls": 18,
+          "bowler_desc_abbreviation": "RMF",
+          "bowler_id": 15660,
+          "bowler_img": null,
+          "bowler_known_as": "Sandeep Sharma",
+          "bowler_name": "S Sharma",
+          "bowling_position": 3,
+          "bowling_type": "pace",
+          "economy_rate": "8.67",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "3.0",
+          "runs": 26,
+          "type": null,
+          "wickets": 2,
+          "wides": 3
+        },
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "RFM",
+          "bowler_id": 44044,
+          "bowler_img": null,
+          "bowler_known_as": "Tushar Deshpande",
+          "bowler_name": "TU Deshpande",
+          "bowling_position": 4,
+          "bowling_type": "pace",
+          "economy_rate": "14.50",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 29,
+          "type": null,
+          "wickets": 1,
+          "wides": 1
+        },
+        {
+          "balls": 12,
+          "bowler_desc_abbreviation": "LB",
+          "bowler_id": 70430,
+          "bowler_img": null,
+          "bowler_known_as": "Ravi Bishnoi",
+          "bowler_name": "RM Bishnoi",
+          "bowling_position": 5,
+          "bowling_type": "spin",
+          "economy_rate": "12.50",
+          "maidens": 0,
+          "noballs": 0,
+          "overs": "2.0",
+          "runs": 25,
+          "type": "substitute",
+          "wickets": 2,
+          "wides": 1
+        }
+      ],
+      "bowling_team_id": 1558,
+      "bowling_team_name": "Rajasthan Royals",
+      "closure_id": 5,
+      "closure_name": "complete",
+      "fow": [
+        {
+          "fow_batter_id": 37670,
+          "fow_batter_known_as": "Ryan Rickelton",
+          "fow_batter_name": "RD Rickelton",
+          "fow_nonstriker_id": 11326,
+          "fow_nonstriker_known_as": "Rohit Sharma",
+          "fow_nonstriker_name": "RG Sharma",
+          "fow_number": 1,
+          "fow_overs": "0.6",
+          "fow_runs": 10,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 20861,
+          "fow_batter_known_as": "Suryakumar Yadav",
+          "fow_batter_name": "SA Yadav",
+          "fow_nonstriker_id": 11326,
+          "fow_nonstriker_known_as": "Rohit Sharma",
+          "fow_nonstriker_name": "RG Sharma",
+          "fow_number": 2,
+          "fow_overs": "1.4",
+          "fow_runs": 20,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 11326,
+          "fow_batter_known_as": "Rohit Sharma",
+          "fow_batter_name": "RG Sharma",
+          "fow_nonstriker_id": 69845,
+          "fow_nonstriker_known_as": "Tilak Varma",
+          "fow_nonstriker_name": "NT Tilak Varma",
+          "fow_number": 3,
+          "fow_overs": "2.3",
+          "fow_runs": 22,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 16093,
+          "fow_batter_known_as": "Hardik Pandya",
+          "fow_batter_name": "HH Pandya",
+          "fow_nonstriker_id": 69845,
+          "fow_nonstriker_known_as": "Tilak Varma",
+          "fow_nonstriker_name": "NT Tilak Varma",
+          "fow_number": 4,
+          "fow_overs": "4.3",
+          "fow_runs": 41,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 69845,
+          "fow_batter_known_as": "Tilak Varma",
+          "fow_batter_name": "NT Tilak Varma",
+          "fow_nonstriker_id": 79429,
+          "fow_nonstriker_known_as": "Naman Dhir",
+          "fow_nonstriker_name": "N Dhir",
+          "fow_number": 5,
+          "fow_overs": "4.6",
+          "fow_runs": 46,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 66048,
+          "fow_batter_known_as": "Sherfane Rutherford",
+          "fow_batter_name": "SE Rutherford",
+          "fow_nonstriker_id": 79429,
+          "fow_nonstriker_known_as": "Naman Dhir",
+          "fow_nonstriker_name": "N Dhir",
+          "fow_number": 6,
+          "fow_overs": "7.5",
+          "fow_runs": 93,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 79429,
+          "fow_batter_known_as": "Naman Dhir",
+          "fow_batter_name": "N Dhir",
+          "fow_nonstriker_id": 27765,
+          "fow_nonstriker_known_as": "Shardul Thakur",
+          "fow_nonstriker_name": "SN Thakur",
+          "fow_number": 7,
+          "fow_overs": "8.5",
+          "fow_runs": 103,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 27765,
+          "fow_batter_known_as": "Shardul Thakur",
+          "fow_batter_name": "SN Thakur",
+          "fow_nonstriker_id": 19257,
+          "fow_nonstriker_known_as": "Deepak Chahar",
+          "fow_nonstriker_name": "DL Chahar",
+          "fow_number": 8,
+          "fow_overs": "9.4",
+          "fow_runs": 111,
+          "fow_type": "out"
+        },
+        {
+          "fow_batter_id": 14330,
+          "fow_batter_known_as": "Trent Boult",
+          "fow_batter_name": "TA Boult",
+          "fow_nonstriker_id": 19257,
+          "fow_nonstriker_known_as": "Deepak Chahar",
+          "fow_nonstriker_name": "DL Chahar",
+          "fow_number": 9,
+          "fow_overs": "10.1",
+          "fow_runs": 116,
+          "fow_type": "out"
+        }
+      ],
+      "innings_number": 2,
+      "milestones": [],
+      "minutes": 64,
+      "notes": [
+        {
+          "id": 88771,
+          "text": "Review taken by Mumbai Indians for Rohit Sharma - lbw, on field decision - out by on-field umpire, Review Decision - out - review lost (Review unsuccessful), reviews remaining: Rajasthan Royals: 2, Mumbai Indians: 1"
+        },
+        {
+          "id": 88772,
+          "text": "Powerplay 1: Overs 1 - 3, 30 runs, 3 wickets"
+        },
+        {
+          "id": 88773,
+          "text": "Mumbai Indians: 50 runs in 5.3 overs, 32 minutes, 4 extras"
+        },
+        {
+          "id": 88774,
+          "text": "Mumbai Indians: 100 runs in 8.4 overs, 49 minutes, 11 extras"
+        },
+        {
+          "id": 88775,
+          "text": "End of match (00:28): Mumbai Indians - 123/9 in 11.0 overs, Deepak Chahar 6 (5), Jasprit Bumrah 5 (2)"
+        }
+      ],
+      "overs": "11.0",
+      "partnerships": [
+        {
+          "balls": 6,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": 4,
+            "known_as": "Ryan Rickelton",
+            "name": "RD Rickelton",
+            "runs": 8
+          },
+          "p1": {
+            "balls_faced": 4,
+            "known_as": "Ryan Rickelton",
+            "name": "RD Rickelton",
+            "runs": 8
+          },
+          "p2": {
+            "balls_faced": 2,
+            "known_as": "Rohit Sharma",
+            "name": "RG Sharma",
+            "runs": 2
+          },
+          "runs": 10,
+          "score": {
+            "overs": "0.6",
+            "runs": 10,
+            "wickets": 1
+          },
+          "wicket": 1
+        },
+        {
+          "balls": 4,
+          "extras": 1,
+          "out_batter": {
+            "balls_faced": 3,
+            "known_as": "Suryakumar Yadav",
+            "name": "SA Yadav",
+            "runs": 6
+          },
+          "p1": {
+            "balls_faced": 1,
+            "known_as": "Rohit Sharma",
+            "name": "RG Sharma",
+            "runs": 3
+          },
+          "p2": {
+            "balls_faced": 3,
+            "known_as": "Suryakumar Yadav",
+            "name": "SA Yadav",
+            "runs": 6
+          },
+          "runs": 10,
+          "score": {
+            "overs": "1.4",
+            "runs": 20,
+            "wickets": 2
+          },
+          "wicket": 2
+        },
+        {
+          "balls": 5,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": 6,
+            "known_as": "Rohit Sharma",
+            "name": "RG Sharma",
+            "runs": 5
+          },
+          "p1": {
+            "balls_faced": 3,
+            "known_as": "Rohit Sharma",
+            "name": "RG Sharma",
+            "runs": 0
+          },
+          "p2": {
+            "balls_faced": 2,
+            "known_as": "Tilak Varma",
+            "name": "NT Tilak Varma",
+            "runs": 2
+          },
+          "runs": 2,
+          "score": {
+            "overs": "2.3",
+            "runs": 22,
+            "wickets": 3
+          },
+          "wicket": 3
+        },
+        {
+          "balls": 12,
+          "extras": 2,
+          "out_batter": {
+            "balls_faced": 6,
+            "known_as": "Hardik Pandya",
+            "name": "HH Pandya",
+            "runs": 9
+          },
+          "p1": {
+            "balls_faced": 6,
+            "known_as": "Tilak Varma",
+            "name": "NT Tilak Varma",
+            "runs": 8
+          },
+          "p2": {
+            "balls_faced": 6,
+            "known_as": "Hardik Pandya",
+            "name": "HH Pandya",
+            "runs": 9
+          },
+          "runs": 19,
+          "score": {
+            "overs": "4.3",
+            "runs": 41,
+            "wickets": 4
+          },
+          "wicket": 4
+        },
+        {
+          "balls": 3,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": 10,
+            "known_as": "Tilak Varma",
+            "name": "NT Tilak Varma",
+            "runs": 14
+          },
+          "p1": {
+            "balls_faced": 2,
+            "known_as": "Tilak Varma",
+            "name": "NT Tilak Varma",
+            "runs": 4
+          },
+          "p2": {
+            "balls_faced": 1,
+            "known_as": "Naman Dhir",
+            "name": "N Dhir",
+            "runs": 1
+          },
+          "runs": 5,
+          "score": {
+            "overs": "4.6",
+            "runs": 46,
+            "wickets": 5
+          },
+          "wicket": 5
+        },
+        {
+          "balls": 17,
+          "extras": 2,
+          "out_batter": {
+            "balls_faced": 8,
+            "known_as": "Sherfane Rutherford",
+            "name": "SE Rutherford",
+            "runs": 25
+          },
+          "p1": {
+            "balls_faced": 9,
+            "known_as": "Naman Dhir",
+            "name": "N Dhir",
+            "runs": 20
+          },
+          "p2": {
+            "balls_faced": 8,
+            "known_as": "Sherfane Rutherford",
+            "name": "SE Rutherford",
+            "runs": 25
+          },
+          "runs": 47,
+          "score": {
+            "overs": "7.5",
+            "runs": 93,
+            "wickets": 6
+          },
+          "wicket": 6
+        },
+        {
+          "balls": 6,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": 13,
+            "known_as": "Naman Dhir",
+            "name": "N Dhir",
+            "runs": 25
+          },
+          "p1": {
+            "balls_faced": 3,
+            "known_as": "Naman Dhir",
+            "name": "N Dhir",
+            "runs": 4
+          },
+          "p2": {
+            "balls_faced": 3,
+            "known_as": "Shardul Thakur",
+            "name": "SN Thakur",
+            "runs": 6
+          },
+          "runs": 10,
+          "score": {
+            "overs": "8.5",
+            "runs": 103,
+            "wickets": 7
+          },
+          "wicket": 7
+        },
+        {
+          "balls": 5,
+          "extras": 6,
+          "out_batter": {
+            "balls_faced": 7,
+            "known_as": "Shardul Thakur",
+            "name": "SN Thakur",
+            "runs": 8
+          },
+          "p1": {
+            "balls_faced": 4,
+            "known_as": "Shardul Thakur",
+            "name": "SN Thakur",
+            "runs": 2
+          },
+          "p2": {
+            "balls_faced": 1,
+            "known_as": "Deepak Chahar",
+            "name": "DL Chahar",
+            "runs": 0
+          },
+          "runs": 8,
+          "score": {
+            "overs": "9.4",
+            "runs": 111,
+            "wickets": 8
+          },
+          "wicket": 8
+        },
+        {
+          "balls": 3,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": 2,
+            "known_as": "Trent Boult",
+            "name": "TA Boult",
+            "runs": 1
+          },
+          "p1": {
+            "balls_faced": 1,
+            "known_as": "Deepak Chahar",
+            "name": "DL Chahar",
+            "runs": 4
+          },
+          "p2": {
+            "balls_faced": 2,
+            "known_as": "Trent Boult",
+            "name": "TA Boult",
+            "runs": 1
+          },
+          "runs": 5,
+          "score": {
+            "overs": "10.1",
+            "runs": 116,
+            "wickets": 9
+          },
+          "wicket": 9
+        },
+        {
+          "balls": 5,
+          "extras": 0,
+          "out_batter": {
+            "balls_faced": null,
+            "name": null,
+            "runs": null
+          },
+          "p1": {
+            "balls_faced": 2,
+            "known_as": "Jasprit Bumrah",
+            "name": "JJ Bumrah",
+            "runs": 5
+          },
+          "p2": {
+            "balls_faced": 3,
+            "known_as": "Deepak Chahar",
+            "name": "DL Chahar",
+            "runs": 2
+          },
+          "runs": 7,
+          "score": {
+            "overs": "11.0",
+            "runs": 123,
+            "wickets": 9
+          },
+          "wicket": 10
+        }
+      ],
+      "reviews": {
+        "batting": {
+          "allowed": 2,
+          "count": 1,
+          "remaining": 1,
+          "retained": 0,
+          "success": 0,
+          "unsuccessful": 1
+        },
+        "bowling": {
+          "allowed": 2,
+          "count": 0,
+          "remaining": 2,
+          "retained": 0,
+          "success": 0,
+          "unsuccessful": 0
+        }
+      },
+      "score": {
+        "byes": 1,
+        "legbyes": 4,
+        "noballs": 0,
+        "penalties": 0,
+        "run_rate": "11.18",
+        "runs": 123,
+        "total_fours": 12,
+        "total_maidens": 0,
+        "total_sixes": 5,
+        "wickets": 9,
+        "wides": 6
+      },
+      "total_ball_count": 72
+    }
+  ],
+  "live_status_id": 9,
+  "match_status": "complete",
+  "scheduled_overs": 20,
+  "start_datetime_utc": "2026-04-07 14:00:00",
+  "start_time": "2026-04-07T14:00:00Z",
+  "team1": {
+    "abbreviation": "RR",
+    "colour_alternative": "133FFA",
+    "colour_primary": "d43291",
+    "colour_secondary": "133FFA",
+    "id": 1558,
+    "logo": "https://cv-general-images.s3.amazonaws.com/teams/This_is_the_logo_for_Rajasthan_Royals,_a_cricket_team_playing_in_the_Indian_Premier_League_(IPL).svg.png",
+    "name": "Rajasthan Royals",
+    "players": [
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 68314,
+        "player_img": null,
+        "player_known_as": "Yashasvi Jaiswal",
+        "player_name": "YB Jaiswal",
+        "player_order": 1,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 83313,
+        "player_img": null,
+        "player_known_as": "Vaibhav Sooryavanshi",
+        "player_name": "V Sooryavanshi",
+        "player_order": 2,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 1,
+        "player_id": 71456,
+        "player_img": null,
+        "player_known_as": "Dhruv Jurel",
+        "player_name": "DC Jurel",
+        "player_order": 3,
+        "player_role": "wicketkeeper batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 1,
+        "is_keeper": 0,
+        "player_id": 65476,
+        "player_img": null,
+        "player_known_as": "Riyan Parag",
+        "player_name": "RP Das",
+        "player_order": 4,
+        "player_role": "allrounder",
+        "role": "all_rounder",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 23713,
+        "player_img": null,
+        "player_known_as": "Shimron Hetmyer",
+        "player_name": "SO Hetmyer",
+        "player_order": 5,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 68473,
+        "player_img": null,
+        "player_known_as": "Donovan Ferreira",
+        "player_name": "D Ferreira",
+        "player_order": 6,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": "replaced"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 13143,
+        "player_img": null,
+        "player_known_as": "Ravindra Jadeja",
+        "player_name": "RA Jadeja",
+        "player_order": 7,
+        "player_role": "allrounder",
+        "role": "all_rounder",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 28503,
+        "player_img": null,
+        "player_known_as": "Jofra Archer",
+        "player_name": "JC Archer",
+        "player_order": 8,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 52827,
+        "player_img": null,
+        "player_known_as": "Nandre Burger",
+        "player_name": "N Burger",
+        "player_order": 9,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 44044,
+        "player_img": null,
+        "player_known_as": "Tushar Deshpande",
+        "player_name": "TU Deshpande",
+        "player_order": 10,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 15660,
+        "player_img": null,
+        "player_known_as": "Sandeep Sharma",
+        "player_name": "S Sharma",
+        "player_order": 11,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1558,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 70430,
+        "player_img": null,
+        "player_known_as": "Ravi Bishnoi",
+        "player_name": "RM Bishnoi",
+        "player_order": 12,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1558,
+        "type": "substitute"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 74047,
+        "player_img": null,
+        "player_known_as": "Shubham Dubey",
+        "player_name": "SB Dubey",
+        "player_order": 13,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": "unused"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 81719,
+        "player_img": null,
+        "player_known_as": "Lhuan-dr\u00e9 Pretorius",
+        "player_name": "LG Pretorius",
+        "player_order": 14,
+        "player_role": "wicketkeeper batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": "unused"
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 90896,
+        "player_img": null,
+        "player_known_as": "Brijesh Sharma",
+        "player_name": "B Sharma",
+        "player_order": 15,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1558,
+        "type": "unused"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 86608,
+        "player_img": null,
+        "player_known_as": "Ravi Singh",
+        "player_name": "RR Singh",
+        "player_order": 16,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1558,
+        "type": "unused"
+      }
+    ]
+  },
+  "team2": {
+    "abbreviation": "MI",
+    "colour_alternative": "D1AB3E",
+    "colour_primary": "004A9F",
+    "colour_secondary": "D1AB3E",
+    "id": 1854,
+    "logo": "https://cv-general-images.s3.amazonaws.com/teams/1280px-Mumbai_Indians_Logo.svg.png",
+    "name": "Mumbai Indians",
+    "players": [
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 1,
+        "player_id": 37670,
+        "player_img": null,
+        "player_known_as": "Ryan Rickelton",
+        "player_name": "RD Rickelton",
+        "player_order": 1,
+        "player_role": "wicketkeeper batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 11326,
+        "player_img": null,
+        "player_known_as": "Rohit Sharma",
+        "player_name": "RG Sharma",
+        "player_order": 2,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 20861,
+        "player_img": null,
+        "player_known_as": "Suryakumar Yadav",
+        "player_name": "SA Yadav",
+        "player_order": 3,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 69845,
+        "player_img": null,
+        "player_known_as": "Tilak Varma",
+        "player_name": "NT Tilak Varma",
+        "player_order": 4,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 1,
+        "is_keeper": 0,
+        "player_id": 16093,
+        "player_img": null,
+        "player_known_as": "Hardik Pandya",
+        "player_name": "HH Pandya",
+        "player_order": 5,
+        "player_role": "allrounder",
+        "role": "all_rounder",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 79429,
+        "player_img": null,
+        "player_known_as": "Naman Dhir",
+        "player_name": "N Dhir",
+        "player_order": 6,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 66048,
+        "player_img": null,
+        "player_known_as": "Sherfane Rutherford",
+        "player_name": "SE Rutherford",
+        "player_order": 7,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": "substitute"
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 27765,
+        "player_img": null,
+        "player_known_as": "Shardul Thakur",
+        "player_name": "SN Thakur",
+        "player_order": 8,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 19257,
+        "player_img": null,
+        "player_known_as": "Deepak Chahar",
+        "player_name": "DL Chahar",
+        "player_order": 9,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 14330,
+        "player_img": null,
+        "player_known_as": "Trent Boult",
+        "player_name": "TA Boult",
+        "player_order": 10,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 16096,
+        "player_img": null,
+        "player_known_as": "Jasprit Bumrah",
+        "player_name": "JJ Bumrah",
+        "player_order": 11,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1854,
+        "type": null
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 78206,
+        "player_img": null,
+        "player_known_as": "AM Ghazanfar",
+        "player_name": "AM Ghazanfar",
+        "player_order": 12,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1854,
+        "type": "replaced"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 76211,
+        "player_img": null,
+        "player_known_as": "Raj Bawa",
+        "player_name": "R Bawa",
+        "player_order": 13,
+        "player_role": "bowling allrounder",
+        "role": "all_rounder",
+        "team_id": 1854,
+        "type": "unused"
+      },
+      {
+        "batting_hand": "right",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 22181,
+        "player_img": null,
+        "player_known_as": "Corbin Bosch",
+        "player_name": "C Bosch",
+        "player_order": 14,
+        "player_role": "bowling allrounder",
+        "role": "all_rounder",
+        "team_id": 1854,
+        "type": "unused"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 72996,
+        "player_img": null,
+        "player_known_as": "Ashwani Kumar",
+        "player_name": "A Kumar",
+        "player_order": 15,
+        "player_role": "bowler",
+        "role": "bowler",
+        "team_id": 1854,
+        "type": "unused"
+      },
+      {
+        "batting_hand": "left",
+        "is_captain": 0,
+        "is_keeper": 0,
+        "player_id": 84159,
+        "player_img": null,
+        "player_known_as": "Robin Minz",
+        "player_name": "R Minz",
+        "player_order": 16,
+        "player_role": "batsman",
+        "role": "batter",
+        "team_id": 1854,
+        "type": "unused"
+      }
+    ]
+  },
+  "team_batting_first": 1558,
+  "toss_comment": "Mumbai Indians won the toss and elected to bowl",
+  "video": true
+}

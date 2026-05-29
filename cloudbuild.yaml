@@ -46,7 +46,15 @@ steps:
 
         EXTRA_ARGS=()
         if [[ -n "${_CLOUD_SQL_INSTANCE}" ]]; then
-          EXTRA_ARGS+=(--add-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
+          EXTRA_ARGS+=(--set-cloudsql-instances "${_CLOUD_SQL_INSTANCE}")
+        fi
+
+        EXTRA_SECRET_ARGS=()
+        if [[ -n "${_WISDEN_COOKIE_SECRET}" ]]; then
+          EXTRA_SECRET_ARGS+=(--set-secrets "WISDEN_COOKIE=${_WISDEN_COOKIE_SECRET}:latest")
+        fi
+        if [[ -n "${_WISDEN_EDAK_SECRET}" ]]; then
+          EXTRA_SECRET_ARGS+=(--set-secrets "WISDEN_EDAK=${_WISDEN_EDAK_SECRET}:latest")
         fi
 
         gcloud run deploy "${_SERVICE_NAME}" \
@@ -62,6 +70,7 @@ steps:
           --set-secrets "FIREBASE_CLIENT_EMAIL=FIREBASE_CLIENT_EMAIL:latest" \
           --set-secrets "FIREBASE_PRIVATE_KEY=FIREBASE_PRIVATE_KEY:latest" \
           --set-secrets "CRICAPI_API_KEY=CRICAPI_API_KEY:latest" \
+          "${EXTRA_SECRET_ARGS[@]}" \
           "${EXTRA_ARGS[@]}"
 
 images:
@@ -72,14 +81,14 @@ substitutions:
   _REGION: asia-south1
   _SERVICE_NAME: d11-dashboard-api-service
   _MIGRATION_JOB_NAME: d11-dashboard-api-service-migrate
+  _SYNC_IDS_JOB_NAME: d11-dashboard-api-service-sync-cricapi-ids
   _AR_REPO: d11-dashboard-api-container-repo
   _RUNTIME_SERVICE_ACCOUNT: ""
   _CLOUD_SQL_INSTANCE: ""
+  _WISDEN_COOKIE_SECRET: ""
+  _WISDEN_EDAK_SECRET: ""
   _CORS_ORIGIN: ""
   _BEST_N_DROP_COUNT: "5"
-  _CRICAPI_SCORE_SOURCE: "live"
-  _CRICAPI_ENABLE_SCORE_POLLER: "true"
-  _CRICAPI_ENABLE_MOCK_SCORE_FALLBACK: "false"
 
 options:
   logging: CLOUD_LOGGING_ONLY
